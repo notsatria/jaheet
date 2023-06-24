@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/home/home_screen.dart';
 
 import 'screens/home/main_screen.dart';
 import 'screens/sign_in_screen.dart';
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
         SignInScreen.routeName: (context) => const SignInScreen(),
         SignUpScreen.routeName: (context) => const SignUpScreen(),
         MainScreen.routeName: (context) => const MainScreen(),
-        // MainScreen.routeName: (context) => const MainScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
       },
     );
   }
