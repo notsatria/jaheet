@@ -137,10 +137,17 @@ class _MainScreenState extends State<MainScreen> {
 
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         floatingActionButton: locationButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: customBottomNav(),
-        body: body(),
+        body: Column(
+          children: [
+            Expanded(
+              child: body(),
+            ),
+          ],
+        ),
       ),
     );
   }
