@@ -265,6 +265,7 @@ class SignUpScreen extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: backgroundColor1,
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: defaultMargin),
