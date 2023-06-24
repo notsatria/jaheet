@@ -9,9 +9,22 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget searchBar() {
       return Container(
-        margin: EdgeInsets.all(20),
-        child: Row(
-          children: [Text('BoxPencarian')],
+        margin: const EdgeInsets.all(15),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 8,
+        ),
+        height: 45,
+        decoration: BoxDecoration(
+          color: backgroundColor4,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: TextFormField(
+          style: subtitleTextStyle,
+          decoration: InputDecoration.collapsed(
+            hintText: 'Search',
+            hintStyle: subtitleTextStyle,
+          ),
         ),
       );
     }
@@ -30,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8)),
                     shadowColor: Colors.transparent),
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   child: Row(
                     children: [
                       Icon(Icons.fire_truck),
@@ -69,21 +82,168 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget categoryOption() {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Kategori Layanan'),
-          Container(
-            child: Row(
+    Widget divider() {
+      return Divider(
+        thickness: 4,
+      );
+    }
+
+    Widget dummyCategory() {
+      return Container(
+        margin: EdgeInsets.only(right: 12, bottom: 10),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: primaryTextColor)),
+        child: Row(
+          children: [
+            Column(
               children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                  child: Image.asset(
+                    'assets/images/userprofile.jpg',
+                    width: 100,
+                  ),
+                ),
                 Container(
-                  child: Text('Atasan'),
-                )
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: Text(
+                    'Atasan',
+                    style: primaryTextStyle.copyWith(
+                        fontSize: 14, fontWeight: bold),
+                  ),
+                ),
               ],
             ),
-          )
-        ],
+          ],
+        ),
+      );
+    }
+
+    Widget dummySeller() {
+      return Container(
+        margin: EdgeInsets.only(left: 5, right: 12, bottom: 10),
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.25),
+              offset: Offset(0, 4),
+              blurRadius: 4)
+        ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
+        child: Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                  child: Image.asset(
+                    'assets/images/userprofile.jpg',
+                    width: 120,
+                  ),
+                ),
+                Container(
+                  width: 120,
+                  decoration: BoxDecoration(),
+                  padding: EdgeInsets.all(5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '500m',
+                        style: secondaryTextStyle,
+                        softWrap: true,
+                      ),
+                      Text(
+                        'Rusdi Tailor',
+                        style: primaryTextStyle.copyWith(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: Color.fromARGB(255, 250, 229, 36),
+                          ),
+                          Text(
+                            '4.0',
+                            style: primaryTextStyle.copyWith(fontSize: 14),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget categoryOption() {
+      return Container(
+        margin: EdgeInsets.symmetric(vertical: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Kategori Layanan',
+              style: primaryTextStyle.copyWith(fontSize: 16, fontWeight: bold),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 12),
+              child: Row(
+                children: [
+                  dummyCategory(),
+                  dummyCategory(),
+                  dummyCategory(),
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    Widget nearest(String title) {
+      return Container(
+        margin: EdgeInsets.symmetric(vertical: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: primaryTextStyle.copyWith(
+                        fontSize: 16, fontWeight: bold),
+                  ),
+                  TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Lihat Semua',
+                        style: primaryTextStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: bold,
+                            color: secondaryColor),
+                      ))
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 12),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [dummySeller(), dummySeller(), dummySeller()],
+                ),
+              ),
+            )
+          ],
+        ),
       );
     }
 
@@ -91,23 +251,32 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: primaryColor,
-        body: Container(
-          child: Column(
-            children: [
-              searchBar(),
-              Container(
-                padding: EdgeInsets.all(15),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: backgroundColor4,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16))),
-                child: Column(
-                  children: [serviceOption(), categoryOption()],
+        body: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              children: [
+                searchBar(),
+                Container(
+                  padding: EdgeInsets.all(15),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: backgroundColor4,
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16))),
+                  child: Column(
+                    children: [
+                      serviceOption(),
+                      categoryOption(),
+                      divider(),
+                      nearest("Paling populer di dekat Anda"),
+                      divider(),
+                      nearest("Rekomendasi toko lain")
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
