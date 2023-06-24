@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/home/detail_screen.dart';
 
 import 'screens/home/main_screen.dart';
 import 'screens/sign_in_screen.dart';
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => const SplashScreen(),
+        '/': (context) =>
+            const DetailScreen(), //nanti diganti splashScreen lagi
         SignInScreen.routeName: (context) => const SignInScreen(),
         SignUpScreen.routeName: (context) => const SignUpScreen(),
         MainScreen.routeName: (context) => const MainScreen(),
