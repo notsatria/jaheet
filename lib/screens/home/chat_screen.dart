@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/home/chatroom_screen.dart';
+import 'package:jahitin/screens/home/main_screen.dart';
 
 import '../../constant/theme.dart';
 
@@ -19,7 +21,7 @@ class ChatScreen extends StatelessWidget {
         ),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushNamed(context, MainScreen.routeName);
           },
           icon: Icon(
             Icons.arrow_back,
@@ -44,12 +46,25 @@ class ChatScreen extends StatelessWidget {
           color: backgroundColor4,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: TextFormField(
-          style: subtitleTextStyle,
-          decoration: InputDecoration.collapsed(
-            hintText: 'Search',
-            hintStyle: subtitleTextStyle,
-          ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.search,
+              color: subtitleTextColor,
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Expanded(
+              child: TextFormField(
+                style: subtitleTextStyle,
+                decoration: InputDecoration.collapsed(
+                  hintText: 'Search',
+                  hintStyle: subtitleTextStyle,
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -57,7 +72,7 @@ class ChatScreen extends StatelessWidget {
     Widget chatBar() {
       return GestureDetector(
         onTap: () {
-          print("Chat clicked");
+          Navigator.pushNamed(context, ChatRoomScreen.routeName);
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: 20),
@@ -80,7 +95,7 @@ class ChatScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Nama Pelanggan',
+                      'Nama Tailor',
                       style: primaryTextStyle.copyWith(
                         fontWeight: semiBold,
                       ),
