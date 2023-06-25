@@ -22,8 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) =>
-            const DetailScreen(), //nanti diganti splashScreen lagi
+        '/': (context) => const SplashScreen(),
         SignInScreen.routeName: (context) => const SignInScreen(),
         SignUpScreen.routeName: (context) => const SignUpScreen(),
         MainScreen.routeName: (context) => const MainScreen(),
