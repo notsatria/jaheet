@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../constant/theme.dart';
-import 'sign_in_screen.dart';
+import 'slide_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushNamed(context, SignInScreen.routeName);
+      Navigator.pushReplacementNamed(context, SlideScreen.routeName);
     });
     super.initState();
   }
@@ -33,9 +33,12 @@ class _SplashScreenState extends State<SplashScreen> {
             height: 200,
           ),
           Text(
-            'Jahitin',
+            'Jaheet',
             style: primaryTextStyle.copyWith(
-                fontSize: 32, fontWeight: semiBold, color: backgroundColor1),
+              fontSize: 32,
+              fontWeight: semiBold,
+              color: backgroundColor1,
+            ),
           ),
         ],
       ),
