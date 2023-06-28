@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constant/theme.dart';
-import 'home/main_screen.dart';
+import 'sign_in_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   static const routeName = '/sign-up-screen';
@@ -179,7 +179,7 @@ class SignUpScreen extends StatelessWidget {
         height: 50,
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, MainScreen.routeName);
+            // Navigator.pushReplacementNamed(context, MainScreen.routeName);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
@@ -212,6 +212,9 @@ class SignUpScreen extends StatelessWidget {
               width: 5,
             ),
             GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, SignInScreen.routeName);
+              },
               child: Text(
                 'Masuk',
                 style: navyTextStyle.copyWith(
@@ -243,7 +246,7 @@ class SignUpScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/icon/google.png',
+                'assets/google.png',
                 width: 24,
                 height: 24,
               ),
