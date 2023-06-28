@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/home/detail_screen.dart';
 import '../../constant/theme.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -121,62 +122,68 @@ class HomeScreen extends StatelessWidget {
     }
 
     Widget dummySeller() {
-      return Container(
-        margin: EdgeInsets.only(left: 5, right: 12, bottom: 10),
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.25),
-              offset: Offset(0, 4),
-              blurRadius: 4)
-        ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
-        child: Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
-                  child: Image.asset(
-                    'assets/images/userprofile.jpg',
+      return InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, DetailScreen.routeName);
+        },
+        child: Container(
+          margin: EdgeInsets.only(left: 5, right: 12, bottom: 10),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+                color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.25),
+                offset: Offset(0, 4),
+                blurRadius: 4)
+          ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(8)),
+                    child: Image.asset(
+                      'assets/images/userprofile.jpg',
+                      width: 120,
+                    ),
+                  ),
+                  Container(
                     width: 120,
+                    decoration: BoxDecoration(),
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '500m',
+                          style: secondaryTextStyle,
+                          softWrap: true,
+                        ),
+                        Text(
+                          'Rusdi Tailor',
+                          style: primaryTextStyle.copyWith(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Color.fromARGB(255, 250, 229, 36),
+                            ),
+                            Text(
+                              '4.0',
+                              style: primaryTextStyle.copyWith(fontSize: 14),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  width: 120,
-                  decoration: BoxDecoration(),
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '500m',
-                        style: secondaryTextStyle,
-                        softWrap: true,
-                      ),
-                      Text(
-                        'Rusdi Tailor',
-                        style: primaryTextStyle.copyWith(
-                            fontSize: 14, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.star,
-                            color: Color.fromARGB(255, 250, 229, 36),
-                          ),
-                          Text(
-                            '4.0',
-                            style: primaryTextStyle.copyWith(fontSize: 14),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       );
     }
