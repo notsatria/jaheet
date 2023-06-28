@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constant/theme.dart';
-import 'login_screen.dart';
+import 'sign_in_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   static const routeName = '/sign-up-screen';
@@ -213,7 +213,7 @@ class SignUpScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, LoginScreen.routeName);
+                Navigator.pushNamed(context, SignInScreen.routeName);
               },
               child: Text(
                 'Masuk',

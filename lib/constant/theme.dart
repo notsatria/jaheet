@@ -31,7 +31,7 @@ TextStyle secondaryTextStyle = GoogleFonts.poppins(
   color: secondaryColor,
 );
 
-TextStyle purpleTextStyle = GoogleFonts.poppins(
+TextStyle navyTextStyle = GoogleFonts.poppins(
   color: primaryColor,
 );
 
