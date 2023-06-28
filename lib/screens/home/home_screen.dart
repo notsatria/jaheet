@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
+import 'package:jahitin/screens/home/search_screen.dart';
 import '../../constant/theme.dart';
 
 class HomeScreen extends StatelessWidget {
   static const routeName = '/home-screen';
+
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     Widget searchBar() {
       return Container(
-        margin: const EdgeInsets.all(15),
+        margin: const EdgeInsets.all(
+          15,
+        ),
         padding: const EdgeInsets.symmetric(
           horizontal: 10,
           vertical: 8,
@@ -20,12 +24,31 @@ class HomeScreen extends StatelessWidget {
           color: backgroundColor4,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: TextFormField(
-          style: subtitleTextStyle,
-          decoration: InputDecoration.collapsed(
-            hintText: 'Search',
-            hintStyle: subtitleTextStyle,
-          ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.search,
+              color: subtitleTextColor,
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, SearchScreen.routeName);
+                },
+                child: TextFormField(
+                  enabled: false,
+                  style: subtitleTextStyle,
+                  decoration: InputDecoration.collapsed(
+                    hintText: 'Search',
+                    hintStyle: subtitleTextStyle,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }

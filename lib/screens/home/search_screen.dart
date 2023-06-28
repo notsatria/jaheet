@@ -1,82 +1,119 @@
 import 'package:flutter/material.dart';
 import '../../constant/theme.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   static const routeName = '/search-screen';
-  const SearchScreen({super.key});
+  const SearchScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen>
+    with SingleTickerProviderStateMixin {
+  static const List<Tab> myTabs = <Tab>[
+    Tab(
+      text: 'Jahit',
+    ),
+    Tab(
+      text: 'Kain',
+    ),
+  ];
+
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: myTabs.length);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     Widget searchBar() {
+      return Row(
+        children: [
+          BackButton(
+            color: primaryColor,
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.all(15),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
+              height: 45,
+              decoration: BoxDecoration(
+                color: backgroundColor4,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: TextFormField(
+                style: subtitleTextStyle,
+                autofocus: true,
+                decoration: InputDecoration.collapsed(
+                  hintText: 'Search',
+                  hintStyle: subtitleTextStyle,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget searchOption() {
       return Container(
-        margin: const EdgeInsets.all(15),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 8,
-        ),
-        height: 45,
-        decoration: BoxDecoration(
-          color: backgroundColor4,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: TextFormField(
-          style: subtitleTextStyle,
-          decoration: InputDecoration.collapsed(
-            hintText: 'Search',
-            hintStyle: subtitleTextStyle,
+        width: double.infinity,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.0),
+            border: Border(
+              bottom: BorderSide(
+                color: Color.fromARGB(177, 158, 158, 158),
+                width: 2,
+              ),
+            ),
+          ),
+          child: TabBar(
+            labelColor: primaryColor,
+            labelStyle: primaryTextStyle.copyWith(
+                fontSize: 18, fontWeight: FontWeight.bold),
+            indicatorColor: primaryColor,
+            unselectedLabelColor: Color.fromARGB(177, 158, 158, 158),
+            controller: _tabController,
+            indicatorPadding: EdgeInsets.zero,
+            tabs: myTabs,
           ),
         ),
       );
     }
 
-    Widget serviceOption() {
+    Widget tabBarView() {
       return Container(
-        width: double.infinity,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        height: 400,
+        child: TabBarView(
+          controller: _tabController,
           children: [
-            ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: secondaryColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    shadowColor: Colors.transparent),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  child: Row(
-                    children: [
-                      Icon(Icons.fire_truck),
-                      SizedBox(width: 6),
-                      Text(
-                        'Home Service',
-                        style: whiteTextStyle.copyWith(
-                            fontSize: 13, fontWeight: bold),
-                      ),
-                    ],
-                  ),
-                )),
-            ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: secondaryColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    shadowColor: Colors.transparent),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  child: Row(
-                    children: [
-                      Icon(Icons.pin_drop),
-                      SizedBox(width: 6),
-                      Text(
-                        'Drop-off ke toko',
-                        style: whiteTextStyle.copyWith(
-                            fontSize: 13, fontWeight: bold),
-                      ),
-                    ],
-                  ),
-                )),
+            // Content for the first tab
+            Container(
+              child: Center(
+                child: Text('Content for Jahit tab'),
+              ),
+            ),
+
+            // Content for the second tab
+            Container(
+              child: Center(
+                child: Text('Content for Kain tab'),
+              ),
+            ),
           ],
         ),
       );
@@ -85,29 +122,25 @@ class SearchScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: primaryColor,
-        body: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: [
-                searchBar(),
-                Container(
-                  padding: EdgeInsets.all(15),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: backgroundColor4,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16))),
-                  child: Column(
-                    children: [
-                      serviceOption(),
-                    ],
-                  ),
+        body: Column(
+          children: [
+            searchBar(),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
                 ),
-              ],
+              ),
+              child: Column(
+                children: [
+                  searchOption(),
+                  SingleChildScrollView(child: tabBarView())
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
