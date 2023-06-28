@@ -4,6 +4,7 @@ import 'screens/home/chatroom_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/home/main_screen.dart';
 import 'screens/home/search_screen.dart';
+import 'screens/home/transaction_detail_screen.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/sign_up_screen.dart';
 import 'screens/slide_screen.dart';
@@ -30,6 +31,8 @@ class MyApp extends StatelessWidget {
         ChatRoomScreen.routeName: (context) => const ChatRoomScreen(),
         SearchScreen.routeName: (context) => const SearchScreen(),
         SlideScreen.routeName: (context) => const SlideScreen(),
+        TransactionDetailScreen.routeName: (context) =>
+            const TransactionDetailScreen(),
       },
     );
   }
