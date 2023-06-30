@@ -1,8 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 import '../../constant/theme.dart';
 
 class DetailScreen extends StatefulWidget {
+  static const routeName = '/detail-screen';
   const DetailScreen({Key? key}) : super(key: key);
 
   @override
@@ -167,7 +168,9 @@ class _DetailScreenState extends State<DetailScreen> {
         top: 20,
         left: 20,
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           backgroundColor: backgroundColor1,
           mini: true,
           child: Icon(
