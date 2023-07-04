@@ -246,7 +246,7 @@ class SignUpScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/google.png',
+                'assets/icon/google.png',
                 width: 24,
                 height: 24,
               ),
@@ -272,24 +272,29 @@ class SignUpScreen extends StatelessWidget {
         backgroundColor: backgroundColor1,
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: defaultMargin),
-          child: Column(
-            children: [
-              header(),
-              namaInput(),
-              emailInput(),
-              passwordInput(),
-              passwordConfirmationInput(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  rememberMe(),
-                  forgotPassword(),
-                ],
-              ),
-              buttonSignUp(),
-              textLogin(),
-              buttonLoginGoogle()
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                header(),
+                namaInput(),
+                emailInput(),
+                passwordInput(),
+                passwordConfirmationInput(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    rememberMe(),
+                    forgotPassword(),
+                  ],
+                ),
+                buttonSignUp(),
+                textLogin(),
+                buttonLoginGoogle(),
+                SizedBox(
+                  height: defaultMargin,
+                )
+              ],
+            ),
           ),
         ),
       ),

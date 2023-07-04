@@ -66,19 +66,27 @@ class ProfileScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
+                Navigator.pushNamed(context, EditProfileScreen.routeName);
+              },
+              child: const ListTile(
+                leading: Text(
+                  'Edit Profil',
+                ),
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
                 //
               },
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, EditProfileScreen.routeName);
-                },
-                child: const ListTile(
-                  leading: Text(
-                    'Edit Profil',
-                  ),
-                  trailing: Icon(
-                    Icons.chevron_right_rounded,
-                  ),
+              child: const ListTile(
+                leading: Text(
+                  'Buka Jasa Jahit',
+                ),
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
                 ),
               ),
             ),
