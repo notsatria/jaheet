@@ -37,6 +37,7 @@ dependencies:
   google_fonts: ^4.0.4
   intro_slider: ^4.2.0
   timelines: ^0.1.0
+  change_app_package_name: ^1.1.0
 
 dev_dependencies:
   flutter_test:
