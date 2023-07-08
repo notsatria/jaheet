@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:jahitin/screens/home/search_screen.dart';
+import 'package:jahitin/services/haversine.dart';
 import '../../constant/theme.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -55,52 +57,59 @@ class HomeScreen extends StatelessWidget {
 
     Widget serviceOption() {
       return Container(
-        width: double.infinity,
+        margin: EdgeInsets.only(bottom: 10),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: secondaryColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    shadowColor: Colors.transparent),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  child: Row(
-                    children: [
-                      Icon(Icons.fire_truck),
-                      SizedBox(width: 6),
-                      Text(
-                        'Home Service',
-                        style: whiteTextStyle.copyWith(
-                            fontSize: 13, fontWeight: bold),
-                      ),
-                    ],
-                  ),
-                )),
-            ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: secondaryColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    shadowColor: Colors.transparent),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  child: Row(
-                    children: [
-                      Icon(Icons.pin_drop),
-                      SizedBox(width: 6),
-                      Text(
-                        'Drop-off ke toko',
-                        style: whiteTextStyle.copyWith(
-                            fontSize: 13, fontWeight: bold),
-                      ),
-                    ],
-                  ),
-                )),
+            Flexible(
+              flex: 1,
+              child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: secondaryColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      shadowColor: Colors.transparent),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: [
+                        Icon(Icons.fire_truck),
+                        SizedBox(width: 6),
+                        Text(
+                          'Home Service',
+                          style: whiteTextStyle.copyWith(
+                              fontSize: 14, fontWeight: bold),
+                        ),
+                      ],
+                    ),
+                  )),
+            ),
+            SizedBox(width: 10),
+            Flexible(
+              flex: 1,
+              child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: secondaryColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      shadowColor: Colors.transparent),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: [
+                        Icon(Icons.pin_drop),
+                        SizedBox(width: 6),
+                        Text(
+                          'Drop-off ke toko',
+                          style: whiteTextStyle.copyWith(
+                              fontSize: 14, fontWeight: bold),
+                        ),
+                      ],
+                    ),
+                  )),
+            ),
           ],
         ),
       );
@@ -112,7 +121,7 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget dummyCategory() {
+    Widget category(title) {
       return Container(
         margin: EdgeInsets.only(right: 12, bottom: 10),
         decoration: BoxDecoration(
@@ -132,7 +141,7 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 5),
                   child: Text(
-                    'Atasan',
+                    title,
                     style: primaryTextStyle.copyWith(
                         fontSize: 14, fontWeight: bold),
                   ),
@@ -144,7 +153,7 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget dummySeller() {
+    Widget seller(name, rating, lat, long) {
       return InkWell(
         onTap: () {
           Navigator.pushNamed(context, DetailScreen.routeName);
@@ -178,12 +187,12 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '500m',
+                          '${Haversine.calculateDistance(-7.058376, 110.430547, lat, long).toInt()} m',
                           style: secondaryTextStyle,
                           softWrap: true,
                         ),
                         Text(
-                          'Rusdi Tailor',
+                          name,
                           style: primaryTextStyle.copyWith(
                               fontSize: 14, fontWeight: FontWeight.bold),
                           overflow: TextOverflow.ellipsis,
@@ -195,7 +204,7 @@ class HomeScreen extends StatelessWidget {
                               color: Color.fromARGB(255, 250, 229, 36),
                             ),
                             Text(
-                              '4.0',
+                              rating,
                               style: primaryTextStyle.copyWith(fontSize: 14),
                             )
                           ],
@@ -225,9 +234,32 @@ class HomeScreen extends StatelessWidget {
               margin: EdgeInsets.only(top: 12),
               child: Row(
                 children: [
-                  dummyCategory(),
-                  dummyCategory(),
-                  dummyCategory(),
+                  // FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  //   future: FirebaseFirestore.instance
+                  //       .collection('categories')
+                  //       .get(),
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.connectionState == ConnectionState.waiting) {
+                  //       return CircularProgressIndicator();
+                  //     }
+                  //     if (snapshot.hasError) {
+                  //       return Text('Error: ${snapshot.error}');
+                  //     }
+                  //     if (snapshot.hasData) {
+                  //       final users = snapshot.data!.docs;
+                  //       return Container(
+                  //         margin: EdgeInsets.only(top: 12),
+                  //         child: Row(
+                  //           children: [
+                  //             for (final user in users)
+                  //               category(user.data()['title'])
+                  //           ],
+                  //         ),
+                  //       );
+                  //     }
+                  //     return SizedBox();
+                  //   },
+                  // ),
                 ],
               ),
             )
@@ -263,15 +295,6 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 12),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [dummySeller(), dummySeller(), dummySeller()],
-                ),
-              ),
-            )
           ],
         ),
       );
@@ -283,6 +306,7 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         body: SingleChildScrollView(
           child: Container(
+            margin: EdgeInsets.only(top: 12),
             child: Column(
               children: [
                 searchBar(),
@@ -295,11 +319,92 @@ class HomeScreen extends StatelessWidget {
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16))),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       serviceOption(),
                       categoryOption(),
+                      FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('categories')
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          if (snapshot.hasData) {
+                            final users = snapshot.data!.docs;
+                            return Container(
+                              child: Row(
+                                children: [
+                                  for (final user in users)
+                                    category(user.data()['title'])
+                                ],
+                              ),
+                            );
+                          }
+                          return SizedBox();
+                        },
+                      ),
                       divider(),
                       nearest("Paling populer di dekat Anda"),
+                      FutureBuilder(
+                        future: FirebaseFirestore.instance
+                            .collection('seller')
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          if (snapshot.hasData) {
+                            final sellers = snapshot.data!.docs;
+
+                            // Menghitung jarak untuk setiap penjual menggunakan Haversine
+                            final currentLatitude = -7.058376;
+                            final currentLongitude = 110.430547;
+                            sellers.sort((a, b) {
+                              final distanceA = Haversine.calculateDistance(
+                                currentLatitude,
+                                currentLongitude,
+                                a.data()['location'].latitude,
+                                a.data()['location'].longitude,
+                              );
+                              final distanceB = Haversine.calculateDistance(
+                                currentLatitude,
+                                currentLongitude,
+                                b.data()['location'].latitude,
+                                b.data()['location'].longitude,
+                              );
+                              return distanceA.compareTo(distanceB);
+                            });
+
+                            return Container(
+                              margin: EdgeInsets.only(top: 12),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    for (final data in sellers)
+                                      seller(
+                                          data.data()['name'],
+                                          data.data()['rating'].toString(),
+                                          data.data()['location'].latitude,
+                                          data.data()['location'].longitude)
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox();
+                        },
+                      ),
                       divider(),
                       nearest("Rekomendasi toko lain")
                     ],
