@@ -33,7 +33,7 @@ class _LocationRecommendationScreenState
           ),
           markers: {
             Marker(
-                markerId: MarkerId('Tes'),
+                markerId: const MarkerId('Tes'),
                 position: LatLng(args['latitude'], args['longitude']),
                 icon: BitmapDescriptor.defaultMarker)
           },
