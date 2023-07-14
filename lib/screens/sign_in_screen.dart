@@ -21,6 +21,14 @@ class _SignInScreenState extends State<SignInScreen> {
   bool isLoading = false;
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget header() {
       return Container(

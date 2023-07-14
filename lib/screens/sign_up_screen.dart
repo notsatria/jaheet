@@ -21,6 +21,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final passwordConfirmController = TextEditingController();
   bool isLoading = false;
 
+  bool checkPasswordMatch() {
+    final password = passwordController.text;
+    final confirmPassword = passwordConfirmController.text;
+    return password == confirmPassword;
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -159,47 +165,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
     }
 
-    Widget rememberMe() {
-      return Container(
-        margin: const EdgeInsets.only(top: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            IconButton(
-              onPressed: () {
-                //
-              },
-              icon: Icon(
-                Icons.check_box_rounded,
-                size: 24,
-                color: primaryColor,
-              ),
-            ),
-            Text(
-              'Ingat saya',
-              style: subtitleTextStyle.copyWith(
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    Widget forgotPassword() {
-      return TextButton(
-        onPressed: () {},
-        child: Text(
-          'Lupa Password?',
-          style: navyTextStyle.copyWith(
-            fontSize: 16,
-            color: primaryColor,
-            fontWeight: semiBold,
-          ),
-        ),
-      );
-    }
-
     Widget buttonSignUp() {
       return Container(
         width: double.infinity,
@@ -207,6 +172,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
         height: 50,
         child: ElevatedButton(
           onPressed: () async {
+            if (!checkPasswordMatch()) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Error'),
+                    content: Text(
+                      'Password dan konfirmasi password tidak cocok',
+                      style: primaryTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: reguler,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'OK',
+                          style: navyTextStyle,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+              return;
+            }
+
             setState(() {
               isLoading = true;
             });
@@ -321,7 +316,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 width: 10,
               ),
               Text(
-                'Masuk dengan Google',
+                'Daftar dengan Google',
                 style: primaryTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: bold,
@@ -349,13 +344,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     emailInput(),
                     passwordInput(),
                     passwordConfirmationInput(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        rememberMe(),
-                        forgotPassword(),
-                      ],
-                    ),
                     buttonSignUp(),
                     textLogin(),
                     buttonLoginGoogle(),
