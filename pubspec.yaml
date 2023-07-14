@@ -38,6 +38,13 @@ dependencies:
   intro_slider: ^4.2.0
   timelines: ^0.1.0
   permission_handler: ^10.4.1
+  change_app_package_name: ^1.1.0
+  firebase_core: ^2.14.0
+  firebase_auth: ^4.6.3
+  cloud_firestore: ^4.8.2
+  firebase_storage: ^11.2.4
+  firebase_database: ^10.2.3
+  skeletons: ^0.0.3
 
 dev_dependencies:
   flutter_test:

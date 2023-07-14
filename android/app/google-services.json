@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "682935980827",
+    "project_id": "jaheet-5fa13",
+    "storage_bucket": "jaheet-5fa13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:682935980827:android:d62ebf37882f977807f9be",
+        "android_client_info": {
+          "package_name": "id.polines.jaheet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "682935980827-045okijsif8rnr96s4eo4lcvt9lo85eq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlRUc858yuovFiOKBV_Xuf0PNrfeqAJLg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682935980827-045okijsif8rnr96s4eo4lcvt9lo85eq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

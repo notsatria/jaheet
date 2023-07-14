@@ -1,4 +1,4 @@
-package com.example.jahitin
+package id.polines.jaheet
 
 import io.flutter.embedding.android.FlutterActivity
 
