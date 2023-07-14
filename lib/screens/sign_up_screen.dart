@@ -15,21 +15,11 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final auth = FirebaseAuth.instance;
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController passwordConfirmController = TextEditingController();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final passwordConfirmController = TextEditingController();
   bool isLoading = false;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    nameController = TextEditingController();
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    passwordConfirmController = TextEditingController();
-  }
 
   @override
   void dispose() {
@@ -228,11 +218,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   email: email, password: password);
               Navigator.pop(context);
             } catch (e) {
-              final snackBar = SnackBar(
-                content: Text(e.toString()),
-                backgroundColor: alertColor,
-              );
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              print(e.toString());
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Error'),
+                      content: Text('Email atau password salah',
+                          style: primaryTextStyle.copyWith(
+                            fontSize: 16,
+                            fontWeight: reguler,
+                          )),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'OK',
+                            style: navyTextStyle,
+                          ),
+                        ),
+                      ],
+                    );
+                  });
             } finally {
               setState(() {
                 isLoading = false;

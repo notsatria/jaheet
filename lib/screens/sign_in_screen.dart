@@ -1,13 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../constant/theme.dart';
 import 'home/main_screen.dart';
 import 'sign_up_screen.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   static const routeName = '/sign-in-screen';
 
   const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final auth = FirebaseAuth.instance;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +61,7 @@ class SignInScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: emailController,
               style: subtitleTextStyle,
               decoration: InputDecoration.collapsed(
                 hintText: 'E-mail',
@@ -73,6 +85,7 @@ class SignInScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: passwordController,
               style: subtitleTextStyle,
               obscureText: true,
               decoration: InputDecoration.collapsed(
@@ -132,8 +145,51 @@ class SignInScreen extends StatelessWidget {
         margin: const EdgeInsets.only(top: 30),
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, MainScreen.routeName);
+          onPressed: () async {
+            setState(() {
+              isLoading = true;
+            });
+
+            try {
+              final email = emailController.text;
+              final password = passwordController.text;
+              await auth.signInWithEmailAndPassword(
+                email: email,
+                password: password,
+              );
+              Navigator.pushReplacementNamed(context, MainScreen.routeName);
+            } catch (e) {
+              // Tampilkan aboutdialog error\
+              print(e.toString());
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Error'),
+                    content: Text('Email atau password salah',
+                        style: primaryTextStyle.copyWith(
+                          fontSize: 16,
+                          fontWeight: reguler,
+                        )),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'OK',
+                          style: navyTextStyle,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            } finally {
+              setState(() {
+                isLoading = false;
+              });
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
@@ -226,21 +282,31 @@ class SignInScreen extends StatelessWidget {
         backgroundColor: backgroundColor1,
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: defaultMargin),
-          child: Column(
+          child: Stack(
             children: [
-              header(),
-              emailInput(),
-              passwordInput(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
                 children: [
-                  rememberMe(),
-                  forgotPassword(),
+                  header(),
+                  emailInput(),
+                  passwordInput(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      rememberMe(),
+                      forgotPassword(),
+                    ],
+                  ),
+                  buttonLogin(),
+                  textSignUp(),
+                  buttonLoginGoogle()
                 ],
               ),
-              buttonLogin(),
-              textSignUp(),
-              buttonLoginGoogle()
+              isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(primaryColor),
+                    ))
+                  : Container()
             ],
           ),
         ),
