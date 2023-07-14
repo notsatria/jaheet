@@ -97,7 +97,7 @@ class _SearchScreenState extends State<SearchScreen>
 
     Widget tabBarView() {
       return Container(
-        height: 400,
+        height: MediaQuery.of(context).size.height - 157,
         child: TabBarView(
           controller: _tabController,
           children: [

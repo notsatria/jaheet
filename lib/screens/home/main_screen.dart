@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:jahitin/screens/home/location_recommendation.dart';
 
 import '../../constant/theme.dart';
 import 'chat_screen.dart';
@@ -18,13 +19,25 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int currIndex = 0;
 
+  // Location
+  double longitude = 0;
+  double latitude = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    checkPermission();
+    getLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget locationButton() {
       return FloatingActionButton(
         backgroundColor: secondaryColor,
         onPressed: () {
-          checkPermission(Permission.location);
+          Navigator.pushNamed(context, LocationRecommendationScreen.routeName,
+              arguments: {'longitude': longitude, 'latitude': latitude});
         },
         child: Icon(
           Icons.location_on,
@@ -153,21 +166,32 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Future<void> checkPermission(Permission permission) async {
-    final status = await permission.request();
+  Future<void> checkPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
 
-    if (status.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Permission is Granted"),
-        ),
-      );
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print('Location permissions are denied');
+      } else if (permission == LocationPermission.deniedForever) {
+        print("'Location permissions are permanently denied");
+      } else {
+        print("GPS Location service is granted");
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Permission is not Granted"),
-        ),
-      );
+      print("GPS Location permission granted.");
     }
+  }
+
+  Future<void> getLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print(position.longitude); //Output: 80.24599079
+    print(position.latitude); //Output: 29.6593457
+
+    setState(() {
+      longitude = position.longitude;
+      latitude = position.latitude;
+    });
   }
 }

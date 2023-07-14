@@ -55,6 +55,39 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
+    Widget sendLocation(location) {
+      return Container(
+        margin: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+        child: Row(
+          children: [
+            Icon(
+              Icons.pin_drop_outlined,
+              color: Colors.white,
+            ),
+            location != null
+                ? InkWell(
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        Text(
+                          'Dikirim ke ',
+                          style: primaryTextStyle.copyWith(color: Colors.white),
+                        ),
+                        Text(
+                          location,
+                          style: primaryTextStyle.copyWith(
+                              color: Colors.white, fontWeight: bold),
+                        ),
+                        Icon(Icons.arrow_drop_down_rounded, color: Colors.white)
+                      ],
+                    ),
+                  )
+                : Text('Pilih Lokasi Pengiriman'),
+          ],
+        ),
+      );
+    }
+
     Widget serviceOption() {
       return Container(
         margin: EdgeInsets.only(bottom: 10),
@@ -73,8 +106,9 @@ class HomeScreen extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.fire_truck),
+                        Icon(Icons.home_filled),
                         SizedBox(width: 6),
                         Text(
                           'Home Service',
@@ -98,6 +132,7 @@ class HomeScreen extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.pin_drop),
                         SizedBox(width: 6),
@@ -230,39 +265,6 @@ class HomeScreen extends StatelessWidget {
               'Kategori Layanan',
               style: primaryTextStyle.copyWith(fontSize: 16, fontWeight: bold),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 12),
-              child: Row(
-                children: [
-                  // FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  //   future: FirebaseFirestore.instance
-                  //       .collection('categories')
-                  //       .get(),
-                  //   builder: (context, snapshot) {
-                  //     if (snapshot.connectionState == ConnectionState.waiting) {
-                  //       return CircularProgressIndicator();
-                  //     }
-                  //     if (snapshot.hasError) {
-                  //       return Text('Error: ${snapshot.error}');
-                  //     }
-                  //     if (snapshot.hasData) {
-                  //       final users = snapshot.data!.docs;
-                  //       return Container(
-                  //         margin: EdgeInsets.only(top: 12),
-                  //         child: Row(
-                  //           children: [
-                  //             for (final user in users)
-                  //               category(user.data()['title'])
-                  //           ],
-                  //         ),
-                  //       );
-                  //     }
-                  //     return SizedBox();
-                  //   },
-                  // ),
-                ],
-              ),
-            )
           ],
         ),
       );
@@ -309,7 +311,9 @@ class HomeScreen extends StatelessWidget {
             margin: EdgeInsets.only(top: 12),
             child: Column(
               children: [
-                searchBar(),
+                Column(
+                  children: [searchBar(), sendLocation('Kos Bu Wiwik')],
+                ),
                 Container(
                   padding: EdgeInsets.all(15),
                   width: double.infinity,

@@ -1,10 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 <<<<<<< HEAD
+<<<<<<< HEAD
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.jahitin">
 =======
     package="id.polines.jaheet">
 >>>>>>> f54548a29fff0297cc5ef95695344a0ce204c183
+=======
+    package="id.polines.jaheet">
+=======
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.jahitin">
+>>>>>>> 3397975e81256f7bade4636b0eadd4e44ef6c27f
+>>>>>>> 100a6f1cf7602c43802af9115ef7bc283666e31f
     <!-- The INTERNET permission is required for development. Specifically,
          the Flutter tool needs it to communicate with the running application
          to allow setting breakpoints, to provide hot reload, etc.

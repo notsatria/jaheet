@@ -4,6 +4,10 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
+<<<<<<< HEAD
+=======
+  geolocator_windows
+>>>>>>> 100a6f1cf7602c43802af9115ef7bc283666e31f
   permission_handler_windows
 )
 
