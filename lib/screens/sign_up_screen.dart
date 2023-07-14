@@ -1,12 +1,45 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../constant/theme.dart';
 import 'sign_in_screen.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   static const routeName = '/sign-up-screen';
 
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final auth = FirebaseAuth.instance;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordConfirmController = TextEditingController();
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    nameController = TextEditingController();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    passwordConfirmController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    passwordConfirmController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +83,7 @@ class SignUpScreen extends StatelessWidget {
           child: Center(
             child: TextFormField(
               style: subtitleTextStyle,
+              keyboardType: TextInputType.name,
               decoration: InputDecoration.collapsed(
                 hintText: 'Nama Lengkap',
                 hintStyle: subtitleTextStyle,
@@ -72,7 +106,9 @@ class SignUpScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: emailController,
               style: subtitleTextStyle,
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration.collapsed(
                 hintText: 'E-mail',
                 hintStyle: subtitleTextStyle,
@@ -95,6 +131,7 @@ class SignUpScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: passwordController,
               style: subtitleTextStyle,
               obscureText: true,
               decoration: InputDecoration.collapsed(
@@ -119,6 +156,7 @@ class SignUpScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: passwordConfirmController,
               style: subtitleTextStyle,
               obscureText: true,
               decoration: InputDecoration.collapsed(
@@ -178,8 +216,28 @@ class SignUpScreen extends StatelessWidget {
         margin: const EdgeInsets.only(top: 30),
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
-            // Navigator.pushReplacementNamed(context, MainScreen.routeName);
+          onPressed: () async {
+            setState(() {
+              isLoading = true;
+            });
+            try {
+              final email = emailController.text;
+              final password = passwordController.text;
+
+              await auth.createUserWithEmailAndPassword(
+                  email: email, password: password);
+              Navigator.pop(context);
+            } catch (e) {
+              final snackBar = SnackBar(
+                content: Text(e.toString()),
+                backgroundColor: alertColor,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } finally {
+              setState(() {
+                isLoading = false;
+              });
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
@@ -272,29 +330,40 @@ class SignUpScreen extends StatelessWidget {
         backgroundColor: backgroundColor1,
         body: Container(
           margin: EdgeInsets.symmetric(horizontal: defaultMargin),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                header(),
-                namaInput(),
-                emailInput(),
-                passwordInput(),
-                passwordConfirmationInput(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
                   children: [
-                    rememberMe(),
-                    forgotPassword(),
+                    header(),
+                    namaInput(),
+                    emailInput(),
+                    passwordInput(),
+                    passwordConfirmationInput(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        rememberMe(),
+                        forgotPassword(),
+                      ],
+                    ),
+                    buttonSignUp(),
+                    textLogin(),
+                    buttonLoginGoogle(),
+                    SizedBox(
+                      height: defaultMargin,
+                    )
                   ],
                 ),
-                buttonSignUp(),
-                textLogin(),
-                buttonLoginGoogle(),
-                SizedBox(
-                  height: defaultMargin,
-                )
-              ],
-            ),
+              ),
+              isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(primaryColor),
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
         ),
       ),
