@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/home/location_recommendation.dart';
 
 import 'screens/home/chatroom_screen.dart';
 import 'screens/home/detail_screen.dart';
@@ -43,6 +44,8 @@ class MyApp extends StatelessWidget {
             const TransactionDetailScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
         EditProfileScreen.routeName: (context) => const EditProfileScreen(),
+        LocationRecommendationScreen.routeName: (context) =>
+            const LocationRecommendationScreen(),
       },
     );
   }

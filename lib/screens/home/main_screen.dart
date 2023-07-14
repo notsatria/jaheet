@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../constant/theme.dart';
 import 'chat_screen.dart';
@@ -23,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
       return FloatingActionButton(
         backgroundColor: secondaryColor,
         onPressed: () {
-          //
+          checkPermission(Permission.location);
         },
         child: Icon(
           Icons.location_on,
@@ -150,5 +151,23 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> checkPermission(Permission permission) async {
+    final status = await permission.request();
+
+    if (status.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Permission is Granted"),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Permission is not Granted"),
+        ),
+      );
+    }
   }
 }
