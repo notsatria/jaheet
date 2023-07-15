@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/provider/location_provider.dart';
 import 'package:jahitin/screens/home/location_recommendation.dart';
+import 'package:provider/provider.dart';
 
 import 'screens/home/chatroom_screen.dart';
 import 'screens/home/detail_screen.dart';
@@ -19,7 +21,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => LocationProvider())],
+      child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
