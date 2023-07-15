@@ -44,7 +44,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
     Widget titlePenjahit() {
       return Container(
-        margin: EdgeInsets.all(defaultMargin - 14),
+        margin: EdgeInsets.all(defaultMargin - 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -186,7 +186,8 @@ class _DetailScreenState extends State<DetailScreen> {
       required Widget child,
     }) {
       return Container(
-        margin: EdgeInsets.all(defaultMargin - 14),
+        margin: EdgeInsets.symmetric(
+            horizontal: defaultMargin - 5, vertical: defaultMargin - 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -471,7 +472,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
     Widget bottomNavbar() {
       return Container(
-        margin: EdgeInsets.all(defaultMargin - 14),
+        margin: EdgeInsets.all(defaultMargin - 5),
         width: fullWidth,
         height: 45,
         child: Row(
@@ -522,7 +523,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
     return SafeArea(
       child: Scaffold(
-        bottomNavigationBar: BottomAppBar(elevation: 10, child: bottomNavbar()),
+        bottomNavigationBar: BottomAppBar(elevation: 2, child: bottomNavbar()),
         backgroundColor: backgroundColor1,
         body: Stack(
           children: [
