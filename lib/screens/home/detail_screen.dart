@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constant/theme.dart';
+import 'checkout_screen.dart';
 
 class DetailScreen extends StatefulWidget {
   const DetailScreen({Key? key}) : super(key: key);
@@ -494,7 +495,9 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, CheckoutScreen.routeName);
+              },
               child: Container(
                 width: fullWidth - 100,
                 decoration: BoxDecoration(

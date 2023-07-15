@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jahitin/screens/home/chatroom_screen.dart';
+import 'package:jahitin/screens/home/checkout_screen.dart';
 import 'package:jahitin/screens/home/home_screen.dart';
 import 'package:jahitin/screens/home/search_screen.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         MainScreen.routeName: (context) => const MainScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
         ChatRoomScreen.routeName: (context) => const ChatRoomScreen(),
-        SearchScreen.routeName: (context) => const SearchScreen()
+        SearchScreen.routeName: (context) => const SearchScreen(),
+        CheckoutScreen.routeName: (context) => const CheckoutScreen(),
       },
     );
   }

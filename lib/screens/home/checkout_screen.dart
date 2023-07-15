@@ -6,6 +6,7 @@ import '../../constant/theme.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
+  static const routeName = '/checkout-screen';
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -174,9 +175,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Container(
                 width: 64,
                 height: 64,
-                color: subtitleTextColor,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
+                  color: subtitleTextColor,
                 ),
               ),
             ],
