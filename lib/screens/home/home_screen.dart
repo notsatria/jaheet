@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/provider/location_provider.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:jahitin/screens/home/search_screen.dart';
 import 'package:jahitin/services/haversine.dart';
+import 'package:provider/provider.dart';
 import '../../constant/theme.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -222,7 +224,7 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${Haversine.calculateDistance(-7.058376, 110.430547, lat, long).toInt()} m',
+                          '${Haversine.calculateDistance(context.watch<LocationProvider>().lat, context.watch<LocationProvider>().long, lat, long).toInt()} m',
                           style: secondaryTextStyle,
                           softWrap: true,
                         ),
@@ -371,8 +373,10 @@ class HomeScreen extends StatelessWidget {
                             final sellers = snapshot.data!.docs;
 
                             // Menghitung jarak untuk setiap penjual menggunakan Haversine
-                            final currentLatitude = -7.058376;
-                            final currentLongitude = 110.430547;
+                            final currentLatitude =
+                                context.read<LocationProvider>().lat;
+                            final currentLongitude =
+                                context.read<LocationProvider>().long;
                             sellers.sort((a, b) {
                               final distanceA = Haversine.calculateDistance(
                                 currentLatitude,
