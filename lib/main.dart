@@ -1,13 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:jahitin/provider/location_provider.dart';
-import 'package:jahitin/screens/home/location_recommendation.dart';
 import 'package:provider/provider.dart';
 
+import 'provider/google_sign_in_provider.dart';
+import 'provider/location_provider.dart';
 import 'screens/home/chatroom_screen.dart';
 import 'screens/home/detail_screen.dart';
 import 'screens/home/edit_profile_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'screens/home/location_recommendation.dart';
 import 'screens/home/main_screen.dart';
 import 'screens/home/profile_screen.dart';
 import 'screens/home/search_screen.dart';
@@ -21,9 +22,19 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-  runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => LocationProvider())],
-      child: MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => LocationProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => GoogleSignInProvider(),
+        )
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
