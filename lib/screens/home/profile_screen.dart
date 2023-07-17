@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/constant/theme.dart';
+import 'package:jahitin/provider/google_sign_in_provider.dart';
+import 'package:jahitin/screens/sign_in_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'edit_profile_screen.dart';
 
@@ -9,27 +13,28 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
     Widget profileHeader() {
       return Container(
         margin: const EdgeInsets.only(
           top: 20,
         ),
         child: ListTile(
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             radius: 30,
             backgroundImage: NetworkImage(
-              'https://i.pravatar.cc/150?img=12',
+              user.photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
             ),
           ),
           title: Text(
-            'Muhammad Fadli',
+            user.displayName ?? 'null',
             style: primaryTextStyle.copyWith(
               fontSize: 18,
               fontWeight: bold,
             ),
           ),
           subtitle: Text(
-            'muhammadfadli@gmail.com',
+            user.email ?? 'null',
             style: subtitleTextStyle.copyWith(
               fontSize: 14,
             ),
@@ -41,7 +46,10 @@ class ProfileScreen extends StatelessWidget {
               size: 30,
             ),
             onPressed: () {
-              //
+              final provider =
+                  Provider.of<GoogleSignInProvider>(context, listen: false);
+              provider.googleLogout();
+              Navigator.pushReplacementNamed(context, SignInScreen.routeName);
             },
           ),
         ),
