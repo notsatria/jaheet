@@ -59,10 +59,10 @@ class HomeScreen extends StatelessWidget {
 
     Widget sendLocation(location) {
       return Container(
-        margin: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+        margin: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.pin_drop_outlined,
               color: Colors.white,
             ),
@@ -80,11 +80,12 @@ class HomeScreen extends StatelessWidget {
                           style: primaryTextStyle.copyWith(
                               color: Colors.white, fontWeight: bold),
                         ),
-                        Icon(Icons.arrow_drop_down_rounded, color: Colors.white)
+                        const Icon(Icons.arrow_drop_down_rounded,
+                            color: Colors.white)
                       ],
                     ),
                   )
-                : Text('Pilih Lokasi Pengiriman'),
+                : const Text('Pilih Lokasi Pengiriman'),
           ],
         ),
       );
@@ -92,7 +93,7 @@ class HomeScreen extends StatelessWidget {
 
     Widget serviceOption() {
       return Container(
-        margin: EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.only(bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -106,12 +107,12 @@ class HomeScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8)),
                       shadowColor: Colors.transparent),
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.home_filled),
-                        SizedBox(width: 6),
+                        const Icon(Icons.home_filled),
+                        const SizedBox(width: 6),
                         Text(
                           'Home Service',
                           style: whiteTextStyle.copyWith(
@@ -121,7 +122,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   )),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Flexible(
               flex: 1,
               child: ElevatedButton(
@@ -132,12 +133,12 @@ class HomeScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8)),
                       shadowColor: Colors.transparent),
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.pin_drop),
-                        SizedBox(width: 6),
+                        const Icon(Icons.pin_drop),
+                        const SizedBox(width: 6),
                         Text(
                           'Drop-off ke toko',
                           style: whiteTextStyle.copyWith(
@@ -153,14 +154,14 @@ class HomeScreen extends StatelessWidget {
     }
 
     Widget divider() {
-      return Divider(
+      return const Divider(
         thickness: 4,
       );
     }
 
     Widget category(title) {
       return Container(
-        margin: EdgeInsets.only(right: 12, bottom: 10),
+        margin: const EdgeInsets.only(right: 12, bottom: 10),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: primaryTextColor)),
@@ -169,14 +170,15 @@ class HomeScreen extends StatelessWidget {
             Column(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(8)),
                   child: Image.asset(
                     'assets/images/userprofile.jpg',
                     width: 100,
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Text(
                     title,
                     style: primaryTextStyle.copyWith(
@@ -190,17 +192,18 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget seller(name, rating, lat, long) {
+    Widget seller(id, name, rating, lat, long) {
       return InkWell(
         onTap: () {
-          Navigator.pushNamed(context, DetailScreen.routeName);
+          Navigator.pushNamed(context, DetailScreen.routeName,
+              arguments: {'id': id});
         },
         child: Container(
-          margin: EdgeInsets.only(left: 5, right: 12, bottom: 10),
+          margin: const EdgeInsets.only(left: 5, right: 12, bottom: 10),
           decoration: BoxDecoration(boxShadow: [
             BoxShadow(
                 color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.25),
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
                 blurRadius: 4)
           ], color: Colors.white, borderRadius: BorderRadius.circular(8)),
           child: Row(
@@ -210,7 +213,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(8)),
+                        const BorderRadius.vertical(top: Radius.circular(8)),
                     child: Image.asset(
                       'assets/images/userprofile.jpg',
                       width: 120,
@@ -218,8 +221,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                   Container(
                     width: 120,
-                    decoration: BoxDecoration(),
-                    padding: EdgeInsets.all(5),
+                    decoration: const BoxDecoration(),
+                    padding: const EdgeInsets.all(5),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -236,7 +239,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.star,
                               color: Color.fromARGB(255, 250, 229, 36),
                             ),
@@ -259,7 +262,7 @@ class HomeScreen extends StatelessWidget {
 
     Widget categoryOption() {
       return Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
+        margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -274,30 +277,28 @@ class HomeScreen extends StatelessWidget {
 
     Widget nearest(String title) {
       return Container(
-        margin: EdgeInsets.symmetric(vertical: 5),
+        margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: primaryTextStyle.copyWith(
-                        fontSize: 16, fontWeight: bold),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Lihat Semua',
-                        style: primaryTextStyle.copyWith(
-                            fontSize: 14,
-                            fontWeight: bold,
-                            color: secondaryColor),
-                      ))
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style:
+                      primaryTextStyle.copyWith(fontSize: 16, fontWeight: bold),
+                ),
+                TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Lihat Semua',
+                      style: primaryTextStyle.copyWith(
+                          fontSize: 14,
+                          fontWeight: bold,
+                          color: secondaryColor),
+                    ))
+              ],
             ),
           ],
         ),
@@ -310,14 +311,14 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         body: SingleChildScrollView(
           child: Container(
-            margin: EdgeInsets.only(top: 12),
+            margin: const EdgeInsets.only(top: 12),
             child: Column(
               children: [
                 Column(
                   children: [searchBar(), sendLocation('Kos Bu Wiwik')],
                 ),
                 Container(
-                  padding: EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(15),
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: backgroundColor4,
@@ -336,23 +337,21 @@ class HomeScreen extends StatelessWidget {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           }
                           if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           }
                           if (snapshot.hasData) {
                             final users = snapshot.data!.docs;
-                            return Container(
-                              child: Row(
-                                children: [
-                                  for (final user in users)
-                                    category(user.data()['title'])
-                                ],
-                              ),
+                            return Row(
+                              children: [
+                                for (final user in users)
+                                  category(user.data()['title'])
+                              ],
                             );
                           }
-                          return SizedBox();
+                          return const SizedBox();
                         },
                       ),
                       divider(),
@@ -364,7 +363,7 @@ class HomeScreen extends StatelessWidget {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           }
                           if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
@@ -394,23 +393,25 @@ class HomeScreen extends StatelessWidget {
                             });
 
                             return Container(
-                              margin: EdgeInsets.only(top: 12),
+                              margin: const EdgeInsets.only(top: 12),
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
                                   children: [
                                     for (final data in sellers)
                                       seller(
-                                          data.data()['name'],
-                                          data.data()['rating'].toString(),
-                                          data.data()['location'].latitude,
-                                          data.data()['location'].longitude)
+                                        data.data()['id'],
+                                        data.data()['name'],
+                                        data.data()['rating'].toString(),
+                                        data.data()['location'].latitude,
+                                        data.data()['location'].longitude,
+                                      )
                                   ],
                                 ),
                               ),
                             );
                           }
-                          return SizedBox();
+                          return const SizedBox();
                         },
                       ),
                       divider(),

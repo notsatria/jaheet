@@ -27,7 +27,7 @@ class _LocationRecommendationScreenState
   BitmapDescriptor? customMarkerIcon;
 
   Future<void> loadCustomMarkerIcon() async {
-    final ImageConfiguration config = ImageConfiguration();
+    const ImageConfiguration config = ImageConfiguration();
     final BitmapDescriptor bitmapDescriptor =
         await BitmapDescriptor.fromAssetImage(
             config, 'assets/icon/user-marker.png');
@@ -115,7 +115,7 @@ class _LocationRecommendationScreenState
                     );
                   }),
                   Marker(
-                    markerId: MarkerId('userLocation'),
+                    markerId: const MarkerId('userLocation'),
                     position: LatLng(context.watch<LocationProvider>().lat,
                         context.watch<LocationProvider>().long),
                     icon: customMarkerIcon ?? BitmapDescriptor.defaultMarker,
@@ -169,12 +169,13 @@ class _LocationRecommendationScreenState
                           padding: const EdgeInsets.all(10),
                           child: Row(
                             children: [
-                              CircleAvatar(
+                              const CircleAvatar(
                                 radius: 25,
                               ),
                               Expanded(
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
