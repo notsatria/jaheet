@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jahitin/constant/theme.dart';
+import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/location_provider.dart';
@@ -23,6 +24,7 @@ class _LocationRecommendationScreenState
   ScrollController scrollController = ScrollController();
 
   List<dynamic> locationSet = [];
+  int highlightRadius = 1000;
 
   BitmapDescriptor? customMarkerIcon;
 
@@ -99,28 +101,40 @@ class _LocationRecommendationScreenState
         body: Stack(
           children: [
             GoogleMap(
-                onMapCreated: _onMapCreated,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(args['latitude'], args['longitude']),
-                  zoom: 15,
-                ),
-                markers: {
-                  ...locationSet.map((data) {
-                    final latitude = data['location'].latitude;
-                    final longitude = data['location'].longitude;
-                    return Marker(
-                      markerId: MarkerId('$latitude-$longitude'),
-                      position: LatLng(latitude, longitude),
-                      icon: BitmapDescriptor.defaultMarker,
-                    );
-                  }),
-                  Marker(
-                    markerId: MarkerId('userLocation'),
-                    position: LatLng(context.watch<LocationProvider>().lat,
-                        context.watch<LocationProvider>().long),
-                    icon: customMarkerIcon ?? BitmapDescriptor.defaultMarker,
-                  ),
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(args['latitude'], args['longitude']),
+                zoom: 15,
+              ),
+              markers: {
+                ...locationSet.map((data) {
+                  final latitude = data['location'].latitude;
+                  final longitude = data['location'].longitude;
+                  return Marker(
+                    markerId: MarkerId('$latitude-$longitude'),
+                    position: LatLng(latitude, longitude),
+                    icon: BitmapDescriptor.defaultMarker,
+                  );
                 }),
+                Marker(
+                  markerId: MarkerId('userLocation'),
+                  position: LatLng(context.watch<LocationProvider>().lat,
+                      context.watch<LocationProvider>().long),
+                  icon: customMarkerIcon ?? BitmapDescriptor.defaultMarker,
+                ),
+              },
+              circles: {
+                Circle(
+                  circleId: CircleId("1"),
+                  center: LatLng(context.watch<LocationProvider>().lat,
+                      context.watch<LocationProvider>().long),
+                  radius: highlightRadius.toDouble(),
+                  strokeWidth: 2,
+                  strokeColor: Color.fromRGBO(0, 133, 255, 0.44),
+                  fillColor: Color.fromRGBO(0, 133, 255, 0.17),
+                ),
+              },
+            ),
             DraggableScrollableSheet(
               snap: true,
               initialChildSize: 0.1,
@@ -165,46 +179,65 @@ class _LocationRecommendationScreenState
                     itemBuilder: (context, index) {
                       final locationData = locationSet[index];
                       // Tampilkan data yang sesuai di dalam ListView
-                      return Container(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 25,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${Haversine.calculateDistance(context.watch<LocationProvider>().lat, context.watch<LocationProvider>().long, locationData["location"].latitude, locationData["location"].longitude).toInt()} m',
-                                        style: primaryTextStyle.copyWith(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                            color: secondaryColor),
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DetailScreen()));
+                        },
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 25,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${Haversine.calculateDistance(context.watch<LocationProvider>().lat, context.watch<LocationProvider>().long, locationData["location"].latitude, locationData["location"].longitude).toInt()} m',
+                                              style: primaryTextStyle.copyWith(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: secondaryColor),
+                                            ),
+                                            Text(
+                                              locationData["name"],
+                                              style: primaryTextStyle.copyWith(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              locationData["address"],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: primaryTextStyle.copyWith(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Text(
-                                        locationData["name"],
-                                        style: primaryTextStyle.copyWith(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        locationData["address"],
-                                        overflow: TextOverflow.ellipsis,
-                                        style: primaryTextStyle.copyWith(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right_rounded,
+                                      color: secondaryColor,
+                                      size: 30,
+                                    )
+                                  ],
                                 ),
-                              )
-                            ],
-                          ));
+                                Divider(thickness: 1)
+                              ],
+                            )),
+                      );
                     },
                   ),
                 );
