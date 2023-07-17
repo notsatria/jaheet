@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/constant/theme.dart';
@@ -14,7 +15,10 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
-    Widget profileHeader() {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    Widget profileHeader(
+        {required photoURL, required String name, required String email}) {
       return Container(
         margin: const EdgeInsets.only(
           top: 20,
@@ -23,18 +27,18 @@ class ProfileScreen extends StatelessWidget {
           leading: CircleAvatar(
             radius: 30,
             backgroundImage: NetworkImage(
-              user.photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
+              photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
             ),
           ),
           title: Text(
-            user.displayName ?? 'null',
+            name,
             style: primaryTextStyle.copyWith(
               fontSize: 18,
               fontWeight: bold,
             ),
           ),
           subtitle: Text(
-            user.email ?? 'null',
+            email,
             style: subtitleTextStyle.copyWith(
               fontSize: 14,
             ),
@@ -198,7 +202,20 @@ class ProfileScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                profileHeader(),
+                FutureBuilder(
+                  future: users.doc(user.uid).get(),
+                  builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (snapshot.hasData) {
+                      return profileHeader(
+                        photoURL: snapshot.data!.get('photoURL'),
+                        name: snapshot.data!.get('name'),
+                        email: snapshot.data!.get('email'),
+                      );
+                    } else {
+                      return const Text('Loading...');
+                    }
+                  },
+                ),
                 accountProfileBlock(),
                 generalProfileBlock(),
               ],

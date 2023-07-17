@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/provider/google_sign_in_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../constant/theme.dart';
 import 'home/main_screen.dart';
@@ -252,7 +254,12 @@ class _SignInScreenState extends State<SignInScreen> {
         margin: const EdgeInsets.only(top: 30),
         height: 50,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            final provider =
+                Provider.of<GoogleSignInProvider>(context, listen: false);
+            provider.addUserToFirestoreFromGoogle();
+            provider.googleLogin();
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: backgroundColor4,
             elevation: 0,
@@ -288,36 +295,50 @@ class _SignInScreenState extends State<SignInScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: backgroundColor1,
-        body: Container(
-          margin: EdgeInsets.symmetric(horizontal: defaultMargin),
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  header(),
-                  emailInput(),
-                  passwordInput(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: StreamBuilder(
+            stream: auth.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(primaryColor),
+                  ),
+                );
+              } else if (snapshot.hasData) {
+                return const MainScreen();
+              } else {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: defaultMargin),
+                  child: Stack(
                     children: [
-                      rememberMe(),
-                      forgotPassword(),
+                      Column(
+                        children: [
+                          header(),
+                          emailInput(),
+                          passwordInput(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              rememberMe(),
+                              forgotPassword(),
+                            ],
+                          ),
+                          buttonLogin(),
+                          textSignUp(),
+                          buttonLoginGoogle(),
+                        ],
+                      ),
+                      isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(primaryColor),
+                            ))
+                          : Container()
                     ],
                   ),
-                  buttonLogin(),
-                  textSignUp(),
-                  buttonLoginGoogle()
-                ],
-              ),
-              isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(primaryColor),
-                    ))
-                  : Container()
-            ],
-          ),
-        ),
+                );
+              }
+            }),
       ),
     );
   }

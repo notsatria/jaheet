@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
+
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   GoogleSignInAccount? _user;
 
@@ -42,8 +45,44 @@ class GoogleSignInProvider extends ChangeNotifier {
   }
 
   Future googleLogout() async {
-    await googleSignIn.disconnect();
+    if (await googleSignIn.isSignedIn()) {
+      await googleSignIn.disconnect();
+    }
     FirebaseAuth.instance.signOut();
+    notifyListeners();
+  }
+
+  Future<void> addUserToFirestoreFromGoogle() async {
+    final googleUser = await googleSignIn.signIn();
+    final user = FirebaseAuth.instance.currentUser;
+
+    final email = googleUser!.email;
+    final name = googleUser.displayName;
+    final String? uid;
+    if (user != null) {
+      uid = user.uid;
+    } else {
+      uid = googleSignIn.currentUser?.id;
+    }
+    final photoURL = googleUser.photoUrl;
+    final newUser = {
+      'uid': uid,
+      'name': name,
+      'email': email,
+      'photoURL': photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
+    };
+    // cek apakah user sudah mendaftar atau belum
+    final userDoc = await users.doc(uid).get();
+    if (userDoc.exists) {
+      print('User already exists');
+      return;
+    }
+    try {
+      await users.doc(uid).set(newUser);
+      print('User Added');
+    } catch (error) {
+      print('Failed to add user: $error');
+    }
     notifyListeners();
   }
 }

@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constant/theme.dart';
+import '../provider/google_sign_in_provider.dart';
+import 'home/main_screen.dart';
 import 'sign_in_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -19,12 +23,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final passwordConfirmController = TextEditingController();
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  final user = FirebaseAuth.instance.currentUser;
   bool isLoading = false;
 
   bool checkPasswordMatch() {
     final password = passwordController.text;
     final confirmPassword = passwordConfirmController.text;
     return password == confirmPassword;
+  }
+
+  Future<void> addUserToFirestore() async {
+    final email = emailController.text;
+    final name = nameController.text;
+    final String? uid;
+    if (user != null) {
+      uid = user?.uid;
+    } else {
+      uid = auth.currentUser?.uid;
+    }
+    final photoURL = user?.photoURL;
+    final newUser = {
+      'uid': uid,
+      'name': name,
+      'email': email,
+      'photoURL': photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
+    };
+    // return users
+    //     .add(newUser)
+    //     .then((value) => print('User Added'))
+    //     .catchError((error) => print("Failed to add user: $error"));
+    try {
+      await users.doc(uid).set(newUser);
+      print('User Added');
+    } catch (error) {
+      print('Failed to add user: $error');
+    }
   }
 
   @override
@@ -78,6 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           child: Center(
             child: TextFormField(
+              controller: nameController,
               style: subtitleTextStyle,
               keyboardType: TextInputType.name,
               decoration: InputDecoration.collapsed(
@@ -205,6 +240,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             setState(() {
               isLoading = true;
             });
+
             try {
               final email = emailController.text;
               final password = passwordController.text;
@@ -219,7 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Error'),
-                      content: Text('Email atau password salah',
+                      content: Text('Email atau password sudah terdaftar',
                           style: primaryTextStyle.copyWith(
                             fontSize: 16,
                             fontWeight: reguler,
@@ -238,6 +274,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     );
                   });
             } finally {
+              addUserToFirestore();
               setState(() {
                 isLoading = false;
               });
@@ -296,7 +333,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         margin: const EdgeInsets.only(top: 30),
         height: 50,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            final provider =
+                Provider.of<GoogleSignInProvider>(context, listen: false);
+            provider.addUserToFirestoreFromGoogle();
+            provider.googleLogin();
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: backgroundColor4,
             elevation: 0,
@@ -332,37 +374,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: backgroundColor1,
-        body: Container(
-          margin: EdgeInsets.symmetric(horizontal: defaultMargin),
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    header(),
-                    namaInput(),
-                    emailInput(),
-                    passwordInput(),
-                    passwordConfirmationInput(),
-                    buttonSignUp(),
-                    textLogin(),
-                    buttonLoginGoogle(),
-                    SizedBox(
-                      height: defaultMargin,
-                    )
-                  ],
-                ),
-              ),
-              isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(primaryColor),
+        body: StreamBuilder(
+            stream: auth.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(primaryColor),
+                  ),
+                );
+              } else if (snapshot.hasData) {
+                return const MainScreen();
+              } else {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: defaultMargin),
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            header(),
+                            namaInput(),
+                            emailInput(),
+                            passwordInput(),
+                            passwordConfirmationInput(),
+                            buttonSignUp(),
+                            textLogin(),
+                            buttonLoginGoogle(),
+                            SizedBox(
+                              height: defaultMargin,
+                            )
+                          ],
+                        ),
                       ),
-                    )
-                  : Container(),
-            ],
-          ),
-        ),
+                      isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation(primaryColor),
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
+                );
+              }
+            }),
       ),
     );
   }
