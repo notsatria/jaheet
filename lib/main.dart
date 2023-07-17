@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:jahitin/constant/theme.dart';
 import 'package:provider/provider.dart';
 
 import 'provider/google_sign_in_provider.dart';
@@ -22,6 +24,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
+
+  await checkPermission();
+
   runApp(
     MultiProvider(
       providers: [
@@ -45,6 +50,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(),
       routes: {
         '/': (context) => const SplashScreen(),
         SignInScreen.routeName: (context) => const SignInScreen(),
@@ -63,5 +69,22 @@ class MyApp extends StatelessWidget {
             const LocationRecommendationScreen(),
       },
     );
+  }
+}
+
+Future<void> checkPermission() async {
+  LocationPermission permission = await Geolocator.checkPermission();
+
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      print('Location permissions are denied');
+    } else if (permission == LocationPermission.deniedForever) {
+      print("'Location permissions are permanently denied");
+    } else {
+      print("GPS Location service is granted");
+    }
+  } else {
+    print("GPS Location permission granted.");
   }
 }
