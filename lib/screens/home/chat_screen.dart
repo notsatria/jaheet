@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/screens/home/chatroom_screen.dart';
 import 'package:jahitin/screens/home/main_screen.dart';
@@ -9,6 +10,9 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference sellers =
+        FirebaseFirestore.instance.collection('seller');
+
     PreferredSizeWidget appBar() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -69,7 +73,7 @@ class ChatScreen extends StatelessWidget {
       );
     }
 
-    Widget chatBar() {
+    Widget chatBar({required String photoURL, required String name}) {
       return GestureDetector(
         onTap: () {
           Navigator.pushNamed(context, ChatRoomScreen.routeName);
@@ -81,8 +85,9 @@ class ChatScreen extends StatelessWidget {
               CircleAvatar(
                 radius: 25.0,
                 child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/userprofile.jpg',
+                  child: Image.network(
+                    photoURL,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -95,7 +100,7 @@ class ChatScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Nama Tailor',
+                      name,
                       style: primaryTextStyle.copyWith(
                         fontWeight: semiBold,
                       ),
@@ -137,10 +142,29 @@ class ChatScreen extends StatelessWidget {
               SizedBox(
                 height: defaultMargin,
               ),
-              chatBar(),
-              chatBar(),
-              chatBar(),
-              chatBar(),
+              StreamBuilder(
+                stream: sellers.snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(primaryColor),
+                    );
+                  } else {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot data = snapshot.data!.docs[index];
+                          return chatBar(
+                            photoURL: data['profileImage'],
+                            name: data['name'],
+                          );
+                        },
+                      ),
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ),

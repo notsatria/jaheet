@@ -50,6 +50,11 @@ dependencies:
   animated_bottom_navigation_bar: ^1.2.0
   provider: ^6.0.5
   google_sign_in: ^6.1.4
+  intl: ^0.18.1
+  image_picker: ^1.0.1
+  fluttertoast: ^8.2.2
+  shared_preferences: ^2.2.0
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:
