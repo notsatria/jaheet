@@ -1,6 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/transaction/service_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
+import '../../provider/location_provider.dart';
+import '../../services/haversine.dart';
 
 class DetailScreen extends StatefulWidget {
   static const routeName = '/detail-screen';
@@ -22,6 +27,8 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    int id = args['id'];
     double fullWidth = MediaQuery.of(context).size.width;
 
     Widget imageHeader() {
@@ -42,7 +49,7 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
-    Widget titlePenjahit() {
+    Widget titlePenjahit(name, lat, long, kota, provinsi) {
       return Container(
         margin: EdgeInsets.all(defaultMargin - 10),
         child: Row(
@@ -52,13 +59,13 @@ class _DetailScreenState extends State<DetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '200m dari Lokasi Anda',
+                  '${Haversine.calculateDistance(context.watch<LocationProvider>().lat, context.watch<LocationProvider>().long, lat, long).toInt()}m dari lokasi Anda',
                   style: secondaryTextStyle.copyWith(
                     fontSize: 14,
                   ),
                 ),
                 Text(
-                  'Jasa Jahit Bu Rusmiati',
+                  name,
                   style: primaryTextStyle.copyWith(
                     fontSize: 20,
                     fontWeight: bold,
@@ -73,7 +80,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Semarang Tengah, Kota Semarang',
+                      '$kota, $provinsi',
                       style: primaryTextStyle.copyWith(
                         fontSize: 14,
                       ),
@@ -343,7 +350,7 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
-    Widget rating(String rating) {
+    Widget rating(rating) {
       return Row(
         children: [
           Row(
@@ -455,7 +462,31 @@ class _DetailScreenState extends State<DetailScreen> {
     Widget ratingUlasan() {
       return Column(
         children: [
-          rating('4.5'),
+          FutureBuilder(
+            future: FirebaseFirestore.instance
+                .collection('seller')
+                .where("id", isEqualTo: id)
+                .get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              if (snapshot.hasData) {
+                final sellers = snapshot.data!.docs;
+                if (sellers.isNotEmpty) {
+                  final sellerData = sellers.first.data();
+                  final rateSeller = sellerData['rating'].toString();
+                  return rating(rateSeller);
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              }
+              return const SizedBox();
+            },
+          ),
           const SizedBox(height: 8),
           const Divider(
             thickness: 2,
@@ -499,7 +530,9 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, ServiceScreen.routeName);
+              },
               child: Container(
                 width: fullWidth - 100,
                 decoration: BoxDecoration(
@@ -523,7 +556,10 @@ class _DetailScreenState extends State<DetailScreen> {
 
     return SafeArea(
       child: Scaffold(
-        bottomNavigationBar: BottomAppBar(elevation: 2, child: bottomNavbar()),
+        bottomNavigationBar: BottomAppBar(
+          elevation: 2,
+          child: bottomNavbar(),
+        ),
         backgroundColor: backgroundColor1,
         body: Stack(
           children: [
@@ -532,7 +568,37 @@ class _DetailScreenState extends State<DetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   imageHeader(),
-                  titlePenjahit(),
+                  FutureBuilder(
+                    future: FirebaseFirestore.instance
+                        .collection('seller')
+                        .where('id', isEqualTo: id)
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+                      if (snapshot.hasData) {
+                        final sellers = snapshot.data!.docs;
+                        if (sellers.isNotEmpty) {
+                          final sellerData = sellers.first.data();
+                          final sellerName = sellerData['name'];
+                          final long = sellerData['location'].longitude;
+                          final lat = sellerData['location'].latitude;
+                          final kota = sellerData['kota'];
+                          final provinsi = sellerData['provinsi'];
+                          return titlePenjahit(
+                              sellerName, lat, long, kota, provinsi);
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
+                      }
+
+                      return const SizedBox();
+                    },
+                  ),
                   const Divider(thickness: 4),
                   customContainer(
                     judul: "Deskripsi",
