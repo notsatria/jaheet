@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../constant/theme.dart';
@@ -8,6 +10,8 @@ class EditProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
     PreferredSizeWidget appBar() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -40,7 +44,7 @@ class EditProfileScreen extends StatelessWidget {
       );
     }
 
-    Widget profileImageEdit() {
+    Widget profileImageEdit({required String photoURL}) {
       return Container(
         margin: const EdgeInsets.only(
           top: 20,
@@ -48,10 +52,10 @@ class EditProfileScreen extends StatelessWidget {
         child: Center(
           child: Stack(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 60,
                 backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=12',
+                  photoURL,
                 ),
               ),
               Positioned(
@@ -105,14 +109,57 @@ class EditProfileScreen extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: defaultMargin),
           child: Column(
             children: [
-              profileImageEdit(),
-              editInputField(
-                title: 'Nama',
-                initialValue: 'Muhammad Fadli',
+              FutureBuilder(
+                future: users.doc(user.uid).get(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    return profileImageEdit(
+                      photoURL: snapshot.data!.get('photoURL'),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
               ),
-              editInputField(title: 'Username', initialValue: '@muhammadfadli'),
-              editInputField(
-                  title: 'Email', initialValue: 'muhammadfadli@gmail.com')
+              FutureBuilder(
+                future: users.doc(user.uid).get(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    return editInputField(
+                      title: 'Nama',
+                      initialValue: snapshot.data!.get('name'),
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
+              FutureBuilder(
+                future: users.doc(user.uid).get(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    return editInputField(
+                      title: 'Username',
+                      initialValue: snapshot.data!.get('name'),
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
+              FutureBuilder(
+                future: users.doc(user.uid).get(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    return editInputField(
+                      title: 'Email',
+                      initialValue: snapshot.data!.get('email'),
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
             ],
           ),
         ),
