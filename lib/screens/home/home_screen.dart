@@ -161,7 +161,7 @@ class HomeScreen extends StatelessWidget {
 
     Widget category(title) {
       return Container(
-        margin: const EdgeInsets.only(right: 12, bottom: 10),
+        margin: const EdgeInsets.only(right: 12, bottom: 10, top: 20),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: primaryTextColor)),
@@ -270,6 +270,26 @@ class HomeScreen extends StatelessWidget {
               'Kategori Layanan',
               style: primaryTextStyle.copyWith(fontSize: 16, fontWeight: bold),
             ),
+            FutureBuilder(
+              future: FirebaseFirestore.instance.collection('categories').get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                if (snapshot.hasData) {
+                  final users = snapshot.data!.docs;
+                  return Row(
+                    children: [
+                      for (final user in users) category(user.data()['title'])
+                    ],
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
           ],
         ),
       );
@@ -299,6 +319,128 @@ class HomeScreen extends StatelessWidget {
                           color: secondaryColor),
                     ))
               ],
+            ),
+            FutureBuilder(
+              future: FirebaseFirestore.instance.collection('seller').get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                if (snapshot.hasData) {
+                  final sellers = snapshot.data!.docs;
+
+                  // Menghitung jarak untuk setiap penjual menggunakan Haversine
+                  final currentLatitude = context.read<LocationProvider>().lat;
+                  final currentLongitude =
+                      context.read<LocationProvider>().long;
+                  sellers.sort((a, b) {
+                    final distanceA = Haversine.calculateDistance(
+                      currentLatitude,
+                      currentLongitude,
+                      a.data()['location'].latitude,
+                      a.data()['location'].longitude,
+                    );
+                    final distanceB = Haversine.calculateDistance(
+                      currentLatitude,
+                      currentLongitude,
+                      b.data()['location'].latitude,
+                      b.data()['location'].longitude,
+                    );
+                    return distanceA.compareTo(distanceB);
+                  });
+
+                  return Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          for (final data in sellers)
+                            seller(
+                              data.data()['id'],
+                              data.data()['name'],
+                              data.data()['rating'].toString(),
+                              data.data()['location'].latitude,
+                              data.data()['location'].longitude,
+                            )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget recommended(String title) {
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style:
+                      primaryTextStyle.copyWith(fontSize: 16, fontWeight: bold),
+                ),
+                TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Lihat Semua',
+                      style: primaryTextStyle.copyWith(
+                          fontSize: 14,
+                          fontWeight: bold,
+                          color: secondaryColor),
+                    ))
+              ],
+            ),
+            FutureBuilder(
+              future: FirebaseFirestore.instance
+                  .collection('seller')
+                  .orderBy('rating', descending: true)
+                  .limit(5)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                if (snapshot.hasData) {
+                  final sellers = snapshot.data!.docs;
+
+                  return Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          for (final data in sellers)
+                            seller(
+                              data.data()['id'],
+                              data.data()['name'],
+                              data.data()['rating'].toString(),
+                              data.data()['location'].latitude,
+                              data.data()['location'].longitude,
+                            )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
             ),
           ],
         ),
@@ -330,92 +472,10 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       serviceOption(),
                       categoryOption(),
-                      FutureBuilder(
-                        future: FirebaseFirestore.instance
-                            .collection('categories')
-                            .get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          }
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-                          if (snapshot.hasData) {
-                            final users = snapshot.data!.docs;
-                            return Row(
-                              children: [
-                                for (final user in users)
-                                  category(user.data()['title'])
-                              ],
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
                       divider(),
                       nearest("Paling populer di dekat Anda"),
-                      FutureBuilder(
-                        future: FirebaseFirestore.instance
-                            .collection('seller')
-                            .get(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          }
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-                          if (snapshot.hasData) {
-                            final sellers = snapshot.data!.docs;
-
-                            // Menghitung jarak untuk setiap penjual menggunakan Haversine
-                            final currentLatitude =
-                                context.read<LocationProvider>().lat;
-                            final currentLongitude =
-                                context.read<LocationProvider>().long;
-                            sellers.sort((a, b) {
-                              final distanceA = Haversine.calculateDistance(
-                                currentLatitude,
-                                currentLongitude,
-                                a.data()['location'].latitude,
-                                a.data()['location'].longitude,
-                              );
-                              final distanceB = Haversine.calculateDistance(
-                                currentLatitude,
-                                currentLongitude,
-                                b.data()['location'].latitude,
-                                b.data()['location'].longitude,
-                              );
-                              return distanceA.compareTo(distanceB);
-                            });
-
-                            return Container(
-                              margin: const EdgeInsets.only(top: 12),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    for (final data in sellers)
-                                      seller(
-                                        data.data()['id'],
-                                        data.data()['name'],
-                                        data.data()['rating'].toString(),
-                                        data.data()['location'].latitude,
-                                        data.data()['location'].longitude,
-                                      )
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
                       divider(),
-                      nearest("Rekomendasi toko lain")
+                      recommended("Rekomendasi toko lain")
                     ],
                   ),
                 ),
