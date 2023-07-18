@@ -5,8 +5,9 @@ import 'package:image_picker/image_picker.dart';
 import '../../constant/theme.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  const CheckoutScreen({super.key, required this.data});
   static const routeName = '/checkout-screen';
+  final Map<String, String> data;
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -28,6 +29,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String kategori = widget.data['kategori'] ?? 'ATASAN';
+    String jenis = widget.data['jenis'] ?? 'Batik';
+    String jasa = widget.data['jasa'] ?? 'Jahit termasuk bahan';
+
     Widget customContainer({
       required String judul,
       required Widget child,
@@ -192,9 +197,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 8),
           detailJasa(
             urlfoto: 'assets/images/produk_jahit_2.png',
-            kategori: 'ATASAN',
-            item: 'Kemeja Batik',
-            jasa: 'Jahit Exclude Bahan',
+            kategori: kategori,
+            item: jenis,
+            jasa: jasa,
           ),
           const SizedBox(height: 8),
           InkWell(
