@@ -244,8 +244,12 @@ class _LocationRecommendationScreenState
                                         Row(
                                           children: [
                                             CircleAvatar(
-                                              radius: 25,
-                                            ),
+                                                radius: 25,
+                                                backgroundImage: NetworkImage(
+                                                  locationData[
+                                                          "profileImage"] ??
+                                                      "https://firebasestorage.googleapis.com/v0/b/jaheet-5fa13.appspot.com/o/userprofile.jpg?alt=media",
+                                                )),
                                             Expanded(
                                               child: Container(
                                                 padding:
