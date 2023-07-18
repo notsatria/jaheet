@@ -1,12 +1,75 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constant/theme.dart';
+import '../provider/google_sign_in_provider.dart';
+import 'home/main_screen.dart';
 import 'sign_in_screen.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   static const routeName = '/sign-up-screen';
 
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final auth = FirebaseAuth.instance;
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final passwordConfirmController = TextEditingController();
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  final user = FirebaseAuth.instance.currentUser;
+  bool isLoading = false;
+
+  bool checkPasswordMatch() {
+    final password = passwordController.text;
+    final confirmPassword = passwordConfirmController.text;
+    return password == confirmPassword;
+  }
+
+  Future<void> addUserToFirestore() async {
+    final email = emailController.text;
+    final name = nameController.text;
+    final String? uid;
+    if (user != null) {
+      uid = user?.uid;
+    } else {
+      uid = auth.currentUser?.uid;
+    }
+    final photoURL = user?.photoURL;
+    final newUser = {
+      'uid': uid,
+      'name': name,
+      'email': email,
+      'photoURL': photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
+    };
+    // return users
+    //     .add(newUser)
+    //     .then((value) => print('User Added'))
+    //     .catchError((error) => print("Failed to add user: $error"));
+    try {
+      await users.doc(uid).set(newUser);
+      print('User Added');
+    } catch (error) {
+      print('Failed to add user: $error');
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    passwordConfirmController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +112,9 @@ class SignUpScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: nameController,
               style: subtitleTextStyle,
+              keyboardType: TextInputType.name,
               decoration: InputDecoration.collapsed(
                 hintText: 'Nama Lengkap',
                 hintStyle: subtitleTextStyle,
@@ -72,7 +137,9 @@ class SignUpScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: emailController,
               style: subtitleTextStyle,
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration.collapsed(
                 hintText: 'E-mail',
                 hintStyle: subtitleTextStyle,
@@ -95,6 +162,7 @@ class SignUpScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: passwordController,
               style: subtitleTextStyle,
               obscureText: true,
               decoration: InputDecoration.collapsed(
@@ -119,6 +187,7 @@ class SignUpScreen extends StatelessWidget {
           ),
           child: Center(
             child: TextFormField(
+              controller: passwordConfirmController,
               style: subtitleTextStyle,
               obscureText: true,
               decoration: InputDecoration.collapsed(
@@ -131,55 +200,85 @@ class SignUpScreen extends StatelessWidget {
       );
     }
 
-    Widget rememberMe() {
-      return Container(
-        margin: const EdgeInsets.only(top: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            IconButton(
-              onPressed: () {
-                //
-              },
-              icon: Icon(
-                Icons.check_box_rounded,
-                size: 24,
-                color: primaryColor,
-              ),
-            ),
-            Text(
-              'Ingat saya',
-              style: subtitleTextStyle.copyWith(
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    Widget forgotPassword() {
-      return TextButton(
-        onPressed: () {},
-        child: Text(
-          'Lupa Password?',
-          style: navyTextStyle.copyWith(
-            fontSize: 16,
-            color: primaryColor,
-            fontWeight: semiBold,
-          ),
-        ),
-      );
-    }
-
     Widget buttonSignUp() {
       return Container(
         width: double.infinity,
         margin: const EdgeInsets.only(top: 30),
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
-            // Navigator.pushReplacementNamed(context, MainScreen.routeName);
+          onPressed: () async {
+            if (!checkPasswordMatch()) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Error'),
+                    content: Text(
+                      'Password dan konfirmasi password tidak cocok',
+                      style: primaryTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: reguler,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'OK',
+                          style: navyTextStyle,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+              return;
+            }
+
+            setState(() {
+              isLoading = true;
+            });
+
+            try {
+              final email = emailController.text;
+              final password = passwordController.text;
+
+              await auth.createUserWithEmailAndPassword(
+                  email: email, password: password);
+              Navigator.pop(context);
+            } catch (e) {
+              print(e.toString());
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Error'),
+                      content: Text('Email atau password sudah terdaftar',
+                          style: primaryTextStyle.copyWith(
+                            fontSize: 16,
+                            fontWeight: reguler,
+                          )),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'OK',
+                            style: navyTextStyle,
+                          ),
+                        ),
+                      ],
+                    );
+                  });
+            } finally {
+              addUserToFirestore();
+              setState(() {
+                isLoading = false;
+              });
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
@@ -234,7 +333,12 @@ class SignUpScreen extends StatelessWidget {
         margin: const EdgeInsets.only(top: 30),
         height: 50,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            final provider =
+                Provider.of<GoogleSignInProvider>(context, listen: false);
+            provider.addUserToFirestoreFromGoogle();
+            provider.googleLogin();
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: backgroundColor4,
             elevation: 0,
@@ -254,7 +358,7 @@ class SignUpScreen extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                'Masuk dengan Google',
+                'Daftar dengan Google',
                 style: primaryTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: bold,
@@ -270,33 +374,52 @@ class SignUpScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: backgroundColor1,
-        body: Container(
-          margin: EdgeInsets.symmetric(horizontal: defaultMargin),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                header(),
-                namaInput(),
-                emailInput(),
-                passwordInput(),
-                passwordConfirmationInput(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    rememberMe(),
-                    forgotPassword(),
-                  ],
-                ),
-                buttonSignUp(),
-                textLogin(),
-                buttonLoginGoogle(),
-                SizedBox(
-                  height: defaultMargin,
-                )
-              ],
-            ),
-          ),
-        ),
+        body: StreamBuilder(
+            stream: auth.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(primaryColor),
+                  ),
+                );
+              } else if (snapshot.hasData) {
+                return const MainScreen();
+              } else {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: defaultMargin),
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            header(),
+                            namaInput(),
+                            emailInput(),
+                            passwordInput(),
+                            passwordConfirmationInput(),
+                            buttonSignUp(),
+                            textLogin(),
+                            buttonLoginGoogle(),
+                            SizedBox(
+                              height: defaultMargin,
+                            )
+                          ],
+                        ),
+                      ),
+                      isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation(primaryColor),
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
+                );
+              }
+            }),
       ),
     );
   }
