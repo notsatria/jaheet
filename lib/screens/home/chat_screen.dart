@@ -73,10 +73,22 @@ class ChatScreen extends StatelessWidget {
       );
     }
 
-    Widget chatBar({required String photoURL, required String name}) {
+    Widget chatBar(
+        {required String profileImage,
+        required String name,
+        required String id}) {
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, ChatRoomScreen.routeName);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatRoomScreen(
+                receiveUserName: name,
+                receiveUserID: id,
+                receiveProfileImage: profileImage,
+              ),
+            ),
+          );
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: 20),
@@ -86,7 +98,7 @@ class ChatScreen extends StatelessWidget {
                 radius: 25.0,
                 child: ClipOval(
                   child: Image.network(
-                    photoURL,
+                    profileImage ?? 'https://i.stack.imgur.com/l60Hf.png',
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -149,6 +161,13 @@ class ChatScreen extends StatelessWidget {
                     return CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation(primaryColor),
                     );
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(primaryColor),
+                      ),
+                    );
                   } else {
                     return Expanded(
                       child: ListView.builder(
@@ -156,8 +175,9 @@ class ChatScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           DocumentSnapshot data = snapshot.data!.docs[index];
                           return chatBar(
-                            photoURL: data['profileImage'],
+                            profileImage: data['profileImage'],
                             name: data['name'],
+                            id: data['id'].toString(),
                           );
                         },
                       ),
