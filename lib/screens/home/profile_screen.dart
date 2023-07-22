@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jahitin/constant/theme.dart';
 import 'package:jahitin/provider/google_sign_in_provider.dart';
 import 'package:jahitin/screens/sign_in_screen.dart';
@@ -14,7 +15,22 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
+    final googleSignIn = GoogleSignIn();
+    final googleUser = googleSignIn.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
+    String? uid;
+    bool isGoogleUser = false;
+
+    Future<void> checkGoogleSignIn() async {
+      final googleUser = await googleSignIn.signInSilently();
+      if (googleUser != null) {
+        uid = googleUser.id;
+        isGoogleUser = true;
+      }
+    }
+
+    checkGoogleSignIn();
+
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
     Widget profileHeader(
@@ -197,13 +213,14 @@ class ProfileScreen extends StatelessWidget {
       child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Container(
+            height: MediaQuery.of(context).size.height * 0.8,
             margin: EdgeInsets.symmetric(
               horizontal: defaultMargin,
             ),
             child: Column(
               children: [
                 FutureBuilder(
-                  future: users.doc(user.uid).get(),
+                  future: users.doc(uid ?? user?.uid).get(),
                   builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                     if (snapshot.hasData) {
                       return profileHeader(
@@ -211,9 +228,17 @@ class ProfileScreen extends StatelessWidget {
                         name: snapshot.data!.get('name'),
                         email: snapshot.data!.get('email'),
                       );
-                    } else {
-                      return const Text('Loading...');
+                    } else if (!snapshot.hasData) {
+                      return profileHeader(
+                        photoURL: googleUser?.photoUrl,
+                        name: googleUser?.displayName ?? 'User',
+                        email: googleUser?.email ?? '',
+                      );
                     }
+
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   },
                 ),
                 accountProfileBlock(),
