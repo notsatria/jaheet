@@ -1,13 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:jahitin/screens/home/chat_screen.dart';
+import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'provider/google_sign_in_provider.dart';
 import 'provider/location_provider.dart';
-import 'screens/home/chatroom_screen.dart';
 import 'screens/home/detail_screen.dart';
 import 'screens/home/edit_profile_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -52,7 +51,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
       routes: {
-        '/': (context) => const ChatScreen(),
+        '/': (context) => const SplashScreen(),
         SignInScreen.routeName: (context) => const SignInScreen(),
         SignUpScreen.routeName: (context) => const SignUpScreen(),
         MainScreen.routeName: (context) => const MainScreen(),
