@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/screens/home/chatroom_screen.dart';
 import 'package:jahitin/screens/home/main_screen.dart';
@@ -9,6 +10,9 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference sellers =
+        FirebaseFirestore.instance.collection('seller');
+
     PreferredSizeWidget appBar() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -69,10 +73,22 @@ class ChatScreen extends StatelessWidget {
       );
     }
 
-    Widget chatBar() {
+    Widget chatBar(
+        {required String profileImage,
+        required String name,
+        required String id}) {
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, ChatRoomScreen.routeName);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatRoomScreen(
+                receiveUserName: name,
+                receiveUserID: id,
+                receiveProfileImage: profileImage,
+              ),
+            ),
+          );
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: 20),
@@ -81,8 +97,9 @@ class ChatScreen extends StatelessWidget {
               CircleAvatar(
                 radius: 25.0,
                 child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/userprofile.jpg',
+                  child: Image.network(
+                    profileImage ?? 'https://i.stack.imgur.com/l60Hf.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -95,7 +112,7 @@ class ChatScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Nama Tailor',
+                      name,
                       style: primaryTextStyle.copyWith(
                         fontWeight: semiBold,
                       ),
@@ -137,10 +154,37 @@ class ChatScreen extends StatelessWidget {
               SizedBox(
                 height: defaultMargin,
               ),
-              chatBar(),
-              chatBar(),
-              chatBar(),
-              chatBar(),
+              StreamBuilder(
+                stream: sellers.snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(primaryColor),
+                    );
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(primaryColor),
+                      ),
+                    );
+                  } else {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot data = snapshot.data!.docs[index];
+                          return chatBar(
+                            profileImage: data['profileImage'],
+                            name: data['name'],
+                            id: data['id'].toString(),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ),

@@ -1,23 +1,48 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../constant/theme.dart';
+import '../../services/chat_services.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   static const routeName = '/chat-room-screen';
+  final String receiveUserName;
+  final String receiveProfileImage;
+  final String receiveUserID;
 
-  const ChatRoomScreen({Key? key}) : super(key: key);
+  const ChatRoomScreen({
+    Key? key,
+    required this.receiveUserName,
+    required this.receiveUserID,
+    required this.receiveProfileImage,
+  }) : super(key: key);
 
   @override
   _ChatRoomScreenState createState() => _ChatRoomScreenState();
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
+  final ChatService _chatService = ChatService();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   @override
   void dispose() {
-    _textEditingController.dispose();
+    _messageController.dispose();
     super.dispose();
+  }
+
+  void sendMessage() async {
+    if (_messageController.text.isNotEmpty) {
+      await _chatService.sendMessage(
+        widget.receiveUserID,
+        _messageController.text,
+      );
+
+      _messageController.clear();
+    }
   }
 
   PreferredSizeWidget appBar() {
@@ -28,8 +53,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           CircleAvatar(
             radius: 18.0,
             child: ClipOval(
-              child: Image.asset(
-                'assets/images/userprofile.jpg',
+              child: Image.network(
+                widget.receiveProfileImage,
+                fit: BoxFit.cover,
+                width: 36.0,
+                height: 36.0,
               ),
             ),
           ),
@@ -40,7 +68,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Nama Tailor',
+                widget.receiveUserName,
                 style: TextStyle(
                   color: primaryTextColor,
                   fontWeight: semiBold,
@@ -71,7 +99,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     );
   }
 
-  Widget senderChatBubble(String message, String time) {
+  Widget chatBubble(String message, String time) {
     return Align(
       alignment: Alignment.centerRight,
       child: Column(
@@ -166,7 +194,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ),
           Expanded(
             child: TextFormField(
-              controller: _textEditingController,
+              controller: _messageController,
               style: subtitleTextStyle,
               decoration: InputDecoration.collapsed(
                 hintText: 'Tulis sesuatu...',
@@ -176,18 +204,56 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ),
           IconButton(
             onPressed: () {
-              // Handle sending the message
-              String message = _textEditingController.text;
-              // Perform actions with the message (e.g., send it to the server)
-              print('Sending message: $message');
-              // Clear the text field
-              _textEditingController.clear();
+              sendMessage();
             },
             icon: const Icon(Icons.send),
             color: secondaryColor,
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildMessageItem(DocumentSnapshot document) {
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+    var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid)
+        ? Alignment.centerRight
+        : Alignment.centerLeft;
+
+    // Convert timestamp to DateTime
+    var timestamp = (data['timestamp'] as Timestamp).toDate();
+
+    // Format time to display only hours and minutes
+    var formattedTime = DateFormat('HH:mm').format(timestamp);
+
+    return Container(
+      alignment: alignment,
+      child: (data['senderId'] == _firebaseAuth.currentUser!.uid)
+          ? chatBubble(data['message'], formattedTime.toString())
+          : receiverChatBubble(data['message'], formattedTime.toString()),
+    );
+  }
+
+  Widget buildMessageList() {
+    return StreamBuilder(
+      stream: _chatService.getMessages(
+          widget.receiveUserID, _firebaseAuth.currentUser!.uid),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error $snapshot.error.toString()',
+              style: primaryTextStyle);
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return ListView.builder(
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            return buildMessageItem(snapshot.data!.docs[index]);
+          },
+        );
+      },
     );
   }
 
@@ -204,21 +270,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ),
           child: Column(
             children: [
-              Expanded(
-                child: ListView(
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    senderChatBubble('Halo, saya ingin memesan', '10:00'),
-                    receiverChatBubble('Halo, saya ingin memesan', '10:00'),
-                    senderChatBubble('Halo, saya ingin memesan', '10:00'),
-                    receiverChatBubble('Halo, saya ingin memesan', '10:00'),
-                    senderChatBubble('Halo, saya ingin memesan', '10:00'),
-                    receiverChatBubble('Halo, saya ingin memesan', '10:00'),
-                  ],
-                ),
-              ),
+              Expanded(child: buildMessageList()),
               chatTextField(),
               SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
             ],
