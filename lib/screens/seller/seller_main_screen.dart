@@ -8,7 +8,7 @@ import 'home/seller_home_screen.dart';
 import 'order/seller_order_screen.dart';
 
 class SellerMainScreen extends StatefulWidget {
-  static const routeName = '/main-screen';
+  static const routeName = '/seller-main-screen';
   const SellerMainScreen({super.key});
 
   @override
