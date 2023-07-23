@@ -62,7 +62,7 @@ class GoogleSignInProvider extends ChangeNotifier {
     if (user != null) {
       uid = user.uid;
     } else {
-      uid = googleSignIn.currentUser?.id;
+      uid = googleUser.id;
     }
     final photoURL = googleUser.photoUrl;
     final newUser = {
