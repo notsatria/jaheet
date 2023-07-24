@@ -85,4 +85,13 @@ class GoogleSignInProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<bool> isUserLoggedIn() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:jahitin/screens/transaction/checkout_screen.dart';
 
 import '../../constant/theme.dart';
@@ -19,10 +18,12 @@ Map<String, String> selectedValues = {
 };
 
 const List<String> kategoriValue = [
+  'Piih kategori Pesanan',
   'ATASAN',
   'BAWAHAN',
 ];
 const List<String> pakaianValue = [
+  'Pilih jenis pakaian',
   'Batik',
   'Jas Formal',
   'Blazer',
@@ -37,6 +38,7 @@ const List<String> pakaianValue = [
 ];
 
 const List<String> celanaValue = [
+  'Pilih jenis bawahan',
   'Rok',
   'Blouse',
   'Blazer',
@@ -52,6 +54,7 @@ const List<String> celanaValue = [
 ];
 
 const List<String> jasaValue = [
+  'Pilih jasa',
   'Jahit termasuk bahan',
   'Jahit tidak termasuk bahan'
 ];
@@ -60,6 +63,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
   String firstKategori = kategoriValue.first;
   var firstItem;
   String firstjasa = jasaValue.first;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   Widget customContainer({
     required String judul,
@@ -216,9 +224,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
     return InkWell(
       onTap: () {
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CheckoutScreen(data: selectedValues)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => CheckoutScreen(data: selectedValues),
+          ),
+        );
       },
       child: Container(
           height: 50,

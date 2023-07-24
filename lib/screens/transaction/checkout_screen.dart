@@ -31,24 +31,55 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     String kategori = widget.data['kategori'] ?? 'ATASAN';
     String jenis = widget.data['jenis'] ?? 'Batik';
-    String jasa = widget.data['jasa'] ?? 'Jahit termasuk bahan';
+    String jasa = widget.data['jasa'] ?? 'Jahit tanpa bahan';
+    bool isHomeService = false;
 
-    Widget customContainer({
+    void pickService() {
+      setState(() {
+        isHomeService = !isHomeService;
+      });
+    }
+
+    Widget customContainer(
+      bool usebutton,
+      bool useIcons,
+      IconData? icons, {
       required String judul,
       required Widget child,
     }) {
       return Padding(
-        padding: EdgeInsets.all(defaultMargin - 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: defaultMargin,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              judul,
-              style: primaryTextStyle.copyWith(
-                fontWeight: semiBold,
-                fontSize: 16,
-              ),
-            ),
+            (useIcons == true)
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        icons,
+                        size: 20,
+                        color: secondaryColor,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        judul,
+                        style: primaryTextStyle.copyWith(
+                          fontWeight: semiBold,
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  )
+                : Text(
+                    judul,
+                    style: primaryTextStyle.copyWith(
+                      fontWeight: semiBold,
+                      fontSize: 16,
+                    ),
+                  ),
             const SizedBox(height: 12),
             Container(child: child),
           ],
@@ -249,7 +280,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
           const SizedBox(
-            height: 8,
+            height: 12,
           ),
           Row(
             children: [
@@ -286,21 +317,129 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     }
 
+    Widget pengiriman() {
+      return Column(
+        children: [
+          Row(
+            children: [
+              InkWell(
+                onTap: () {},
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: secondaryColor,
+                  ),
+                  child: Center(
+                      child: Text(
+                    'Home service',
+                    style: whiteTextStyle.copyWith(
+                      fontSize: 11,
+                      fontWeight: bold,
+                    ),
+                  )),
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  pickService();
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: secondaryColor,
+                  ),
+                  child: Center(
+                      child: Text(
+                    'Drop off',
+                    style: whiteTextStyle.copyWith(
+                      fontSize: 11,
+                      fontWeight: bold,
+                    ),
+                  )),
+                ),
+              ),
+            ],
+          )
+        ],
+      );
+    }
+
+    Widget homeService() {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            width: 0.5,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Dikirim ke',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 12,
+                  fontWeight: bold,
+                ),
+              ),
+              Text(
+                'Rumah',
+                style: primaryTextStyle.copyWith(
+                  color: secondaryColor,
+                  fontSize: 12,
+                  fontWeight: bold,
+                ),
+              ),
+              Text('')
+            ],
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: appBar(),
         body: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 12),
               customContainer(
+                false,
+                null,
                 judul: 'Pemesanan dari Toko',
                 child: detailPesanan('Jasa Jahit Bu Rusmiati'),
               ),
               const SizedBox(height: 12),
+              const Divider(
+                thickness: 2,
+              ),
+              const SizedBox(height: 12),
               customContainer(
+                false,
+                null,
                 judul: 'Deskripsikan Pesanan (optional)',
                 child: deskripsiPesanan(),
-              )
+              ),
+              const SizedBox(height: 12),
+              const Divider(
+                thickness: 2,
+              ),
+              const SizedBox(height: 12),
+              customContainer(
+                true,
+                Icons.local_shipping_outlined,
+                judul: 'Pengiriman',
+                child: pengiriman(),
+              ),
             ],
           ),
         ),
