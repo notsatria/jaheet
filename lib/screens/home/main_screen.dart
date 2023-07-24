@@ -6,6 +6,7 @@ import 'package:jahitin/screens/home/location_recommendation.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
+import '../../provider/home_screen_provider.dart';
 import 'chat_screen.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
@@ -23,8 +24,33 @@ class _MainScreenState extends State<MainScreen> {
   int currIndex = 0;
 
   // Location
-  double longitude = 0;
-  double latitude = 0;
+  late double longitude;
+  late double latitude;
+
+  Future<void> getLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    print(position.longitude);
+    print(position.latitude);
+
+    context.read<LocationProvider>().setLat(position.latitude);
+    context.read<LocationProvider>().setLong(position.longitude);
+
+    context.read<HomeScreenProvider>().updateLocation(
+          position.latitude,
+          position.longitude,
+        );
+
+    setState(() {
+      longitude = position.longitude;
+      latitude = position.latitude;
+    });
+
+    context.read<HomeScreenProvider>().fetchCategories();
+    context.read<HomeScreenProvider>().fetchNearestSellers();
+    context.read<HomeScreenProvider>().fetchRecommendedSellers();
+  }
 
   @override
   void initState() {
@@ -183,20 +209,5 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> getLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    print(position.longitude); //Output: 80.24599079
-    print(position.latitude); //Output: 29.6593457
-
-    context.read<LocationProvider>().setLat(position.latitude);
-    context.read<LocationProvider>().setLong(position.longitude);
-
-    setState(() {
-      longitude = position.longitude;
-      latitude = position.latitude;
-    });
   }
 }

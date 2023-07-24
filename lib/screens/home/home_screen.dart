@@ -21,13 +21,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    final homeScreenProvider =
-        Provider.of<HomeScreenProvider>(context, listen: false);
-    homeScreenProvider.fetchCategories();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Future<void> _refreshData() async {
+    final homeScreenProvider =
+        Provider.of<HomeScreenProvider>(context, listen: false);
+
+    await homeScreenProvider.fetchCategories();
+    await homeScreenProvider.fetchNearestSellers();
+    await homeScreenProvider.fetchRecommendedSellers();
+  }
+
+  Widget _buildContent() {
     Widget searchBar() {
       return Container(
         margin: const EdgeInsets.all(
@@ -329,59 +334,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     ))
               ],
             ),
-            FutureBuilder(
-              future: FirebaseFirestore.instance.collection('seller').get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+            Consumer<HomeScreenProvider>(
+              builder: (context, homeScreenProvider, _) {
+                final sellers = homeScreenProvider.nearestSeller;
+                if (sellers.isEmpty) {
+                  return const Text('Tidak ada penjual terdekat');
                 }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                if (snapshot.hasData) {
-                  final sellers = snapshot.data!.docs;
-
-                  // Menghitung jarak untuk setiap penjual menggunakan Haversine
-                  final currentLatitude = context.read<LocationProvider>().lat;
-                  final currentLongitude =
-                      context.read<LocationProvider>().long;
-                  sellers.sort((a, b) {
-                    final distanceA = Haversine.calculateDistance(
-                      currentLatitude,
-                      currentLongitude,
-                      a.data()['location'].latitude,
-                      a.data()['location'].longitude,
-                    );
-                    final distanceB = Haversine.calculateDistance(
-                      currentLatitude,
-                      currentLongitude,
-                      b.data()['location'].latitude,
-                      b.data()['location'].longitude,
-                    );
-                    return distanceA.compareTo(distanceB);
-                  });
-
-                  return Container(
-                    margin: const EdgeInsets.only(top: 12),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          for (final data in sellers)
-                            seller(
-                              data.data()['id'],
-                              data.data()['name'],
-                              data.data()['profileImage'],
-                              data.data()['rating'].toString(),
-                              data.data()['location'].latitude,
-                              data.data()['location'].longitude,
-                            )
-                        ],
-                      ),
+                return Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final data in sellers)
+                          seller(
+                            data['id'],
+                            data['name'],
+                            data['profileImage'],
+                            data['rating'].toString(),
+                            data['location'].latitude,
+                            data['location'].longitude,
+                          ),
+                      ],
                     ),
-                  );
-                }
-                return const SizedBox();
+                  ),
+                );
               },
             ),
           ],
@@ -414,43 +391,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     ))
               ],
             ),
-            FutureBuilder(
-              future: FirebaseFirestore.instance
-                  .collection('seller')
-                  .orderBy('rating', descending: true)
-                  .limit(5)
-                  .get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                if (snapshot.hasData) {
-                  final sellers = snapshot.data!.docs;
+            Consumer<HomeScreenProvider>(
+              builder: (context, homeScreenProvider, _) {
+                final recommendedSellers = homeScreenProvider.recommendedSeller;
 
-                  return Container(
-                    margin: const EdgeInsets.only(top: 12),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          for (final data in sellers)
-                            seller(
-                              data.data()['id'],
-                              data.data()['name'],
-                              data.data()['profileImage'],
-                              data.data()['rating'].toString(),
-                              data.data()['location'].latitude,
-                              data.data()['location'].longitude,
-                            )
-                        ],
-                      ),
+                return Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final data in recommendedSellers)
+                          seller(
+                            data['id'],
+                            data['name'],
+                            data['profileImage'],
+                            data['rating'].toString(),
+                            data['location'].latitude,
+                            data['location'].longitude,
+                          )
+                      ],
                     ),
-                  );
-                }
-                return const SizedBox();
+                  ),
+                );
               },
             ),
           ],
@@ -458,41 +421,49 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+    return SingleChildScrollView(
+      child: Container(
+        margin: const EdgeInsets.only(top: 12),
+        child: Column(
+          children: [
+            Column(
+              children: [searchBar(), sendLocation('Kos Bu Wiwik')],
+            ),
+            Container(
+              padding: const EdgeInsets.all(15),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: backgroundColor4,
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  serviceOption(),
+                  categoryOption(),
+                  divider(),
+                  nearest("Paling populer di dekat Anda"),
+                  divider(),
+                  recommended("Rekomendasi toko lain")
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: primaryColor,
-        body: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.only(top: 12),
-            child: Column(
-              children: [
-                Column(
-                  children: [searchBar(), sendLocation('Kos Bu Wiwik')],
-                ),
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: backgroundColor4,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16))),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      serviceOption(),
-                      categoryOption(),
-                      divider(),
-                      nearest("Paling populer di dekat Anda"),
-                      divider(),
-                      recommended("Rekomendasi toko lain")
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+        body: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: _buildContent(),
         ),
       ),
     );

@@ -44,7 +44,6 @@ class HomeScreenProvider extends ChangeNotifier {
         final sellers = snapshot.docs.map((doc) => doc.data()).toList();
 
         if (_currentLatitude == null || _currentLongitude == null) {
-          // Handle if latitude and longitude are not available
           return;
         }
 
