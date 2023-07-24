@@ -291,10 +291,17 @@ class _LocationRecommendationScreenState
                                           IconButton(
                                               onPressed: () {
                                                 Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            DetailScreen()));
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DetailScreen(),
+                                                    settings: RouteSettings(
+                                                        arguments: {
+                                                          'id': locationData[
+                                                              "id"],
+                                                        }),
+                                                  ),
+                                                );
                                               },
                                               icon: Icon(
                                                   Icons.chevron_right_rounded,

@@ -14,6 +14,8 @@ import 'seller_main_screen.dart';
 class RegistrationFormScreen extends StatefulWidget {
   const RegistrationFormScreen({super.key});
 
+  static const routeName = '/registration-form-screen';
+
   @override
   State<RegistrationFormScreen> createState() => _RegistrationFormScreenState();
 }

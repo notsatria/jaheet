@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/location_provider.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
@@ -6,6 +5,7 @@ import 'package:jahitin/screens/home/search_screen.dart';
 import 'package:jahitin/services/haversine.dart';
 import 'package:provider/provider.dart';
 import '../../constant/theme.dart';
+import '../../provider/detail_screen_provider.dart';
 import '../../provider/home_screen_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,6 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
     await homeScreenProvider.fetchCategories();
     await homeScreenProvider.fetchNearestSellers();
     await homeScreenProvider.fetchRecommendedSellers();
+  }
+
+  void _navigateToDetailScreen(BuildContext context, int id) async {
+    await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
+    Navigator.pushNamed(context, DetailScreen.routeName, arguments: {'id': id});
   }
 
   Widget _buildContent() {
@@ -112,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget serviceOption() {
       return Container(
+        padding: const EdgeInsets.all(15),
         margin: const EdgeInsets.only(bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -178,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    Widget category(title) {
+    Widget category(String title, String image) {
       return Container(
         margin: const EdgeInsets.only(right: 12, bottom: 10, top: 20),
         decoration: BoxDecoration(
@@ -189,11 +195,14 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               children: [
                 ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(8)),
-                  child: Image.asset(
-                    'assets/images/userprofile.jpg',
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                  child: SizedBox(
                     width: 100,
+                    height: 75,
+                    child: Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 Container(
@@ -214,8 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Widget seller(id, name, imageUrl, rating, lat, long) {
       return InkWell(
         onTap: () {
-          Navigator.pushNamed(context, DetailScreen.routeName,
-              arguments: {'id': id});
+          _navigateToDetailScreen(context, id);
         },
         child: Container(
           margin: const EdgeInsets.only(left: 5, right: 12, bottom: 10),
@@ -285,6 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget categoryOption() {
       return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,11 +305,14 @@ class _HomeScreenState extends State<HomeScreen> {
             Consumer<HomeScreenProvider>(
               builder: (context, homeScreenProvider, _) {
                 final categories = homeScreenProvider.category;
-                return Row(
-                  children: [
-                    for (final categori in categories)
-                      category(categori['title'])
-                  ],
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (final categori in categories)
+                        category(categori['title'], categori['imageUrl'])
+                    ],
+                  ),
                 );
               },
             ),
@@ -311,6 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget nearest(String title) {
       return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,6 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget recommended(String title) {
       return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -430,7 +444,6 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [searchBar(), sendLocation('Kos Bu Wiwik')],
             ),
             Container(
-              padding: const EdgeInsets.all(15),
               width: double.infinity,
               decoration: BoxDecoration(
                   color: backgroundColor4,
