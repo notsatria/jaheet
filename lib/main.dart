@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,8 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => GoogleSignInProvider(),
-        )
+        ),
+        ChangeNotifierProvider(create: (_) => HomeScreenProvider())
       ],
       child: const MyApp(),
     ),

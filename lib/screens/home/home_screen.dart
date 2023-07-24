@@ -6,11 +6,25 @@ import 'package:jahitin/screens/home/search_screen.dart';
 import 'package:jahitin/services/haversine.dart';
 import 'package:provider/provider.dart';
 import '../../constant/theme.dart';
+import '../../provider/home_screen_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
 
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final homeScreenProvider =
+        Provider.of<HomeScreenProvider>(context, listen: false);
+    homeScreenProvider.fetchCategories();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +206,7 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget seller(id, name, rating, lat, long) {
+    Widget seller(id, name, imageUrl, rating, lat, long) {
       return InkWell(
         onTap: () {
           Navigator.pushNamed(context, DetailScreen.routeName,
@@ -214,9 +228,13 @@ class HomeScreen extends StatelessWidget {
                   ClipRRect(
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(8)),
-                    child: Image.asset(
-                      'assets/images/userprofile.jpg',
+                    child: SizedBox(
                       width: 120,
+                      height: 120,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   Container(
@@ -270,24 +288,15 @@ class HomeScreen extends StatelessWidget {
               'Kategori Layanan',
               style: primaryTextStyle.copyWith(fontSize: 16, fontWeight: bold),
             ),
-            FutureBuilder(
-              future: FirebaseFirestore.instance.collection('categories').get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                if (snapshot.hasData) {
-                  final users = snapshot.data!.docs;
-                  return Row(
-                    children: [
-                      for (final user in users) category(user.data()['title'])
-                    ],
-                  );
-                }
-                return const SizedBox();
+            Consumer<HomeScreenProvider>(
+              builder: (context, homeScreenProvider, _) {
+                final categories = homeScreenProvider.category;
+                return Row(
+                  children: [
+                    for (final categori in categories)
+                      category(categori['title'])
+                  ],
+                );
               },
             ),
           ],
@@ -362,6 +371,7 @@ class HomeScreen extends StatelessWidget {
                             seller(
                               data.data()['id'],
                               data.data()['name'],
+                              data.data()['profileImage'],
                               data.data()['rating'].toString(),
                               data.data()['location'].latitude,
                               data.data()['location'].longitude,
@@ -430,6 +440,7 @@ class HomeScreen extends StatelessWidget {
                             seller(
                               data.data()['id'],
                               data.data()['name'],
+                              data.data()['profileImage'],
                               data.data()['rating'].toString(),
                               data.data()['location'].latitude,
                               data.data()['location'].longitude,

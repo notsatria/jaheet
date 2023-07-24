@@ -16,6 +16,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
+  TextEditingController _searchController = TextEditingController();
   static const List<Tab> myTabs = <Tab>[
     Tab(
       text: 'Jahit',
@@ -26,16 +27,20 @@ class _SearchScreenState extends State<SearchScreen>
   ];
 
   late TabController _tabController;
+  late String keyword;
+  late List<DocumentSnapshot> _sellerData;
 
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
     _tabController = TabController(vsync: this, length: myTabs.length);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _searchController = TextEditingController();
     super.dispose();
   }
 
@@ -70,6 +75,12 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
                   Expanded(
                     child: TextFormField(
+                      onChanged: (value) {
+                        setState(() {
+                          keyword = _searchController.text;
+                        });
+                      },
+                      controller: _searchController,
                       style: subtitleTextStyle,
                       autofocus: true,
                       decoration: InputDecoration.collapsed(
@@ -231,12 +242,50 @@ class _SearchScreenState extends State<SearchScreen>
         body: Column(
           children: [
             searchBar(),
-            Column(
-              children: [
-                searchOption(),
-                SingleChildScrollView(child: tabBarView())
-              ],
-            ),
+            if (_searchController.text.isEmpty)
+              Expanded(
+                child: Column(
+                  children: [
+                    searchOption(),
+                    SingleChildScrollView(
+                      child: tabBarView(),
+                    ),
+                  ],
+                ),
+              ),
+            if (_searchController.text.isNotEmpty)
+              StreamBuilder<QuerySnapshot>(
+                stream: (_searchController.text.isNotEmpty)
+                    ? FirebaseFirestore.instance
+                        .collection('seller')
+                        .where("name",
+                            isGreaterThanOrEqualTo: _searchController.text)
+                        .snapshots()
+                    : FirebaseFirestore.instance
+                        .collection("seller")
+                        .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data == null) {
+                    return Text('No data found.');
+                  }
+                  final sellers = snapshot.data!.docs;
+                  return Container(
+                    height: 200,
+                    child: ListView.builder(
+                      itemCount: sellers.length,
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot data = sellers[index];
+                        return ListTile(
+                          title: Text(data["name"]),
+                        );
+                      },
+                    ),
+                  );
+                },
+              )
           ],
         ),
       ),
