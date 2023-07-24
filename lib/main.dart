@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/screens/splash_screen.dart';
+import 'package:jahitin/screens/seller/registration_form_screen.dart';
+import 'package:jahitin/screens/seller/seller_main_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +55,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
       routes: {
-        '/': (context) => const SplashScreen(),
+        '/': (context) => const RegistrationFormScreen(),
         SignInScreen.routeName: (context) => const SignInScreen(),
         SignUpScreen.routeName: (context) => const SignUpScreen(),
         MainScreen.routeName: (context) => const MainScreen(),
@@ -68,6 +70,7 @@ class MyApp extends StatelessWidget {
         EditProfileScreen.routeName: (context) => const EditProfileScreen(),
         LocationRecommendationScreen.routeName: (context) =>
             const LocationRecommendationScreen(),
+        SellerMainScreen.routeName: (context) => const SellerMainScreen(),
       },
     );
   }
