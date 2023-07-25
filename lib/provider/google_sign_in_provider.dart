@@ -68,6 +68,7 @@ class GoogleSignInProvider extends ChangeNotifier {
     final newUser = {
       'uid': uid,
       'name': name,
+      'isSeller': false,
       'email': email,
       'photoURL': photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
     };

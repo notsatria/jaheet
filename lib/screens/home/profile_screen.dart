@@ -7,6 +7,8 @@ import 'package:jahitin/provider/google_sign_in_provider.dart';
 import 'package:jahitin/screens/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../seller/registration_form_screen.dart';
+import '../seller/seller_main_screen.dart';
 import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -141,12 +143,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                //
+              onTap: () async {
+                final isSeller = await users.doc(uid).get().then((value) {
+                  return value.get('isSeller');
+                });
+                if (isSeller == true) {
+                  Navigator.pushNamed(context, SellerMainScreen.routeName);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: primaryColor,
+                      content: Text(
+                        'Selamat Datang Penjahit',
+                        style: whiteTextStyle.copyWith(
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.pushNamed(
+                      context, RegistrationFormScreen.routeName);
+                  // scaffold messanger
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: alertColor,
+                      content: Text(
+                        'Anda belum terdaftar sebagai penjahit',
+                        style: whiteTextStyle.copyWith(
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                    ),
+                  );
+                }
               },
               child: const ListTile(
                 leading: Text(
-                  'Buka Jasa Jahit',
+                  'Penjaheet',
                 ),
                 trailing: Icon(
                   Icons.chevron_right_rounded,

@@ -18,6 +18,17 @@ class SellerMainScreen extends StatefulWidget {
 class SellerMainScreenState extends State<SellerMainScreen> {
   int currIndex = 0;
 
+  Widget addProductButton() {
+    return FloatingActionButton(
+      backgroundColor: secondaryColor,
+      onPressed: () {},
+      child: Icon(
+        Icons.add,
+        color: backgroundColor1,
+      ),
+    );
+  }
+
   Widget body() {
     switch (currIndex) {
       case 0:
@@ -41,11 +52,14 @@ class SellerMainScreenState extends State<SellerMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      floatingActionButton: addProductButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
         activeColor: primaryColor,
         inactiveColor: Colors.grey,
         height: kBottomNavigationBarHeight + 20,
         iconSize: 28,
+
         icons: [
           currIndex == 0 ? Icons.home : Icons.home_outlined,
           currIndex == 1 ? Icons.library_books : Icons.library_books_outlined,
