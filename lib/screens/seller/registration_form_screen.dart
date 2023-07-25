@@ -15,6 +15,8 @@ class RegistrationFormScreen extends StatefulWidget {
   static const routeName = '/registration-form-screen';
   const RegistrationFormScreen({super.key});
 
+  static const routeName = '/registration-form-screen';
+
   @override
   State<RegistrationFormScreen> createState() => _RegistrationFormScreenState();
 }
