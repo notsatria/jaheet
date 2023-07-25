@@ -111,7 +111,7 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             ),
             GestureDetector(
               onTap: () {
-                getSellerData();
+                //
               },
               child: const ListTile(
                 leading: Text(
