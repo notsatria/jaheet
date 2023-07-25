@@ -41,7 +41,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
 
     Widget customContainer(
-      bool usebutton,
       bool useIcons,
       IconData? icons, {
       required String judul,

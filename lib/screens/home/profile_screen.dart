@@ -9,30 +9,56 @@ import 'package:provider/provider.dart';
 
 import 'edit_profile_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile-screen';
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final googleSignIn = GoogleSignIn();
-    final googleUser = googleSignIn.currentUser;
-    final user = FirebaseAuth.instance.currentUser;
-    String? uid;
-    bool isGoogleUser = false;
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
 
-    Future<void> checkGoogleSignIn() async {
-      final googleUser = await googleSignIn.signInSilently();
+class _ProfileScreenState extends State<ProfileScreen> {
+  final _googleSignIn = GoogleSignIn();
+  final user = FirebaseAuth.instance.currentUser;
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  String? uid;
+  bool isGoogleUser = false;
+  bool isDataLoaded = false;
+
+  Future<void> loadUser() async {
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser != null) {
+      setState(() {
+        uid = firebaseUser.uid;
+        isGoogleUser = false;
+        isDataLoaded = true;
+      });
+    } else {
+      GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser != null) {
-        uid = googleUser.id;
-        isGoogleUser = true;
+        setState(() {
+          uid = googleUser.id;
+          isGoogleUser = true;
+          isDataLoaded = true;
+        });
+      } else {
+        setState(() {
+          uid = null;
+          isGoogleUser = false;
+          isDataLoaded = true;
+        });
       }
     }
+  }
 
-    checkGoogleSignIn();
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
 
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
+  @override
+  Widget build(BuildContext context) {
     Widget profileHeader(
         {required photoURL, required String name, required String email}) {
       return Container(
@@ -43,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
           leading: CircleAvatar(
             radius: 30,
             backgroundImage: NetworkImage(
-              photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
+              photoURL,
             ),
           ),
           title: Text(
@@ -73,6 +99,15 @@ class ProfileScreen extends StatelessWidget {
             },
           ),
         ),
+      );
+    }
+
+    Future<Widget> googleProfileHeader() async {
+      final googleUser = await _googleSignIn.signIn();
+      return profileHeader(
+        photoURL: googleUser!.photoUrl,
+        name: googleUser.displayName ?? '',
+        email: googleUser.email,
       );
     }
 
@@ -219,28 +254,40 @@ class ProfileScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                FutureBuilder(
-                  future: users.doc(uid ?? user?.uid).get(),
-                  builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    if (snapshot.hasData) {
-                      return profileHeader(
-                        photoURL: snapshot.data!.get('photoURL'),
-                        name: snapshot.data!.get('name'),
-                        email: snapshot.data!.get('email'),
-                      );
-                    } else if (!snapshot.hasData) {
-                      return profileHeader(
-                        photoURL: googleUser?.photoUrl,
-                        name: googleUser?.displayName ?? 'User',
-                        email: googleUser?.email ?? '',
-                      );
-                    }
-
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
+                isDataLoaded
+                    ? (isGoogleUser
+                        ? FutureBuilder(
+                            future: googleProfileHeader(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else {
+                                return snapshot.data ??
+                                    const Text('Google user not signed in');
+                              }
+                            },
+                          )
+                        : FutureBuilder(
+                            future: users.doc(uid).get(),
+                            builder: (context,
+                                AsyncSnapshot<DocumentSnapshot> snapshot) {
+                              if (snapshot.hasData) {
+                                return profileHeader(
+                                  photoURL: snapshot.data!.get('photoURL'),
+                                  name: snapshot.data!.get('name'),
+                                  email: snapshot.data!.get('email'),
+                                );
+                              } else {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
+                          ))
+                    : const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                 accountProfileBlock(),
                 generalProfileBlock(),
               ],

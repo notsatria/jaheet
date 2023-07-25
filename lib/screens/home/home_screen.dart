@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/location_provider.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
@@ -6,14 +5,39 @@ import 'package:jahitin/screens/home/search_screen.dart';
 import 'package:jahitin/services/haversine.dart';
 import 'package:provider/provider.dart';
 import '../../constant/theme.dart';
+import '../../provider/detail_screen_provider.dart';
+import '../../provider/home_screen_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
 
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> _refreshData() async {
+    final homeScreenProvider =
+        Provider.of<HomeScreenProvider>(context, listen: false);
+
+    await homeScreenProvider.fetchCategories();
+    await homeScreenProvider.fetchNearestSellers();
+    await homeScreenProvider.fetchRecommendedSellers();
+  }
+
+  void _navigateToDetailScreen(BuildContext context, int id) async {
+    await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
+    Navigator.pushNamed(context, DetailScreen.routeName, arguments: {'id': id});
+  }
+
+  Widget _buildContent() {
     Widget searchBar() {
       return Container(
         margin: const EdgeInsets.all(
@@ -93,6 +117,7 @@ class HomeScreen extends StatelessWidget {
 
     Widget serviceOption() {
       return Container(
+        padding: const EdgeInsets.all(15),
         margin: const EdgeInsets.only(bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -159,7 +184,7 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget category(title) {
+    Widget category(String title, String image) {
       return Container(
         margin: const EdgeInsets.only(right: 12, bottom: 10, top: 20),
         decoration: BoxDecoration(
@@ -172,9 +197,13 @@ class HomeScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(8)),
-                  child: Image.asset(
-                    'assets/images/userprofile.jpg',
+                  child: SizedBox(
                     width: 100,
+                    height: 75,
+                    child: Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 Container(
@@ -192,11 +221,10 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget seller(id, name, rating, lat, long) {
+    Widget seller(id, name, imageUrl, rating, lat, long) {
       return InkWell(
         onTap: () {
-          Navigator.pushNamed(context, DetailScreen.routeName,
-              arguments: {'id': id});
+          _navigateToDetailScreen(context, id);
         },
         child: Container(
           margin: const EdgeInsets.only(left: 5, right: 12, bottom: 10),
@@ -214,9 +242,13 @@ class HomeScreen extends StatelessWidget {
                   ClipRRect(
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(8)),
-                    child: Image.asset(
-                      'assets/images/userprofile.jpg',
+                    child: SizedBox(
                       width: 120,
+                      height: 120,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   Container(
@@ -262,6 +294,7 @@ class HomeScreen extends StatelessWidget {
 
     Widget categoryOption() {
       return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,24 +303,18 @@ class HomeScreen extends StatelessWidget {
               'Kategori Layanan',
               style: primaryTextStyle.copyWith(fontSize: 16, fontWeight: bold),
             ),
-            FutureBuilder(
-              future: FirebaseFirestore.instance.collection('categories').get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                if (snapshot.hasData) {
-                  final users = snapshot.data!.docs;
-                  return Row(
+            Consumer<HomeScreenProvider>(
+              builder: (context, homeScreenProvider, _) {
+                final categories = homeScreenProvider.category;
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
                     children: [
-                      for (final user in users) category(user.data()['title'])
+                      for (final categori in categories)
+                        category(categori['title'], categori['imageUrl'])
                     ],
-                  );
-                }
-                return const SizedBox();
+                  ),
+                );
               },
             ),
           ],
@@ -297,6 +324,7 @@ class HomeScreen extends StatelessWidget {
 
     Widget nearest(String title) {
       return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,58 +348,31 @@ class HomeScreen extends StatelessWidget {
                     ))
               ],
             ),
-            FutureBuilder(
-              future: FirebaseFirestore.instance.collection('seller').get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+            Consumer<HomeScreenProvider>(
+              builder: (context, homeScreenProvider, _) {
+                final sellers = homeScreenProvider.nearestSeller;
+                if (sellers.isEmpty) {
+                  return const Text('Tidak ada penjual terdekat');
                 }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                if (snapshot.hasData) {
-                  final sellers = snapshot.data!.docs;
-
-                  // Menghitung jarak untuk setiap penjual menggunakan Haversine
-                  final currentLatitude = context.read<LocationProvider>().lat;
-                  final currentLongitude =
-                      context.read<LocationProvider>().long;
-                  sellers.sort((a, b) {
-                    final distanceA = Haversine.calculateDistance(
-                      currentLatitude,
-                      currentLongitude,
-                      a.data()['location'].latitude,
-                      a.data()['location'].longitude,
-                    );
-                    final distanceB = Haversine.calculateDistance(
-                      currentLatitude,
-                      currentLongitude,
-                      b.data()['location'].latitude,
-                      b.data()['location'].longitude,
-                    );
-                    return distanceA.compareTo(distanceB);
-                  });
-
-                  return Container(
-                    margin: const EdgeInsets.only(top: 12),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          for (final data in sellers)
-                            seller(
-                              data.data()['id'],
-                              data.data()['name'],
-                              data.data()['rating'].toString(),
-                              data.data()['location'].latitude,
-                              data.data()['location'].longitude,
-                            )
-                        ],
-                      ),
+                return Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final data in sellers)
+                          seller(
+                            data['id'],
+                            data['name'],
+                            data['profileImage'],
+                            data['rating'].toString(),
+                            data['location'].latitude,
+                            data['location'].longitude,
+                          ),
+                      ],
                     ),
-                  );
-                }
-                return const SizedBox();
+                  ),
+                );
               },
             ),
           ],
@@ -381,6 +382,7 @@ class HomeScreen extends StatelessWidget {
 
     Widget recommended(String title) {
       return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,42 +406,29 @@ class HomeScreen extends StatelessWidget {
                     ))
               ],
             ),
-            FutureBuilder(
-              future: FirebaseFirestore.instance
-                  .collection('seller')
-                  .orderBy('rating', descending: true)
-                  .limit(5)
-                  .get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                if (snapshot.hasData) {
-                  final sellers = snapshot.data!.docs;
+            Consumer<HomeScreenProvider>(
+              builder: (context, homeScreenProvider, _) {
+                final recommendedSellers = homeScreenProvider.recommendedSeller;
 
-                  return Container(
-                    margin: const EdgeInsets.only(top: 12),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          for (final data in sellers)
-                            seller(
-                              data.data()['id'],
-                              data.data()['name'],
-                              data.data()['rating'].toString(),
-                              data.data()['location'].latitude,
-                              data.data()['location'].longitude,
-                            )
-                        ],
-                      ),
+                return Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final data in recommendedSellers)
+                          seller(
+                            data['id'],
+                            data['name'],
+                            data['profileImage'],
+                            data['rating'].toString(),
+                            data['location'].latitude,
+                            data['location'].longitude,
+                          )
+                      ],
                     ),
-                  );
-                }
-                return const SizedBox();
+                  ),
+                );
               },
             ),
           ],
@@ -447,41 +436,48 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
+    return SingleChildScrollView(
+      child: Container(
+        margin: const EdgeInsets.only(top: 12),
+        child: Column(
+          children: [
+            Column(
+              children: [searchBar(), sendLocation('Kos Bu Wiwik')],
+            ),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: backgroundColor4,
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  serviceOption(),
+                  categoryOption(),
+                  divider(),
+                  nearest("Paling populer di dekat Anda"),
+                  divider(),
+                  recommended("Rekomendasi toko lain")
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: primaryColor,
-        body: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.only(top: 12),
-            child: Column(
-              children: [
-                Column(
-                  children: [searchBar(), sendLocation('Kos Bu Wiwik')],
-                ),
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: backgroundColor4,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16))),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      serviceOption(),
-                      categoryOption(),
-                      divider(),
-                      nearest("Paling populer di dekat Anda"),
-                      divider(),
-                      recommended("Rekomendasi toko lain")
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+        body: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: _buildContent(),
         ),
       ),
     );
