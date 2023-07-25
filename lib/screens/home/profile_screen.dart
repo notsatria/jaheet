@@ -1,5 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jahitin/constant/theme.dart';
+import 'package:jahitin/provider/google_sign_in_provider.dart';
+import 'package:jahitin/screens/sign_in_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'edit_profile_screen.dart';
 
@@ -9,27 +15,46 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget profileHeader() {
+    final googleSignIn = GoogleSignIn();
+    final googleUser = googleSignIn.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
+    String? uid;
+    bool isGoogleUser = false;
+
+    Future<void> checkGoogleSignIn() async {
+      final googleUser = await googleSignIn.signInSilently();
+      if (googleUser != null) {
+        uid = googleUser.id;
+        isGoogleUser = true;
+      }
+    }
+
+    checkGoogleSignIn();
+
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    Widget profileHeader(
+        {required photoURL, required String name, required String email}) {
       return Container(
         margin: const EdgeInsets.only(
           top: 20,
         ),
         child: ListTile(
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             radius: 30,
             backgroundImage: NetworkImage(
-              'https://i.pravatar.cc/150?img=12',
+              photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
             ),
           ),
           title: Text(
-            'Muhammad Fadli',
+            name,
             style: primaryTextStyle.copyWith(
               fontSize: 18,
               fontWeight: bold,
             ),
           ),
           subtitle: Text(
-            'muhammadfadli@gmail.com',
+            email,
             style: subtitleTextStyle.copyWith(
               fontSize: 14,
             ),
@@ -41,7 +66,10 @@ class ProfileScreen extends StatelessWidget {
               size: 30,
             ),
             onPressed: () {
-              //
+              final provider =
+                  Provider.of<GoogleSignInProvider>(context, listen: false);
+              provider.googleLogout();
+              Navigator.pushReplacementNamed(context, SignInScreen.routeName);
             },
           ),
         ),
@@ -185,12 +213,34 @@ class ProfileScreen extends StatelessWidget {
       child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Container(
+            height: MediaQuery.of(context).size.height * 0.8,
             margin: EdgeInsets.symmetric(
               horizontal: defaultMargin,
             ),
             child: Column(
               children: [
-                profileHeader(),
+                FutureBuilder(
+                  future: users.doc(uid ?? user?.uid).get(),
+                  builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    if (snapshot.hasData) {
+                      return profileHeader(
+                        photoURL: snapshot.data!.get('photoURL'),
+                        name: snapshot.data!.get('name'),
+                        email: snapshot.data!.get('email'),
+                      );
+                    } else if (!snapshot.hasData) {
+                      return profileHeader(
+                        photoURL: googleUser?.photoUrl,
+                        name: googleUser?.displayName ?? 'User',
+                        email: googleUser?.email ?? '',
+                      );
+                    }
+
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
                 accountProfileBlock(),
                 generalProfileBlock(),
               ],

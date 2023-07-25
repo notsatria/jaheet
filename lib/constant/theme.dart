@@ -44,3 +44,9 @@ FontWeight reguler = FontWeight.w400;
 FontWeight medium = FontWeight.w500;
 FontWeight semiBold = FontWeight.w600;
 FontWeight bold = FontWeight.w700;
+
+// Box Shadow
+BoxShadow cardShadow = BoxShadow(
+    color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.25),
+    offset: Offset(0, 4),
+    blurRadius: 4);

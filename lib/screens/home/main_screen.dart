@@ -29,7 +29,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    checkPermission();
     getLocation();
   }
 
@@ -184,23 +183,6 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> checkPermission() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        print('Location permissions are denied');
-      } else if (permission == LocationPermission.deniedForever) {
-        print("'Location permissions are permanently denied");
-      } else {
-        print("GPS Location service is granted");
-      }
-    } else {
-      print("GPS Location permission granted.");
-    }
   }
 
   Future<void> getLocation() async {
