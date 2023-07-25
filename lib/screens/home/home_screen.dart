@@ -96,7 +96,48 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? Container(
                     padding: const EdgeInsets.all(12),
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        showModalBottomSheet<void>(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10))),
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(
+                              padding: const EdgeInsets.all(20),
+                              height: MediaQuery.of(context).size.height * 0.30,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Mau kirim produk ke mana?",
+                                      style: primaryTextStyle.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          width: 160,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width: 1.5,
+                                                  color: primaryColor),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: primaryColor
+                                                  .withOpacity(0.1)),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
                       child: Row(
                         children: [
                           Text(
@@ -325,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget categoryOption() {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.only(left: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget nearest(String title) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.only(left: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,7 +468,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget recommended(String title) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.only(left: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
