@@ -16,6 +16,13 @@ class HomeScreenProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _recommendedSeller = [];
   List<Map<String, dynamic>> get recommendedSeller => _recommendedSeller;
 
+  Future<void> clearState() async {
+    _nearestSeller = [];
+    _recommendedSeller = [];
+    _category = [];
+    notifyListeners();
+  }
+
   Future<void> fetchCategories() async {
     try {
       final snapshot =
