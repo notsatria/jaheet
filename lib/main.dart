@@ -1,7 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jahitin/provider/detail_screen_provider.dart';
+import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/screens/splash_screen.dart';
+import 'package:jahitin/screens/seller/registration_form_screen.dart';
+import 'package:jahitin/screens/seller/seller_main_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +38,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => GoogleSignInProvider(),
-        )
+        ),
+        ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
+        ChangeNotifierProvider(create: (_) => DetailScreenProvider())
       ],
       child: const MyApp(),
     ),
@@ -58,7 +64,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.routeName: (context) => const HomeScreen(),
         DetailScreen.routeName: (context) => const DetailScreen(),
         ServiceScreen.routeName: (context) => const ServiceScreen(),
-        SearchScreen.routeName: (context) => const SearchScreen(),
+        SearchScreen.routeName: (context) => SearchScreen(),
         SlideScreen.routeName: (context) => const SlideScreen(),
         TransactionDetailScreen.routeName: (context) =>
             const TransactionDetailScreen(),
@@ -66,6 +72,9 @@ class MyApp extends StatelessWidget {
         EditProfileScreen.routeName: (context) => const EditProfileScreen(),
         LocationRecommendationScreen.routeName: (context) =>
             const LocationRecommendationScreen(),
+        SellerMainScreen.routeName: (context) => const SellerMainScreen(),
+        RegistrationFormScreen.routeName: (context) =>
+            const RegistrationFormScreen()
       },
     );
   }
@@ -77,7 +86,6 @@ Future<void> checkPermission() async {
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      print('Location permissions are denied');
     } else if (permission == LocationPermission.deniedForever) {
       print("'Location permissions are permanently denied");
     } else {
