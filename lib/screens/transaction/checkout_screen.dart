@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jahitin/screens/transaction/delivery_screen.dart';
+import 'package:jahitin/screens/transaction/service_screen.dart';
 import '../../constant/theme.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -40,9 +42,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       });
     }
 
-    Widget customContainer(
-      bool useIcons,
-      IconData? icons, {
+    Widget customContainer({
       required String judul,
       required Widget child,
     }) {
@@ -53,34 +53,45 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            (useIcons == true)
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        icons,
-                        size: 20,
-                        color: secondaryColor,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        judul,
-                        style: primaryTextStyle.copyWith(
-                          fontWeight: semiBold,
-                          fontSize: 16,
-                        ),
-                      )
-                    ],
-                  )
-                : Text(
-                    judul,
-                    style: primaryTextStyle.copyWith(
-                      fontWeight: semiBold,
-                      fontSize: 16,
-                    ),
-                  ),
+            Text(
+              judul,
+              style: primaryTextStyle.copyWith(
+                fontWeight: semiBold,
+                fontSize: 16,
+              ),
+            ),
             const SizedBox(height: 12),
             Container(child: child),
+          ],
+        ),
+      );
+    }
+
+    Widget deliveyContainer() {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.local_shipping_outlined,
+              size: 20,
+              color: secondaryColor,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Pengiriman',
+              style: primaryTextStyle.copyWith(
+                fontWeight: semiBold,
+                fontSize: 16,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 18,
+              color: secondaryColor,
+            ),
           ],
         ),
       );
@@ -127,23 +138,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             width: 10,
           ),
           SizedBox(
-              width: 80,
-              height: 80,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _pickedImage?.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    width: 70,
-                    height: 70,
-                    margin: const EdgeInsets.only(right: 10),
-                    child: Image.file(
-                      File(_pickedImage![index].path),
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ))
+            width: 80,
+            height: 80,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _pickedImage?.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  width: 70,
+                  height: 70,
+                  margin: const EdgeInsets.only(right: 10),
+                  child: Image.file(
+                    File(_pickedImage![index].path),
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       );
     }
@@ -233,7 +245,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           const SizedBox(height: 8),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, ServiceScreen.routeName);
+            },
             child: Container(
               height: 30,
               decoration: BoxDecoration(
@@ -396,7 +410,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   fontWeight: bold,
                 ),
               ),
-              Text('')
             ],
           ),
         ),
@@ -412,8 +425,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               const SizedBox(height: 12),
               customContainer(
-                false,
-                null,
                 judul: 'Pemesanan dari Toko',
                 child: detailPesanan('Jasa Jahit Bu Rusmiati'),
               ),
@@ -423,8 +434,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               const SizedBox(height: 12),
               customContainer(
-                false,
-                null,
                 judul: 'Deskripsikan Pesanan (optional)',
                 child: deskripsiPesanan(),
               ),
@@ -432,12 +441,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const Divider(
                 thickness: 2,
               ),
-              const SizedBox(height: 12),
-              customContainer(
-                true,
-                Icons.local_shipping_outlined,
-                judul: 'Pengiriman',
-                child: pengiriman(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, DeliveryScreen.routeName);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: deliveyContainer(),
+                ),
               ),
             ],
           ),
