@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -568,37 +569,51 @@ class _DetailScreenState extends State<DetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   imageHeader(),
-                  FutureBuilder(
-                    future: FirebaseFirestore.instance
-                        .collection('seller')
-                        .where('id', isEqualTo: id)
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      }
-                      if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      }
-                      if (snapshot.hasData) {
-                        final sellers = snapshot.data!.docs;
-                        if (sellers.isNotEmpty) {
-                          final sellerData = sellers.first.data();
-                          final sellerName = sellerData['name'];
-                          final long = sellerData['location'].longitude;
-                          final lat = sellerData['location'].latitude;
-                          final kota = sellerData['kota'];
-                          final provinsi = sellerData['provinsi'];
-                          return titlePenjahit(
-                              sellerName, lat, long, kota, provinsi);
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      }
+                  // FutureBuilder(
+                  //   future: FirebaseFirestore.instance
+                  //       .collection('seller')
+                  //       .where('id', isEqualTo: id)
+                  //       .get(),
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.connectionState == ConnectionState.waiting) {
+                  //       return const CircularProgressIndicator();
+                  //     }
+                  //     if (snapshot.hasError) {
+                  //       return Text('Error: ${snapshot.error}');
+                  //     }
+                  //     if (snapshot.hasData) {
+                  //       final sellers = snapshot.data!.docs;
+                  //       if (sellers.isNotEmpty) {
+                  //         final sellerData = sellers.first.data();
+                  //         final sellerName = sellerData['name'];
+                  //         final long = sellerData['location'].longitude;
+                  //         final lat = sellerData['location'].latitude;
+                  //         final kota = sellerData['kota'];
+                  //         final provinsi = sellerData['provinsi'];
+                  //         return titlePenjahit(
+                  //             sellerName, lat, long, kota, provinsi);
+                  //       } else {
+                  //         return const CircularProgressIndicator();
+                  //       }
+                  //     }
 
-                      return const SizedBox();
+                  //     return const SizedBox();
+                  //   },
+                  // ),
+                  Consumer<DetailScreenProvider>(
+                    builder: (context, detailScreenProvider, _) {
+                      final detaildata = detailScreenProvider.detailScreenData;
+                      final sellerName = detaildata?['name'];
+                      final long = detaildata?['location'].longitude;
+                      final lat = detaildata?['location'].latitude;
+                      final kota = detaildata?['kota'];
+                      final provinsi = detaildata?['provinsi'];
+
+                      return titlePenjahit(
+                          sellerName, lat, long, kota, provinsi);
                     },
                   ),
+
                   const Divider(thickness: 4),
                   customContainer(
                     judul: "Deskripsi",

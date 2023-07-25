@@ -26,6 +26,7 @@ class _LocationRecommendationScreenState
   List<dynamic> locationSet = [];
   int highlightRadius = 1000;
   List<int> radiusOptions = [500, 1000, 2000];
+  late LatLng initialFocusMap;
 
   BitmapDescriptor? customMarkerIcon;
 
@@ -39,6 +40,13 @@ class _LocationRecommendationScreenState
     });
   }
 
+  void loadInitialMapFocus() async {
+    setState(() {
+      initialFocusMap = LatLng(context.read<LocationProvider>().lat,
+          context.read<LocationProvider>().long);
+    });
+  }
+
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -48,14 +56,11 @@ class _LocationRecommendationScreenState
         .collection('seller')
         .get()
         .then((QuerySnapshot snapshot) {
-      // Menghapus data lama sebelum menambahkan data baru
       locationSet.clear();
 
-      // Mengurutkan data berdasarkan jarak menggunakan Haversine
       final currentLatitude = context.read<LocationProvider>().lat;
       final currentLongitude = context.read<LocationProvider>().long;
 
-      // Mendapatkan data dari snapshot dan menyimpannya dalam state setLocation
       for (var doc in snapshot.docs) {
         final sellerLatitude = doc['location'].latitude;
         final sellerLongitude = doc['location'].longitude;
@@ -86,8 +91,6 @@ class _LocationRecommendationScreenState
         );
         return distanceA.compareTo(distanceB);
       });
-
-      // Memperbarui tampilan dengan setState
       setState(() {});
     });
   }
@@ -95,7 +98,8 @@ class _LocationRecommendationScreenState
   @override
   void initState() {
     super.initState();
-    getData(); // Memanggil getData saat initState dipanggil
+    loadInitialMapFocus();
+    getData();
     scrollController = ScrollController();
     loadCustomMarkerIcon();
   }
@@ -108,7 +112,6 @@ class _LocationRecommendationScreenState
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
@@ -117,7 +120,8 @@ class _LocationRecommendationScreenState
               GoogleMap(
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(args['latitude'], args['longitude']),
+                  target: LatLng(context.watch<LocationProvider>().lat,
+                      context.watch<LocationProvider>().long),
                   zoom: 15,
                 ),
                 markers: {
@@ -125,10 +129,10 @@ class _LocationRecommendationScreenState
                     final latitude = data['location'].latitude;
                     final longitude = data['location'].longitude;
                     return Marker(
-                      markerId: MarkerId('$latitude-$longitude'),
-                      position: LatLng(latitude, longitude),
-                      icon: BitmapDescriptor.defaultMarker,
-                    );
+                        markerId: MarkerId('$latitude-$longitude'),
+                        position: LatLng(latitude, longitude),
+                        icon: BitmapDescriptor.defaultMarker,
+                        infoWindow: InfoWindow(title: data['name']));
                   }),
                   Marker(
                     markerId: const MarkerId('userLocation'),
@@ -189,7 +193,6 @@ class _LocationRecommendationScreenState
                         ]),
                     child: Column(
                       children: [
-                        // Dropdown untuk memilih highlightRadius
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -208,9 +211,7 @@ class _LocationRecommendationScreenState
                                 );
                               }).toList(),
                               onChanged: (int? newValue) {
-                                // Mengubah tipe data parameter menjadi int?
                                 if (newValue != null) {
-                                  // Memastikan nilai newValue tidak null
                                   setState(() {
                                     highlightRadius = newValue;
                                   });
@@ -227,30 +228,22 @@ class _LocationRecommendationScreenState
                             itemCount: locationSet.length,
                             itemBuilder: (context, index) {
                               final locationData = locationSet[index];
-                              // Tampilkan data yang sesuai di dalam ListView
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetailScreen()));
-                                },
-                                child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            CircleAvatar(
-                                                radius: 25,
-                                                backgroundImage: NetworkImage(
-                                                  locationData[
-                                                          "profileImage"] ??
-                                                      "https://firebasestorage.googleapis.com/v0/b/jaheet-5fa13.appspot.com/o/userprofile.jpg?alt=media",
-                                                )),
-                                            Expanded(
+                              return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                              radius: 25,
+                                              backgroundImage: NetworkImage(
+                                                locationData["profileImage"] ??
+                                                    "https://firebasestorage.googleapis.com/v0/b/jaheet-5fa13.appspot.com/o/userprofile.jpg?alt=media",
+                                              )),
+                                          Expanded(
+                                            child: InkWell(
+                                              onTap: () {},
                                               child: Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -294,17 +287,31 @@ class _LocationRecommendationScreenState
                                                 ),
                                               ),
                                             ),
-                                            Icon(
-                                              Icons.chevron_right_rounded,
-                                              color: secondaryColor,
-                                              size: 30,
-                                            )
-                                          ],
-                                        ),
-                                        Divider(thickness: 1)
-                                      ],
-                                    )),
-                              );
+                                          ),
+                                          IconButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DetailScreen(),
+                                                    settings: RouteSettings(
+                                                        arguments: {
+                                                          'id': locationData[
+                                                              "id"],
+                                                        }),
+                                                  ),
+                                                );
+                                              },
+                                              icon: Icon(
+                                                  Icons.chevron_right_rounded,
+                                                  color: secondaryColor,
+                                                  size: 30))
+                                        ],
+                                      ),
+                                      Divider(thickness: 1)
+                                    ],
+                                  ));
                             },
                           ),
                         ),
