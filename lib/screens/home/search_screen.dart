@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jahitin/provider/search_screen_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletons/skeletons.dart';
 import '../../constant/theme.dart';
+import '../../provider/detail_screen_provider.dart';
 import '../../provider/location_provider.dart';
 import '../../services/haversine.dart';
 import 'detail_screen.dart';
@@ -29,6 +32,11 @@ class _SearchScreenState extends State<SearchScreen>
   late String keyword;
   late List<DocumentSnapshot> _sellerData;
   late List<DocumentSnapshot> _searchResults = [];
+
+  void _navigateToDetailScreen(BuildContext context, int id) async {
+    await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
+    Navigator.pushNamed(context, DetailScreen.routeName, arguments: {'id': id});
+  }
 
   @override
   void initState() {
@@ -126,105 +134,101 @@ class _SearchScreenState extends State<SearchScreen>
     }
 
     Widget jahitGridView(String target) {
-      return FutureBuilder(
-        future: FirebaseFirestore.instance.collection('seller').get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+      return Consumer<SearchScreenProvider>(
+        builder: (context, searchScreenProvider, _) {
+          List<Map<String, dynamic>> sellers = [];
+          if (target == "sailor") {
+            sellers = searchScreenProvider.sailorSearchResult;
+          } else {
+            sellers = searchScreenProvider.clothSellerSearchResult;
           }
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          if (snapshot.hasData) {
-            final sellers = snapshot.data!.docs;
-            return Container(
-              margin: const EdgeInsets.only(right: 16, left: 16, top: 16),
-              child: GridView(
-                padding: const EdgeInsets.only(bottom: 16, left: 5, right: 5),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 1 / 1.56,
-                ),
-                children: [
-                  for (final data in sellers)
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, DetailScreen.routeName,
-                            arguments: {'id': data["id"]});
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [cardShadow],
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(8),
-                              ),
-                              child: Image.asset(
-                                'assets/images/userprofile.jpg',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
+          return Container(
+            margin: const EdgeInsets.only(right: 16, left: 16, top: 16),
+            child: GridView(
+              padding: const EdgeInsets.only(bottom: 16, left: 5, right: 5),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 12,
+                childAspectRatio: 1 / 1.56,
+              ),
+              children: [
+                for (final data in sellers)
+                  GestureDetector(
+                    onTap: () {
+                      _navigateToDetailScreen(context, data["id"]);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [cardShadow],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(8),
                             ),
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${Haversine.calculateDistance(
-                                        context.watch<LocationProvider>().lat,
-                                        context.watch<LocationProvider>().long,
-                                        data.data()['location'].latitude,
-                                        data.data()['location'].longitude,
-                                      ).toInt()} m',
-                                      style: secondaryTextStyle,
-                                      softWrap: true,
-                                      overflow: TextOverflow.clip,
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 175,
+                              child: Image.network(data["profileImage"],
+                                  fit: BoxFit.cover),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${Haversine.calculateDistance(
+                                      context.watch<LocationProvider>().lat,
+                                      context.watch<LocationProvider>().long,
+                                      data['location'].latitude,
+                                      data['location'].longitude,
+                                    ).toInt()} m',
+                                    style: secondaryTextStyle,
+                                    softWrap: true,
+                                    overflow: TextOverflow.clip,
+                                  ),
+                                  Text(
+                                    data['name'],
+                                    style: primaryTextStyle.copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    Text(
-                                      data.data()['name'],
-                                      style: primaryTextStyle.copyWith(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star,
+                                        color:
+                                            Color.fromARGB(255, 250, 229, 36),
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.star,
-                                          color:
-                                              Color.fromARGB(255, 250, 229, 36),
+                                      Text(
+                                        data['rating'].toString(),
+                                        style: primaryTextStyle.copyWith(
+                                          fontSize: 14,
                                         ),
-                                        Text(
-                                          data.data()['rating'].toString(),
-                                          style: primaryTextStyle.copyWith(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                ],
-              ),
-            );
-          }
+                  ),
+              ],
+            ),
+          );
           return SizedBox(
             height: 16,
           );
@@ -253,8 +257,7 @@ class _SearchScreenState extends State<SearchScreen>
             DocumentSnapshot data = _searchResults[index];
             return GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, DetailScreen.routeName,
-                    arguments: {'id': data["id"]});
+                _navigateToDetailScreen(context, data["id"]);
               },
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -318,6 +321,15 @@ class _SearchScreenState extends State<SearchScreen>
       );
     }
 
+    Widget skeletonListTile() {
+      return SkeletonListTile(
+        leadingStyle: SkeletonAvatarStyle(width: 80, height: 80),
+        titleStyle: SkeletonLineStyle(height: 20),
+        hasSubtitle: true,
+        subtitleStyle: SkeletonLineStyle(randomLength: true),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -342,10 +354,19 @@ class _SearchScreenState extends State<SearchScreen>
                 future: FirebaseFirestore.instance.collection('seller').get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          for (int i = 0; i < 4; i++) skeletonListTile()
+                        ],
+                      ),
+                    );
                   }
-                  if (!snapshot.hasData || snapshot.data == null) {
-                    return Text('No data found.');
+                  if (!snapshot.hasData ||
+                      snapshot.data == null ||
+                      snapshot.data == []) {
+                    return Center(child: Text('No data found.'));
                   }
 
                   // Store all sellers in _sellerData list

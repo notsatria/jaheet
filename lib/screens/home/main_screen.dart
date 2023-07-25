@@ -60,6 +60,12 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void dispose() {
+    getLocation();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget locationButton() {
       return Container(
@@ -91,13 +97,8 @@ class _MainScreenState extends State<MainScreen> {
           top: Radius.circular(20),
         ),
         child: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 12.0,
           clipBehavior: Clip.antiAlias,
           child: BottomNavigationBar(
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            selectedLabelStyle: primaryTextStyle.copyWith(color: Colors.black),
             selectedItemColor: primaryColor,
             currentIndex: currIndex,
             onTap: (value) {
@@ -106,7 +107,7 @@ class _MainScreenState extends State<MainScreen> {
               });
             },
             type: BottomNavigationBarType.fixed,
-            backgroundColor: backgroundColor4,
+            backgroundColor: backgroundColor1,
             items: [
               BottomNavigationBarItem(
                 icon: Container(
@@ -196,77 +197,7 @@ class _MainScreenState extends State<MainScreen> {
         resizeToAvoidBottomInset: false,
         floatingActionButton: locationButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: primaryColor,
-          currentIndex: currIndex,
-          onTap: (value) {
-            setState(() {
-              currIndex = value;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: backgroundColor1,
-          items: [
-            BottomNavigationBarItem(
-              icon: Container(
-                margin: const EdgeInsets.only(
-                  top: 10,
-                  bottom: 10,
-                ),
-                child: Icon(
-                  currIndex == 0 ? Icons.home : Icons.home_outlined,
-                  color: primaryColor,
-                  size: 28,
-                ),
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                margin: const EdgeInsets.only(
-                  top: 10,
-                  bottom: 10,
-                ),
-                child: Icon(
-                  currIndex == 1
-                      ? Icons.library_books
-                      : Icons.library_books_outlined,
-                  color: primaryColor,
-                  size: 28,
-                ),
-              ),
-              label: 'Transaction',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                margin: const EdgeInsets.only(
-                  top: 10,
-                  bottom: 10,
-                ),
-                child: Icon(
-                  currIndex == 2 ? Icons.chat : Icons.chat_outlined,
-                  color: primaryColor,
-                  size: 28,
-                ),
-              ),
-              label: 'Chat',
-            ),
-            BottomNavigationBarItem(
-              icon: Container(
-                margin: const EdgeInsets.only(
-                  top: 10,
-                  bottom: 10,
-                ),
-                child: Icon(
-                  currIndex == 3 ? Icons.person : Icons.person_outlined,
-                  color: primaryColor,
-                  size: 28,
-                ),
-              ),
-              label: 'Profile',
-            ),
-          ],
-        ),
+        bottomNavigationBar: customBottomNav(),
         body: Column(
           children: [
             Expanded(
