@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/screens/home/chatroom_screen.dart';
+import 'package:jahitin/screens/seller/chat/seller_chatroom_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
 
 import '../../../constant/theme.dart';
@@ -81,10 +82,10 @@ class SellerChatScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChatRoomScreen(
-                receiveUserName: name,
-                receiveUserID: id,
-                receiveProfileImage: profileImage,
+              builder: (context) => SellerChatRoomScreen(
+                receiverName: name,
+                receiverID: id,
+                receiverProfileImage: profileImage,
               ),
             ),
           );

@@ -236,7 +236,9 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
   Widget buildMessageList() {
     return StreamBuilder(
       stream: _chatService.getMessages(
-          widget.receiverID, _firebaseAuth.currentUser!.uid),
+        _firebaseAuth.currentUser!.uid,
+        widget.receiverID,
+      ),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error $snapshot.error.toString()',
