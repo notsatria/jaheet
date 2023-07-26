@@ -158,8 +158,10 @@ class ChatScreen extends StatelessWidget {
                 stream: sellers.snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(primaryColor),
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(primaryColor),
+                      ),
                     );
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {

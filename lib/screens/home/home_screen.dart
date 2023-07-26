@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/location_provider.dart';
+import 'package:jahitin/provider/search_screen_provider.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:jahitin/screens/home/search_screen.dart';
 import 'package:jahitin/services/haversine.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletons/skeletons.dart';
 import '../../constant/theme.dart';
 import '../../provider/detail_screen_provider.dart';
 import '../../provider/home_screen_provider.dart';
@@ -26,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _refreshData() async {
     final homeScreenProvider =
         Provider.of<HomeScreenProvider>(context, listen: false);
-
+    await homeScreenProvider.clearState();
     await homeScreenProvider.fetchCategories();
     await homeScreenProvider.fetchNearestSellers();
     await homeScreenProvider.fetchRecommendedSellers();
@@ -40,9 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildContent() {
     Widget searchBar() {
       return Container(
-        margin: const EdgeInsets.all(
-          15,
-        ),
+        margin: const EdgeInsets.only(left: 15, right: 15, top: 15),
         padding: const EdgeInsets.symmetric(
           horizontal: 10,
           vertical: 8,
@@ -64,6 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: GestureDetector(
                 onTap: () {
+                  Provider.of<SearchScreenProvider>(context, listen: false)
+                      .fetchData();
                   Navigator.pushNamed(context, SearchScreen.routeName);
                 },
                 child: TextFormField(
@@ -81,9 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    Widget sendLocation(location) {
+    Widget sendLocation(String? location) {
       return Container(
-        margin: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+        margin: const EdgeInsets.only(left: 15, right: 15),
         child: Row(
           children: [
             const Icon(
@@ -91,25 +93,78 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.white,
             ),
             location != null
-                ? InkWell(
-                    onTap: () {},
-                    child: Row(
-                      children: [
-                        Text(
-                          'Dikirim ke ',
-                          style: primaryTextStyle.copyWith(color: Colors.white),
-                        ),
-                        Text(
-                          location,
-                          style: primaryTextStyle.copyWith(
-                              color: Colors.white, fontWeight: bold),
-                        ),
-                        const Icon(Icons.arrow_drop_down_rounded,
-                            color: Colors.white)
-                      ],
+                ? Container(
+                    padding: const EdgeInsets.all(12),
+                    child: InkWell(
+                      onTap: () {
+                        showModalBottomSheet<void>(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10))),
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(
+                              padding: const EdgeInsets.all(20),
+                              height: MediaQuery.of(context).size.height * 0.30,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Mau kirim produk ke mana?",
+                                      style: primaryTextStyle.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          width: 160,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  width: 1.5,
+                                                  color: primaryColor),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: primaryColor
+                                                  .withOpacity(0.1)),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            'Dikirim ke ',
+                            style:
+                                primaryTextStyle.copyWith(color: Colors.white),
+                          ),
+                          Text(
+                            location,
+                            style: primaryTextStyle.copyWith(
+                                color: Colors.white, fontWeight: bold),
+                          ),
+                          const Icon(Icons.arrow_drop_down_rounded,
+                              color: Colors.white)
+                        ],
+                      ),
                     ),
                   )
-                : const Text('Pilih Lokasi Pengiriman'),
+                : TextButton(
+                    style: TextButton.styleFrom(),
+                    onPressed: () {},
+                    child: Text(
+                      'Pilih Lokasi Pengiriman',
+                      style: primaryTextStyle.copyWith(
+                          color: Colors.white, fontWeight: bold),
+                    ),
+                  )
           ],
         ),
       );
@@ -292,9 +347,27 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+    Widget skeletonCategoryLoading() {
+      return SkeletonAvatar(
+        style: SkeletonAvatarStyle(
+            height: 100,
+            width: 100,
+            padding: const EdgeInsets.only(right: 10, top: 10)),
+      );
+    }
+
+    Widget skeletonSellerLoading() {
+      return SkeletonAvatar(
+        style: SkeletonAvatarStyle(
+            height: 140,
+            width: 120,
+            padding: const EdgeInsets.only(right: 10, top: 10)),
+      );
+    }
+
     Widget categoryOption() {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.only(left: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,6 +379,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Consumer<HomeScreenProvider>(
               builder: (context, homeScreenProvider, _) {
                 final categories = homeScreenProvider.category;
+                if (categories.isEmpty) {
+                  return Row(
+                    children: [
+                      for (int i = 0; i < 3; i++) skeletonCategoryLoading()
+                    ],
+                  );
+                }
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -324,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget nearest(String title) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.only(left: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,7 +432,14 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, homeScreenProvider, _) {
                 final sellers = homeScreenProvider.nearestSeller;
                 if (sellers.isEmpty) {
-                  return const Text('Tidak ada penjual terdekat');
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (int i = 0; i < 3; i++) skeletonSellerLoading()
+                      ],
+                    ),
+                  );
                 }
                 return Container(
                   margin: const EdgeInsets.only(top: 12),
@@ -382,7 +469,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget recommended(String title) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.only(left: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -409,7 +496,16 @@ class _HomeScreenState extends State<HomeScreen> {
             Consumer<HomeScreenProvider>(
               builder: (context, homeScreenProvider, _) {
                 final recommendedSellers = homeScreenProvider.recommendedSeller;
-
+                if (recommendedSellers.isEmpty) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (int i = 0; i < 3; i++) skeletonSellerLoading()
+                      ],
+                    ),
+                  );
+                }
                 return Container(
                   margin: const EdgeInsets.only(top: 12),
                   child: SingleChildScrollView(

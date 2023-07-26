@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
+import 'package:jahitin/provider/search_screen_provider.dart';
 import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
-import 'package:jahitin/screens/transaction/checkout_screen.dart';
-import 'package:jahitin/screens/transaction/delivery_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +23,7 @@ import 'screens/home/transaction_detail_screen.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/sign_up_screen.dart';
 import 'screens/slide_screen.dart';
+import 'screens/transaction/delivery_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +42,8 @@ Future<void> main() async {
           create: (_) => GoogleSignInProvider(),
         ),
         ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
-        ChangeNotifierProvider(create: (_) => DetailScreenProvider())
+        ChangeNotifierProvider(create: (_) => DetailScreenProvider()),
+        ChangeNotifierProvider(create: (_) => SearchScreenProvider())
       ],
       child: const MyApp(),
     ),
@@ -52,7 +53,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
             const LocationRecommendationScreen(),
         SellerMainScreen.routeName: (context) => const SellerMainScreen(),
         RegistrationFormScreen.routeName: (context) =>
-            const RegistrationFormScreen()
+            const RegistrationFormScreen(),
       },
     );
   }

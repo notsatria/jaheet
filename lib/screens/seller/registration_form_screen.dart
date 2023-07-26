@@ -12,9 +12,8 @@ import '../home/profile_screen.dart';
 import 'seller_main_screen.dart';
 
 class RegistrationFormScreen extends StatefulWidget {
-  const RegistrationFormScreen({super.key});
-
   static const routeName = '/registration-form-screen';
+  const RegistrationFormScreen({super.key});
 
   @override
   State<RegistrationFormScreen> createState() => _RegistrationFormScreenState();
@@ -113,7 +112,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     }
 
     return seller
-        .add({
+        .doc('${sellerDataLength + 1}')
+        .set({
           'id': sellerDataLength + 1,
           'isClothSeller': false,
           'isSailor': true,
