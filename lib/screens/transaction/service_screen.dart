@@ -18,12 +18,12 @@ Map<String, String> selectedValues = {
 };
 
 const List<String> kategoriValue = [
-  'Piih kategori Pesanan',
   'ATASAN',
   'BAWAHAN',
+  'TERUSAN',
+  'PERBAIKAN',
 ];
 const List<String> pakaianValue = [
-  'Pilih jenis pakaian',
   'Batik',
   'Jas Formal',
   'Blazer',
@@ -38,7 +38,6 @@ const List<String> pakaianValue = [
 ];
 
 const List<String> celanaValue = [
-  'Pilih jenis bawahan',
   'Rok',
   'Blouse',
   'Blazer',
@@ -54,7 +53,6 @@ const List<String> celanaValue = [
 ];
 
 const List<String> jasaValue = [
-  'Pilih jasa',
   'Jahit termasuk bahan',
   'Jahit tidak termasuk bahan'
 ];
@@ -67,6 +65,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void setSelectedValue(String key, String value, List<String> listValue) {
+    if (listValue.contains(value)) {
+      selectedValues[key] = value;
+    } else {
+      selectedValues[key] = listValue.first;
+    }
   }
 
   Widget customContainer({
@@ -104,7 +110,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
           onChanged: (value) {
             setState(() {
               firstKategori = value!;
-              selectedValues['kategori'] = value;
+              setSelectedValue('kategori', value, kategoriValue);
             });
           },
           items: kategoriValue.map<DropdownMenuItem<String>>((String value) {
@@ -140,7 +146,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
           onChanged: (value) {
             setState(() {
               firstItem = value!;
-              selectedValues['jenis'] = value;
+              List<String> selectedPakaianValue =
+                  firstKategori == 'BAWAHAN' ? celanaValue : pakaianValue;
+              setSelectedValue('jenis', value, selectedPakaianValue);
             });
           },
           items: selectedPakaianValue
@@ -183,7 +191,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
           onChanged: (value) {
             setState(() {
               firstjasa = value!;
-              selectedValues['jasa'] = value;
+              setSelectedValue('jasa', value, jasaValue);
             });
           },
           items: jasaValue.map<DropdownMenuItem<String>>((String value) {

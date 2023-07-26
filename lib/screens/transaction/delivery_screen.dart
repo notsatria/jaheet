@@ -13,6 +13,8 @@ class DeliveryScreen extends StatefulWidget {
 
 class _DeliveryScreenState extends State<DeliveryScreen> {
   bool isExpanded = false;
+  String selectedDelivery = '';
+  bool isSelected = false;
 
   void expanded(bool clicked) {
     setState(() {
@@ -20,8 +22,11 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     });
   }
 
-  void selected() {
-    setState(() {});
+  void setSelectedOption(String option) {
+    setState(() {
+      selectedDelivery = option;
+      isSelected = true;
+    });
   }
 
   @override
@@ -49,37 +54,44 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       );
     }
 
-    Widget cardSelect() {
-      return Container(
-        padding: EdgeInsets.all(defaultMargin),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/icon/drop-off.svg',
-              width: 18,
-              color: secondaryColor,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              'Drop off',
-              style: primaryTextStyle.copyWith(
-                fontWeight: semiBold,
-                fontSize: 16,
+    Widget dropSelect() {
+      return InkWell(
+        onTap: () {
+          setSelectedOption('drop');
+        },
+        child: Container(
+          padding: EdgeInsets.all(defaultMargin),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'assets/icon/drop-off.svg',
+                width: 18,
+                color: secondaryColor,
               ),
-            ),
-            const Spacer(),
-            Icon(
-              Icons.check_circle,
-              size: 16,
-              color: secondaryColor,
-            ),
-          ],
+              const SizedBox(width: 10),
+              Text(
+                'Drop off',
+                style: primaryTextStyle.copyWith(
+                  fontWeight: semiBold,
+                  fontSize: 16,
+                ),
+              ),
+              const Spacer(),
+              isSelected && selectedDelivery == 'drop'
+                  ? Icon(
+                      Icons.check_circle,
+                      size: 16,
+                      color: secondaryColor,
+                    )
+                  : Text(''),
+            ],
+          ),
         ),
       );
     }
 
-    Widget expansion() {
+    Widget homeSelect() {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: ExpansionTile(
@@ -107,10 +119,27 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
           ),
           onExpansionChanged: expanded,
           children: [
-            ListTile(
-              title: Text(
-                'Pesanan akan diantar ke rumah anda sesuai jam kerja',
-                style: primaryTextStyle.copyWith(fontSize: 12),
+            InkWell(
+              onTap: () {
+                setSelectedOption('home');
+              },
+              child: ListTile(
+                title: Row(
+                  children: [
+                    Text(
+                      'Pesanan akan diantar ke rumah anda sesuai jam kerja',
+                      style: primaryTextStyle.copyWith(fontSize: 12),
+                    ),
+                    const Spacer(),
+                    isSelected && selectedDelivery == 'home'
+                        ? Icon(
+                            Icons.check_circle,
+                            size: 16,
+                            color: secondaryColor,
+                          )
+                        : Text(''),
+                  ],
+                ),
               ),
             )
           ],
@@ -122,8 +151,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       appBar: appBar(),
       body: Column(
         children: [
-          cardSelect(),
-          expansion(),
+          dropSelect(),
+          homeSelect(),
         ],
       ),
     );

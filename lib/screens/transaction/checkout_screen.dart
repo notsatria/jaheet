@@ -31,11 +31,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String kategori = widget.data['kategori'] ?? 'ATASAN';
-    String jenis = widget.data['jenis'] ?? 'Batik';
-    String jasa = widget.data['jasa'] ?? 'Jahit tanpa bahan';
-    bool isHomeService = false;
+    String kategori = widget.data['kategori'] ?? '';
+    String jenis = widget.data['jenis'] ?? '';
+    String jasa = widget.data['jasa'] ?? '';
+    if (kategori == '') {
+      kategori = 'ATASAN';
+    } else if (jenis == '') {
+      jenis = 'Batik';
+    } else if (jasa == '') {
+      jasa = 'Jahit termasuk bahan';
+    }
 
+    bool isHomeService = false;
     void pickService() {
       setState(() {
         isHomeService = !isHomeService;
@@ -83,7 +90,37 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               'Pengiriman',
               style: primaryTextStyle.copyWith(
                 fontWeight: semiBold,
-                fontSize: 16,
+                fontSize: 14,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 18,
+              color: secondaryColor,
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget paymentContainer() {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.credit_card,
+              size: 20,
+              color: secondaryColor,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Pembayaran',
+              style: primaryTextStyle.copyWith(
+                fontWeight: semiBold,
+                fontSize: 14,
               ),
             ),
             const Spacer(),
@@ -449,6 +486,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   child: deliveyContainer(),
                 ),
+              ),
+              const Divider(
+                thickness: 2,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, DeliveryScreen.routeName);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: paymentContainer(),
+                ),
+              ),
+              const Divider(
+                thickness: 2,
               ),
             ],
           ),
