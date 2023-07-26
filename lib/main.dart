@@ -1,12 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jahitin/provider/checkout_screen_provider.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
+import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
+import 'package:jahitin/screens/transaction/checkout_screen.dart';
+import 'package:jahitin/screens/transaction/payment_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -35,15 +39,12 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => LocationProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => GoogleSignInProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
+        ChangeNotifierProvider(create: (_) => GoogleSignInProvider()),
         ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
         ChangeNotifierProvider(create: (_) => DetailScreenProvider()),
-        ChangeNotifierProvider(create: (_) => SearchScreenProvider())
+        ChangeNotifierProvider(create: (_) => SearchScreenProvider()),
+        ChangeNotifierProvider(create: (_) => CheckoutScreenProvider()),
       ],
       child: const MyApp(),
     ),
@@ -68,7 +69,10 @@ class MyApp extends StatelessWidget {
         ServiceScreen.routeName: (context) => const ServiceScreen(),
         SearchScreen.routeName: (context) => SearchScreen(),
         DeliveryScreen.routeName: (context) => const DeliveryScreen(),
+        PaymentScreen.routeName: (context) => const PaymentScreen(),
         SlideScreen.routeName: (context) => const SlideScreen(),
+        CheckoutScreen.routeName: (context) => const CheckoutScreen(),
+        TransactionScreen.routeName: (context) => const TransactionScreen(),
         TransactionDetailScreen.routeName: (context) =>
             const TransactionDetailScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),

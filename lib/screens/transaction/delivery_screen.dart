@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:jahitin/screens/transaction/checkout_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
+import '../../provider/checkout_screen_provider.dart';
 
 class DeliveryScreen extends StatefulWidget {
   static const routeName = '/delivery-screen';
@@ -31,6 +34,11 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final checkoutProvider = Provider.of<CheckoutScreenProvider>(
+      context,
+      listen: false,
+    );
+
     PreferredSizeWidget appBar() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -58,6 +66,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       return InkWell(
         onTap: () {
           setSelectedOption('drop');
+          checkoutProvider.setDelivery('drop');
         },
         child: Container(
           padding: EdgeInsets.all(defaultMargin),
@@ -122,6 +131,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             InkWell(
               onTap: () {
                 setSelectedOption('home');
+                checkoutProvider.setDelivery('home');
               },
               child: ListTile(
                 title: Row(
@@ -147,12 +157,40 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       );
     }
 
+    Widget bottomButton() {
+      return InkWell(
+        onTap: () {
+          Navigator.pushReplacementNamed(context, CheckoutScreen.routeName);
+          checkoutProvider.setDelivery(
+            checkoutProvider.getDelivery,
+          );
+        },
+        child: Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                'Pilih pengiriman',
+                style: whiteTextStyle.copyWith(fontWeight: FontWeight.w600),
+              ),
+            )),
+      );
+    }
+
     return Scaffold(
       appBar: appBar(),
       body: Column(
         children: [
           dropSelect(),
           homeSelect(),
+          const Spacer(),
+          Padding(
+            padding: EdgeInsets.all(defaultMargin),
+            child: bottomButton(),
+          ),
         ],
       ),
     );

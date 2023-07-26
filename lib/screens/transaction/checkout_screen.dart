@@ -1,15 +1,18 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/transaction/delivery_screen.dart';
-import 'package:jahitin/screens/transaction/service_screen.dart';
+import 'package:provider/provider.dart';
 import '../../constant/theme.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import '../../provider/checkout_screen_provider.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key, required this.data});
+  const CheckoutScreen({super.key});
   static const routeName = '/checkout-screen';
-  final Map<String, String> data;
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -31,23 +34,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String kategori = widget.data['kategori'] ?? '';
-    String jenis = widget.data['jenis'] ?? '';
-    String jasa = widget.data['jasa'] ?? '';
-    if (kategori == '') {
-      kategori = 'ATASAN';
-    } else if (jenis == '') {
-      jenis = 'Batik';
-    } else if (jasa == '') {
-      jasa = 'Jahit termasuk bahan';
-    }
-
-    bool isHomeService = false;
-    void pickService() {
-      setState(() {
-        isHomeService = !isHomeService;
-      });
-    }
+    final checkoutProvider = Provider.of<CheckoutScreenProvider>(
+      context,
+      listen: false,
+    );
 
     Widget customContainer({
       required String judul,
@@ -74,31 +64,151 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     }
 
-    Widget deliveyContainer() {
+    Widget homeDetail() {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          border: Border.all(width: 0.2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              Icons.local_shipping_outlined,
-              size: 20,
-              color: secondaryColor,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              'Pengiriman',
-              style: primaryTextStyle.copyWith(
-                fontWeight: semiBold,
-                fontSize: 14,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Dikirim ke',
+                    style: primaryTextStyle.copyWith(
+                      fontWeight: bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  RichText(
+                    text: TextSpan(
+                      text: 'Rumah',
+                      style: secondaryTextStyle.copyWith(
+                        fontWeight: semiBold,
+                        fontSize: 12,
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: ' - Haidar Alfathin (6282142685510)',
+                          style: primaryTextStyle.copyWith(
+                            fontSize: 12,
+                            fontWeight: reguler,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Text(
+                    'Jalan Candi tembaga tengah I No.825, Kota Semarang',
+                    style: subtitleTextStyle.copyWith(fontSize: 12),
+                  ),
+                ],
               ),
             ),
-            const Spacer(),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 18,
-              color: secondaryColor,
+            // const Divider(
+            //   height: 1,
+            //   thickness: 0.3,
+            //   color: Colors.black,
+            // ),
+            // Padding(
+            //   padding: const EdgeInsets.all(10),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Text(
+            //         'Jadwal pengambilan',
+            //         style: primaryTextStyle.copyWith(
+            //           fontWeight: bold,
+            //         ),
+            //       ),
+            //       const SizedBox(height: 4),
+            //       Row(
+            //         children: [
+            //           Container(
+            //             padding: const EdgeInsets.all(8),
+            //             decoration: BoxDecoration(
+            //                 color: Colors.grey.shade300,
+            //                 borderRadius: BorderRadius.circular(4)),
+            //             child: Text('Senin, 8 Juli 2023'),
+            //           ),
+            //           const SizedBox(
+            //             width: 10,
+            //           ),
+            //           Container(
+            //             padding: const EdgeInsets.all(8),
+            //             decoration: BoxDecoration(
+            //                 color: Colors.grey.shade300,
+            //                 borderRadius: BorderRadius.circular(4)),
+            //             child: Text('08.00 - 10.00'),
+            //           ),
+            //         ],
+            //       )
+            //     ],
+            //   ),
+            // )
+          ],
+        ),
+      );
+    }
+
+    Widget deliveyContainer() {
+      String delivery = checkoutProvider.getDelivery;
+      String deliveryText = '';
+      switch (delivery) {
+        case 'drop':
+          deliveryText = 'Drop off';
+          break;
+        case 'home':
+          deliveryText = 'Home delivery';
+          break;
+        default:
+          deliveryText = '';
+      }
+
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.local_shipping_outlined,
+                  size: 20,
+                  color: secondaryColor,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'Metode pengiriman',
+                  style: primaryTextStyle.copyWith(
+                    fontWeight: semiBold,
+                    fontSize: 14,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  deliveryText,
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 18,
+                  color: secondaryColor,
+                ),
+              ],
             ),
+            delivery == 'home' ? homeDetail() : const SizedBox(),
           ],
         ),
       );
@@ -197,11 +307,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     }
 
-    Widget detailJasa(
-        {required String urlfoto,
-        required String kategori,
-        required String item,
-        required String jasa}) {
+    Widget detailJasa({
+      required String urlfoto,
+      required String kategori,
+      required String jenis,
+      required String jasa,
+      required String size,
+    }) {
       return Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -211,20 +323,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             width: 0.5,
           ),
         ),
-        height: 60,
+        height: 80,
         width: double.infinity,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
+              width: 60,
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade400),
                   borderRadius: BorderRadius.circular(4)),
               child: Center(
                 child: Image.asset(
                   urlfoto,
-                  height: 45,
-                  width: 40,
+                  height: 50,
+                  width: 50,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -237,7 +350,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '$kategori ($item)',
+                  '$kategori ($jenis)',
                   style: primaryTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: semiBold,
@@ -247,16 +360,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   jasa,
                   style: subtitleTextStyle.copyWith(fontSize: 12),
                 ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  'Size: $size',
+                  style: secondaryTextStyle.copyWith(
+                    fontSize: 11,
+                    fontWeight: bold,
+                  ),
+                ),
               ],
             ),
-            const Spacer(),
-            //nanti ditambahkan counter widget disini, tp belom ada hehe
-            Text(
-              'x 1',
-              style:
-                  subtitleTextStyle.copyWith(fontSize: 12, fontWeight: light),
-            ),
-            const SizedBox(width: 4),
           ],
         ),
       );
@@ -276,33 +391,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 8),
           detailJasa(
             urlfoto: 'assets/images/produk_jahit_2.png',
-            kategori: kategori,
-            item: jenis,
-            jasa: jasa,
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, ServiceScreen.routeName);
-            },
-            child: Container(
-              height: 30,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: subtitleTextColor,
-                  width: 0.5,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'Tambah Jasa',
-                  style: subtitleTextStyle.copyWith(
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
+            kategori: checkoutProvider.getKategori,
+            jenis: checkoutProvider.getJenis,
+            jasa: checkoutProvider.getJasa,
+            size: checkoutProvider.getSize,
           ),
         ],
       );
@@ -319,12 +411,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: TextField(
+                onChanged: (value) {
+                  checkoutProvider.setDeskripsi(value);
+                },
                 maxLines: 5,
                 keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintStyle: subtitleTextStyle.copyWith(fontSize: 14),
-                  hintText: 'Tuliskan deskripsi singkat pesanan anda...',
+                  hintText: 'Contoh: lingkar perut saya 45cm',
                 ),
               ),
             ),
@@ -341,120 +436,91 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     }
 
-    //untuk membuat card yang bisa di klik, yang ada tanda panah
-    Widget buttonCard(
-      Color background, {
-      required Widget child,
-      required String url,
-    }) {
+    Widget bottomNavbar() {
       return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: background,
-        ),
-        width: double.infinity,
+        margin: EdgeInsets.all(defaultMargin - 5),
+        width: double.maxFinite,
+        height: 45,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            child,
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 20,
-              color: primaryTextColor,
+            Text(
+              '100.000 - 200.000*',
+              style: primaryTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: bold,
+              ),
             ),
+            InkWell(
+              onTap: () {
+                try {
+                  checkoutProvider.sendCheckoutData();
+                } catch (e) {
+                  throw Exception(e);
+                } finally {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        insetPadding: const EdgeInsets.all(90),
+                        content: SizedBox(
+                          height: 128,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.check_circle,
+                                size: 60,
+                                color: Colors.greenAccent,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Pesanan telah dibuat',
+                                style: primaryTextStyle,
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                  Timer(const Duration(seconds: 3), () {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      TransactionScreen.routeName,
+                    );
+                  });
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                    child: Text(
+                  'Checkout',
+                  style: whiteTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: semiBold,
+                  ),
+                )),
+              ),
+            )
           ],
-        ),
-      );
-    }
-
-    Widget pengiriman() {
-      return Column(
-        children: [
-          Row(
-            children: [
-              InkWell(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: secondaryColor,
-                  ),
-                  child: Center(
-                      child: Text(
-                    'Home service',
-                    style: whiteTextStyle.copyWith(
-                      fontSize: 11,
-                      fontWeight: bold,
-                    ),
-                  )),
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              InkWell(
-                onTap: () {
-                  pickService();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: secondaryColor,
-                  ),
-                  child: Center(
-                      child: Text(
-                    'Drop off',
-                    style: whiteTextStyle.copyWith(
-                      fontSize: 11,
-                      fontWeight: bold,
-                    ),
-                  )),
-                ),
-              ),
-            ],
-          )
-        ],
-      );
-    }
-
-    Widget homeService() {
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            width: 0.5,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Dikirim ke',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 12,
-                  fontWeight: bold,
-                ),
-              ),
-              Text(
-                'Rumah',
-                style: primaryTextStyle.copyWith(
-                  color: secondaryColor,
-                  fontSize: 12,
-                  fontWeight: bold,
-                ),
-              ),
-            ],
-          ),
         ),
       );
     }
 
     return SafeArea(
       child: Scaffold(
+        bottomNavigationBar: BottomAppBar(
+          child: bottomNavbar(),
+        ),
         appBar: appBar(),
         body: SingleChildScrollView(
           child: Column(
@@ -463,7 +529,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const SizedBox(height: 12),
               customContainer(
                 judul: 'Pemesanan dari Toko',
-                child: detailPesanan('Jasa Jahit Bu Rusmiati'),
+                child: detailPesanan('JasaFfinallJahit Bu Rusmiati'),
               ),
               const SizedBox(height: 12),
               const Divider(
@@ -486,21 +552,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   child: deliveyContainer(),
                 ),
-              ),
-              const Divider(
-                thickness: 2,
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, DeliveryScreen.routeName);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: paymentContainer(),
-                ),
-              ),
-              const Divider(
-                thickness: 2,
               ),
             ],
           ),
