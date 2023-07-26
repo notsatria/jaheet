@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
-import 'package:jahitin/screens/splash_screen.dart';
+import 'package:jahitin/provider/search_screen_provider.dart';
+import 'package:jahitin/screens/seller/products/add_product_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
 import 'package:jahitin/screens/splash_screen.dart';
@@ -41,7 +42,8 @@ Future<void> main() async {
           create: (_) => GoogleSignInProvider(),
         ),
         ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
-        ChangeNotifierProvider(create: (_) => DetailScreenProvider())
+        ChangeNotifierProvider(create: (_) => DetailScreenProvider()),
+        ChangeNotifierProvider(create: (_) => SearchScreenProvider())
       ],
       child: const MyApp(),
     ),
@@ -51,7 +53,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -76,6 +77,7 @@ class MyApp extends StatelessWidget {
         SellerMainScreen.routeName: (context) => const SellerMainScreen(),
         RegistrationFormScreen.routeName: (context) =>
             const RegistrationFormScreen(),
+        AddProductScreen.routeName: (context) => const AddProductScreen(),
       },
     );
   }
