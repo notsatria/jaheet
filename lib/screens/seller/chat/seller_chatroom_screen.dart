@@ -46,7 +46,7 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
     super.dispose();
   }
 
-  void checkUserIsSeller() async {
+  Future<void> checkUserIsSeller() async {
     final currentUser = _firebaseAuth.currentUser;
     if (currentUser != null) {
       final userDoc = await users.doc(currentUser.uid).get();
@@ -56,7 +56,7 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
         final sellerSnapshot = await seller.doc('$sellerId').get();
         if (sellerSnapshot.exists) {
           // The user is a seller, you can handle this case here
-          currentSellerId = sellerId;
+          currentSellerId = sellerId.toString();
           print('User is a seller');
         } else {
           // The user is not a seller, you can handle this case here
@@ -67,6 +67,9 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
         print('User is not a seller');
       }
     }
+    setState(() {
+      currentSellerId = currentSellerId;
+    });
   }
 
   void sendMessage() async {
@@ -252,7 +255,7 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
   Widget buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-    var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid)
+    var alignment = (data['senderId'] == currentSellerId)
         ? Alignment.centerRight
         : Alignment.centerLeft;
 
@@ -264,7 +267,7 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
 
     return Container(
       alignment: alignment,
-      child: (data['senderId'] == _firebaseAuth.currentUser!.uid)
+      child: (data['senderId'] == currentSellerId)
           ? chatBubble(data['message'], formattedTime.toString())
           : receiverChatBubble(data['message'], formattedTime.toString()),
     );
@@ -307,11 +310,13 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
           margin: const EdgeInsets.symmetric(
             horizontal: 10,
           ),
-          child: Column(children: [
-            Expanded(child: buildMessageList()),
-            chatTextField(),
-            SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
-          ]),
+          child: Column(
+            children: [
+              Expanded(child: buildMessageList()),
+              chatTextField(),
+              SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+            ],
+          ),
         ),
       ),
     );
