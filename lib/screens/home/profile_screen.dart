@@ -96,8 +96,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               final provider =
                   Provider.of<GoogleSignInProvider>(context, listen: false);
-              provider.googleLogout();
-              Navigator.pushReplacementNamed(context, SignInScreen.routeName);
+
+              try {
+                // about dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'Logout',
+                      style: primaryTextStyle.copyWith(
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                    content: Text(
+                      'Apakah anda yakin ingin logout?',
+                      style: subtitleTextStyle.copyWith(
+                        fontWeight: medium,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          'Batal',
+                          style: primaryTextStyle.copyWith(
+                            fontWeight: medium,
+                            color: alertColor,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          provider.googleLogout();
+                          Navigator.pushReplacementNamed(
+                              context, SignInScreen.routeName);
+                        },
+                        child: Text(
+                          'Logout',
+                          style: primaryTextStyle.copyWith(
+                            fontWeight: medium,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } catch (e) {
+                // scaffold messanger
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: alertColor,
+                    content: Text(
+                      'Logout gagal ($e.toString())',
+                      style: whiteTextStyle.copyWith(
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ),
+                );
+              }
             },
           ),
         ),

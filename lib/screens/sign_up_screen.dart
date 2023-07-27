@@ -37,17 +37,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final email = emailController.text;
     final name = nameController.text;
     final String? uid;
+
     if (user != null) {
-      uid = user?.uid;
+      uid = user!.uid;
     } else {
-      uid = auth.currentUser?.uid;
+      uid = auth.currentUser!.uid;
     }
+
     final photoURL = user?.photoURL;
     final newUser = {
       'uid': uid,
       'name': name,
       'email': email,
       'photoURL': photoURL ?? 'https://i.stack.imgur.com/l60Hf.png',
+      'isSeller': false,
     };
     // return users
     //     .add(newUser)

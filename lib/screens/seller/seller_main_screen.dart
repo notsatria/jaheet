@@ -1,5 +1,6 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/seller/products/add_product_screen.dart';
 import 'package:jahitin/screens/seller/profile/seller_profile_screen.dart';
 
 import '../../constant/theme.dart';
@@ -21,7 +22,9 @@ class SellerMainScreenState extends State<SellerMainScreen> {
   Widget addProductButton() {
     return FloatingActionButton(
       backgroundColor: secondaryColor,
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pushNamed(context, AddProductScreen.routeName);
+      },
       child: Icon(
         Icons.add,
         color: backgroundColor1,
@@ -51,6 +54,7 @@ class SellerMainScreenState extends State<SellerMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       extendBody: true,
       floatingActionButton: addProductButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

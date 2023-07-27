@@ -6,9 +6,9 @@ import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/splash_screen.dart';
+import 'package:jahitin/screens/seller/products/add_product_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
-import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -75,6 +75,7 @@ class MyApp extends StatelessWidget {
         SellerMainScreen.routeName: (context) => const SellerMainScreen(),
         RegistrationFormScreen.routeName: (context) =>
             const RegistrationFormScreen(),
+        AddProductScreen.routeName: (context) => const AddProductScreen(),
       },
     );
   }
