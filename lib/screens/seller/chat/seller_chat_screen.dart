@@ -120,7 +120,7 @@ class SellerChatScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Saya ingin memesan jasa jahit Anda',
+                      '...',
                       style: subtitleTextStyle.copyWith(
                         fontSize: 14,
                         overflow: TextOverflow.ellipsis,
@@ -131,7 +131,7 @@ class SellerChatScreen extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'Hari ini',
+                'Online',
                 style: subtitleTextStyle.copyWith(
                   fontSize: 12,
                 ),
