@@ -8,15 +8,15 @@ import '../../services/chat_services.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   static const routeName = '/chat-room-screen';
-  final String receiveUserName;
-  final String receiveProfileImage;
-  final String receiveUserID;
+  final String receiverUserName;
+  final String receiverProfileImage;
+  final String receiverUserID;
 
   const ChatRoomScreen({
     Key? key,
-    required this.receiveUserName,
-    required this.receiveUserID,
-    required this.receiveProfileImage,
+    required this.receiverUserName,
+    required this.receiverUserID,
+    required this.receiverProfileImage,
   }) : super(key: key);
 
   @override
@@ -37,7 +37,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       await _chatService.sendMessage(
-        widget.receiveUserID,
+        widget.receiverUserID,
         _messageController.text,
       );
 
@@ -54,7 +54,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             radius: 18.0,
             child: ClipOval(
               child: Image.network(
-                widget.receiveProfileImage,
+                widget.receiverProfileImage,
                 fit: BoxFit.cover,
                 width: 36.0,
                 height: 36.0,
@@ -68,7 +68,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.receiveUserName,
+                widget.receiverUserName,
                 style: TextStyle(
                   color: primaryTextColor,
                   fontWeight: semiBold,
@@ -238,7 +238,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   Widget buildMessageList() {
     return StreamBuilder(
       stream: _chatService.getMessages(
-          widget.receiveUserID, _firebaseAuth.currentUser!.uid),
+          widget.receiverUserID, _firebaseAuth.currentUser!.uid),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error $snapshot.error.toString()',

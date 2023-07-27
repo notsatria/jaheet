@@ -26,10 +26,47 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  final CollectionReference seller =
+      FirebaseFirestore.instance.collection('seller');
+  final CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
+
+  String currentSellerId = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkUserIsSeller();
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
     super.dispose();
+  }
+
+  void checkUserIsSeller() async {
+    final currentUser = _firebaseAuth.currentUser;
+    if (currentUser != null) {
+      final userDoc = await users.doc(currentUser.uid).get();
+      final sellerId = userDoc['sellerId'];
+
+      if (sellerId != null) {
+        final sellerSnapshot = await seller.doc('$sellerId').get();
+        if (sellerSnapshot.exists) {
+          // The user is a seller, you can handle this case here
+          currentSellerId = sellerId;
+          print('User is a seller');
+        } else {
+          // The user is not a seller, you can handle this case here
+          print('User is not a seller');
+        }
+      } else {
+        // The user does not have a sellerId, so they are not a seller
+        print('User is not a seller');
+      }
+    }
   }
 
   void sendMessage() async {
@@ -236,7 +273,9 @@ class _SellerChatRoomScreenState extends State<SellerChatRoomScreen> {
   Widget buildMessageList() {
     return StreamBuilder(
       stream: _chatService.getMessages(
-        _firebaseAuth.currentUser!.uid,
+        // TODO: Kesalahan mengambil seller ID
+        currentSellerId,
+        // TODO: Ini seharusnya adlaah user ID
         widget.receiverID,
       ),
       builder: (context, snapshot) {

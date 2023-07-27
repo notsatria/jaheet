@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:jahitin/screens/home/chatroom_screen.dart';
-import 'package:jahitin/screens/home/main_screen.dart';
 
 import '../../constant/theme.dart';
+import 'chatroom_screen.dart';
+import 'main_screen.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -83,9 +83,9 @@ class ChatScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => ChatRoomScreen(
-                receiveUserName: name,
-                receiveUserID: id,
-                receiveProfileImage: profileImage,
+                receiverUserName: name,
+                receiverUserID: id,
+                receiverProfileImage: profileImage,
               ),
             ),
           );
