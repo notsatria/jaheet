@@ -517,7 +517,9 @@ class _DetailScreenState extends State<DetailScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             InkWell(
-              onTap: () {},
+              onTap: () {
+                //
+              },
               child: Container(
                 width: 50,
                 height: 55,
