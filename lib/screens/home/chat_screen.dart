@@ -96,10 +96,13 @@ class ChatScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 25.0,
-                child: ClipOval(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
                   child: Image.network(
                     profileImage ?? 'https://i.stack.imgur.com/l60Hf.png',
                     fit: BoxFit.cover,
+                    width: 50.0,
+                    height: 50.0,
                   ),
                 ),
               ),
