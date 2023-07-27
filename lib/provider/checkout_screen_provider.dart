@@ -16,6 +16,10 @@ class CheckoutScreenProvider extends ChangeNotifier {
 
   String _delivery = '';
 
+  String _date = '';
+
+  int _sellerId = 0;
+
   final Map<String, dynamic> _detailJasa = {
     'kategori': '',
     'jenis': '',
@@ -58,6 +62,16 @@ class CheckoutScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setOrderdate(String date) {
+    _date = date;
+    notifyListeners();
+  }
+
+  void setSellerId(int sellerId) {
+    _sellerId = sellerId;
+    notifyListeners();
+  }
+
   String get getKategori => _kategori;
   String get getJenis => _jenis;
   String get getJasa => _jasa;
@@ -69,6 +83,10 @@ class CheckoutScreenProvider extends ChangeNotifier {
 
   String get getAlamat => _alamat;
 
+  String get getOrderDate => _date;
+
+  int get getSellerId => _sellerId;
+
   Map<String, dynamic> get detailJasa => _detailJasa;
 
   void setDetailJasa(String kategori, String jenis, String jasa, String size) {
@@ -77,6 +95,10 @@ class CheckoutScreenProvider extends ChangeNotifier {
     _detailJasa['jasa'] = jasa;
     _detailJasa['size'] = size;
     notifyListeners();
+  }
+
+  String generateOrderId() {
+    return '$_sellerId-$_date';
   }
 
   Future<void> sendCheckoutData() async {
@@ -89,6 +111,9 @@ class CheckoutScreenProvider extends ChangeNotifier {
       'alamat': _alamat,
       'deskripsi': _deskripsi,
       'delivery': _delivery,
+      'order-date': _date,
+      'sellerid': _sellerId,
+      'orderid': generateOrderId(),
     });
   }
 }

@@ -7,8 +7,8 @@ import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/transaction/delivery_screen.dart';
 import 'package:provider/provider.dart';
 import '../../constant/theme.dart';
-import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 import '../../provider/checkout_screen_provider.dart';
+import '../../provider/detail_screen_provider.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -377,12 +377,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     }
 
-    Widget detailPesanan(String namaToko) {
+    Widget detailPesanan(String sellerName) {
+      String date = checkoutProvider.getOrderDate;
+      int sellerId = checkoutProvider.getSellerId;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            namaToko,
+            sellerName,
             style: primaryTextStyle.copyWith(
               fontSize: 14,
               fontWeight: semiBold,
@@ -396,6 +398,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             jasa: checkoutProvider.getJasa,
             size: checkoutProvider.getSize,
           ),
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+              '$sellerId-$date',
+              style: subtitleTextStyle.copyWith(fontSize: 8),
+            ),
+          )
         ],
       );
     }
@@ -529,7 +539,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const SizedBox(height: 12),
               customContainer(
                 judul: 'Pemesanan dari Toko',
-                child: detailPesanan('JasaFfinallJahit Bu Rusmiati'),
+                child: Consumer<DetailScreenProvider>(
+                    builder: (context, detailScreenProvider, _) {
+                  final detaildata = detailScreenProvider.detailScreenData;
+                  final sellerName = detaildata?['name'];
+                  return detailPesanan(sellerName);
+                }),
               ),
               const SizedBox(height: 12),
               const Divider(

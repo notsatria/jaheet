@@ -4,6 +4,7 @@ import 'package:jahitin/screens/transaction/checkout_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
+import '../../provider/detail_screen_provider.dart';
 
 class ServiceScreen extends StatefulWidget {
   static const routeName = '/service-screen';
@@ -74,6 +75,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
   var firstItem;
   String firstjasa = jasaValue.first;
   String firstSize = sizeValue.first;
+
   @override
   void dispose() {
     super.dispose();
@@ -93,6 +95,22 @@ class _ServiceScreenState extends State<ServiceScreen> {
       context,
       listen: false,
     );
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    int id = args['id'];
+
+    int sellerId = context.read<DetailScreenProvider>().detailScreenData?['id'];
+
+    String formatTwoDigits(int number) {
+      return number.toString().padLeft(2, '0');
+    }
+
+    String generateDate() {
+      DateTime now = DateTime.now();
+      String timestamp =
+          "${now.year}${formatTwoDigits(now.month)}${formatTwoDigits(now.day)}"
+          "${formatTwoDigits(now.hour)}${formatTwoDigits(now.minute)}${formatTwoDigits(now.second)}";
+      return timestamp;
+    }
 
     Widget customContainer({
       required String judul,
@@ -307,13 +325,19 @@ class _ServiceScreenState extends State<ServiceScreen> {
     Widget bottomButton() {
       return InkWell(
         onTap: () {
-          Navigator.pushReplacementNamed(context, CheckoutScreen.routeName);
+          Navigator.pushReplacementNamed(
+            context,
+            CheckoutScreen.routeName,
+            arguments: id,
+          );
           checkoutProvider.setDetailJasa(
             checkoutProvider.getKategori,
             checkoutProvider.getJenis,
             checkoutProvider.getJasa,
             checkoutProvider.getSize,
           );
+          checkoutProvider.setOrderdate(generateDate());
+          checkoutProvider.setSellerId(sellerId);
         },
         child: Container(
             height: 50,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
@@ -30,9 +32,14 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     int id = args['id'];
-    double fullWidth = MediaQuery.of(context).size.width;
 
-    Widget imageHeader() {
+    void _navigateToCheckout(BuildContext, int id) async {
+      await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
+      Navigator.pushNamed(context, ServiceScreen.routeName,
+          arguments: {'id': id});
+    }
+
+    Widget imageHeader(String profileImage) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           double width = constraints.maxWidth;
@@ -41,8 +48,8 @@ class _DetailScreenState extends State<DetailScreen> {
           return SizedBox(
             width: width,
             height: height,
-            child: Image.asset(
-              'assets/images/dummy_tailor_bg.png',
+            child: Image.network(
+              profileImage,
               fit: BoxFit.cover,
             ),
           );
@@ -277,7 +284,7 @@ class _DetailScreenState extends State<DetailScreen> {
             color: primaryColor,
             borderRadius: BorderRadius.circular(14),
           ),
-          width: fullWidth,
+          width: double.maxFinite,
           height: 74,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -505,14 +512,14 @@ class _DetailScreenState extends State<DetailScreen> {
     Widget bottomNavbar() {
       return Container(
         margin: EdgeInsets.all(defaultMargin - 5),
-        width: fullWidth,
         height: 45,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
+            InkWell(
+              onTap: () {},
               child: Container(
-                width: 55,
+                width: 50,
                 height: 55,
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -530,24 +537,27 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, ServiceScreen.routeName);
-              },
-              child: Container(
-                width: fullWidth - 100,
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                    child: Text(
-                  'Pesan Jasa',
-                  style: whiteTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: semiBold,
+            const SizedBox(width: 16),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  _navigateToCheckout(context, id);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                )),
+                  child: Center(
+                    child: Text(
+                      'Pesan Jasa',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             )
           ],
@@ -568,38 +578,12 @@ class _DetailScreenState extends State<DetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  imageHeader(),
-                  // FutureBuilder(
-                  //   future: FirebaseFirestore.instance
-                  //       .collection('seller')
-                  //       .where('id', isEqualTo: id)
-                  //       .get(),
-                  //   builder: (context, snapshot) {
-                  //     if (snapshot.connectionState == ConnectionState.waiting) {
-                  //       return const CircularProgressIndicator();
-                  //     }
-                  //     if (snapshot.hasError) {
-                  //       return Text('Error: ${snapshot.error}');
-                  //     }
-                  //     if (snapshot.hasData) {
-                  //       final sellers = snapshot.data!.docs;
-                  //       if (sellers.isNotEmpty) {
-                  //         final sellerData = sellers.first.data();
-                  //         final sellerName = sellerData['name'];
-                  //         final long = sellerData['location'].longitude;
-                  //         final lat = sellerData['location'].latitude;
-                  //         final kota = sellerData['kota'];
-                  //         final provinsi = sellerData['provinsi'];
-                  //         return titlePenjahit(
-                  //             sellerName, lat, long, kota, provinsi);
-                  //       } else {
-                  //         return const CircularProgressIndicator();
-                  //       }
-                  //     }
-
-                  //     return const SizedBox();
-                  //   },
-                  // ),
+                  Consumer<DetailScreenProvider>(
+                      builder: (context, detailScreenProvider, _) {
+                    final detaildata = detailScreenProvider.detailScreenData;
+                    final profileImage = detaildata?['profileImage'];
+                    return imageHeader(profileImage);
+                  }),
                   Consumer<DetailScreenProvider>(
                     builder: (context, detailScreenProvider, _) {
                       final detaildata = detailScreenProvider.detailScreenData;
@@ -608,12 +592,12 @@ class _DetailScreenState extends State<DetailScreen> {
                       final lat = detaildata?['location'].latitude;
                       final kota = detaildata?['kota'];
                       final provinsi = detaildata?['provinsi'];
+                      // final sellerId = detaildata?['id'];
 
                       return titlePenjahit(
                           sellerName, lat, long, kota, provinsi);
                     },
                   ),
-
                   const Divider(thickness: 4),
                   customContainer(
                     judul: "Deskripsi",
