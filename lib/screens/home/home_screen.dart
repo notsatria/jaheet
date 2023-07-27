@@ -83,6 +83,85 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+    Widget locationCard(
+      String type,
+    ) {
+      return Container(
+        padding: const EdgeInsets.all(10),
+        margin: const EdgeInsets.only(right: 10),
+        decoration: BoxDecoration(
+          border: Border.all(width: 1.5, color: primaryColor),
+          borderRadius: BorderRadius.circular(10),
+          color: primaryColor.withOpacity(0.1),
+        ),
+        child: SizedBox(
+          width: 150,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Kos',
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Text(
+                      "Terpilih",
+                      style: primaryTextStyle.copyWith(
+                          color: backgroundColor1, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ],
+              ),
+              Text(
+                'Rafi Adi Pramana',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                '681229736552',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                'Kost Bu Wiwik (Kota Semarang)',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                'Semarang, Indonesia',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     Widget sendLocation(String? location) {
       return Container(
         margin: const EdgeInsets.only(left: 15, right: 15),
@@ -104,34 +183,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           context: context,
                           builder: (BuildContext context) {
                             return Container(
-                              padding: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.only(left: 20, top: 20),
                               height: MediaQuery.of(context).size.height * 0.30,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text("Mau kirim produk ke mana?",
                                       style: primaryTextStyle.copyWith(
-                                          fontSize: 16,
+                                          fontSize: 18,
                                           fontWeight: FontWeight.bold)),
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          height: 150,
-                                          width: 160,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  width: 1.5,
-                                                  color: primaryColor),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: primaryColor
-                                                  .withOpacity(0.1)),
-                                        )
-                                      ],
+                                    child: Container(
+                                      margin: const EdgeInsets.only(top: 20),
+                                      child: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [],
+                                      ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             );

@@ -1,7 +1,5 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:jahitin/provider/location_provider.dart';
 import 'package:jahitin/screens/home/location_recommendation.dart';
 import 'package:provider/provider.dart';
@@ -32,8 +30,6 @@ class _MainScreenState extends State<MainScreen> {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
-    print(position.longitude);
-    print(position.latitude);
 
     context.read<LocationProvider>().setLat(position.latitude);
     context.read<LocationProvider>().setLong(position.longitude);

@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
+import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
@@ -35,15 +36,12 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => LocationProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => GoogleSignInProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
+        ChangeNotifierProvider(create: (_) => GoogleSignInProvider()),
         ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
         ChangeNotifierProvider(create: (_) => DetailScreenProvider()),
-        ChangeNotifierProvider(create: (_) => SearchScreenProvider())
+        ChangeNotifierProvider(create: (_) => SearchScreenProvider()),
+        ChangeNotifierProvider(create: (_) => SendLocationProvider())
       ],
       child: const MyApp(),
     ),
