@@ -9,6 +9,8 @@ import 'package:jahitin/provider/search_screen_provider.dart';
 import 'package:jahitin/screens/home/address_screen.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/splash_screen.dart';
+import 'package:jahitin/screens/seller/order/seller_order_detail_screen.dart';
+import 'package:jahitin/screens/seller/products/add_product_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
 import 'package:jahitin/screens/transaction/checkout_screen.dart';
@@ -85,6 +87,9 @@ class MyApp extends StatelessWidget {
         SellerMainScreen.routeName: (context) => const SellerMainScreen(),
         RegistrationFormScreen.routeName: (context) =>
             const RegistrationFormScreen(),
+        AddProductScreen.routeName: (context) => const AddProductScreen(),
+        SellerOrderDetailScreen.routeName: (context) =>
+            const SellerOrderDetailScreen(),
       },
     );
   }

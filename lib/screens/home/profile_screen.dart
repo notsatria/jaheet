@@ -96,8 +96,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               final provider =
                   Provider.of<GoogleSignInProvider>(context, listen: false);
-              provider.googleLogout();
-              Navigator.pushReplacementNamed(context, SignInScreen.routeName);
+
+              try {
+                // about dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'Logout',
+                      style: primaryTextStyle.copyWith(
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                    content: Text(
+                      'Apakah anda yakin ingin logout?',
+                      style: subtitleTextStyle.copyWith(
+                        fontWeight: medium,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          'Batal',
+                          style: primaryTextStyle.copyWith(
+                            fontWeight: medium,
+                            color: alertColor,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          provider.googleLogout();
+                          Navigator.pushReplacementNamed(
+                              context, SignInScreen.routeName);
+                        },
+                        child: Text(
+                          'Logout',
+                          style: primaryTextStyle.copyWith(
+                            fontWeight: medium,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } catch (e) {
+                // scaffold messanger
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: alertColor,
+                    content: Text(
+                      'Logout gagal ($e.toString())',
+                      style: whiteTextStyle.copyWith(
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ),
+                );
+              }
             },
           ),
         ),
@@ -149,31 +209,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 });
                 if (isSeller == true) {
                   Navigator.pushNamed(context, SellerMainScreen.routeName);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: primaryColor,
-                      content: Text(
-                        'Selamat Datang Penjahit',
-                        style: whiteTextStyle.copyWith(
-                          fontWeight: semiBold,
-                        ),
-                      ),
-                    ),
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Selamat Datang'),
+                        content:
+                            const Text('Anda telah masuk sebagai penjahit'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'))
+                        ],
+                      );
+                    },
                   );
                 } else {
                   Navigator.pushNamed(
                       context, RegistrationFormScreen.routeName);
                   // scaffold messanger
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: alertColor,
-                      content: Text(
-                        'Anda belum terdaftar sebagai penjahit',
-                        style: whiteTextStyle.copyWith(
-                          fontWeight: semiBold,
-                        ),
-                      ),
-                    ),
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Seller Registration'),
+                        content: const Text(
+                            'Anda belum terdaftar sebagai penjahit, silahkan registrasi terlebih dahulu'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'))
+                        ],
+                      );
+                    },
                   );
                 }
               },

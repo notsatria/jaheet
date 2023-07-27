@@ -71,10 +71,11 @@ class SellerChatScreen extends StatelessWidget {
       );
     }
 
-    Widget chatBar(
-        {required String profileImage,
-        required String name,
-        required String id,}) {
+    Widget chatBar({
+      required String profileImage,
+      required String name,
+      required String id,
+    }) {
       return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -94,10 +95,13 @@ class SellerChatScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 25.0,
-                child: ClipOval(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
                   child: Image.network(
                     profileImage ?? 'https://i.stack.imgur.com/l60Hf.png',
                     fit: BoxFit.cover,
+                    width: 50,
+                    height: 50,
                   ),
                 ),
               ),
@@ -116,7 +120,7 @@ class SellerChatScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Saya ingin memesan jasa jahit Anda',
+                      '...',
                       style: subtitleTextStyle.copyWith(
                         fontSize: 14,
                         overflow: TextOverflow.ellipsis,
@@ -127,7 +131,7 @@ class SellerChatScreen extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'Hari ini',
+                'Online',
                 style: subtitleTextStyle.copyWith(
                   fontSize: 12,
                 ),
