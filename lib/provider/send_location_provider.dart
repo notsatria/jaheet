@@ -6,34 +6,76 @@ class SendLocationProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _sendLocation = [];
   List<Map<String, dynamic>> get sendLocation => _sendLocation;
 
+  String _selectedLocation = '';
+  String get selectedLocation => _selectedLocation;
+
   String _userUid = '';
   String get userUid => _userUid;
 
   Future<void> fetchSendLocation() async {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(_userUid)
-        .collection('sendLocation')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      if (querySnapshot.size > 0) {
-        _sendLocation.clear();
-        querySnapshot.docs.forEach((DocumentSnapshot document) {
-          _sendLocation.add(document.data() as Map<String, dynamic>);
-        });
+    await getLoggedInUID();
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userUid)
+          .collection('sendLocation')
+          .get();
 
-        notifyListeners();
+      if (snapshot.docs.isNotEmpty) {
+        _sendLocation = snapshot.docs.map((doc) => doc.data()).toList();
+
+        int selectedLocationIndex = _sendLocation.indexWhere(
+          (locationData) => locationData["isSelected"] == true,
+        );
+
+        if (selectedLocationIndex >= 0) {
+          Map<String, dynamic> selectedLocation =
+              _sendLocation[selectedLocationIndex];
+          _sendLocation.removeAt(selectedLocationIndex);
+          _sendLocation.insert(0, selectedLocation);
+
+          _selectedLocation = selectedLocation["receiverName"];
+          notifyListeners();
+        } else {
+          _selectedLocation = '';
+        }
       } else {
-        print('No data found in Firestore.');
+        _sendLocation = [];
+        _selectedLocation = '';
       }
-    }).catchError((error) {
-      print('Error getting data from Firestore: $error');
-    });
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
   }
 
-  void getLoggedInUID() {
+  Future<void> setSelectedLocation(
+      Map<String, dynamic> selectedLocation) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userUid)
+          .collection('sendLocation')
+          .get()
+          .then((snapshot) {
+        snapshot.docs.forEach((doc) async {
+          if (doc.data()["receiverName"] == selectedLocation["receiverName"]) {
+            await doc.reference.update({"isSelected": true});
+          } else {
+            await doc.reference.update({"isSelected": false});
+          }
+        });
+      });
+
+      _selectedLocation = selectedLocation["receiverName"];
+      await fetchSendLocation();
+      notifyListeners();
+    } catch (error) {
+      print('Error updating selected location: $error');
+    }
+  }
+
+  Future<void> getLoggedInUID() async {
     User user = FirebaseAuth.instance.currentUser!;
     _userUid = user.uid;
-    notifyListeners();
   }
 }

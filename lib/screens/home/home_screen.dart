@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/location_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
+import 'package:jahitin/provider/send_location_provider.dart';
+import 'package:jahitin/screens/home/add_location.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:jahitin/screens/home/search_screen.dart';
 import 'package:jahitin/services/haversine.dart';
@@ -23,6 +25,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<SendLocationProvider>().fetchSendLocation();
+  }
+
+  @override
+  void deactivate() {
+    context.read<SendLocationProvider>().fetchSendLocation();
+    super.deactivate();
   }
 
   Future<void> _refreshData() async {
@@ -84,79 +93,114 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     Widget locationCard(
-      String type,
-    ) {
-      return Container(
-        padding: const EdgeInsets.all(10),
-        margin: const EdgeInsets.only(right: 10),
-        decoration: BoxDecoration(
-          border: Border.all(width: 1.5, color: primaryColor),
-          borderRadius: BorderRadius.circular(10),
-          color: primaryColor.withOpacity(0.1),
-        ),
-        child: SizedBox(
-          width: 150,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Kos',
-                    style: primaryTextStyle.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+        String type,
+        bool isSelected,
+        String name,
+        String phoneNumber,
+        String additionalDetail,
+        String city,
+        String province) {
+      return InkWell(
+        onTap: () {
+          Map<String, dynamic> selectedLocation = {
+            "type": type,
+            "isSelected": true,
+            "receiverName": name,
+            "phone": phoneNumber,
+            "additionalDetail": additionalDetail,
+            "city": city,
+            "province": province,
+          };
+          context
+              .read<SendLocationProvider>()
+              .setSelectedLocation(selectedLocation);
+        },
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.only(right: 10),
+          decoration: isSelected
+              ? BoxDecoration(
+                  border: Border.all(width: 1.5, color: secondaryColor),
+                  borderRadius: BorderRadius.circular(10),
+                  color: secondaryColor.withOpacity(0.1),
+                )
+              : BoxDecoration(
+                  border: Border.all(width: 1.0, color: subtitleTextColor),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+          child: SizedBox(
+            width: 150,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        child: Text(
+                          type,
+                          style: primaryTextStyle.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: primaryColor.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Text(
-                      "Terpilih",
-                      style: primaryTextStyle.copyWith(
-                          color: backgroundColor1, fontWeight: FontWeight.bold),
+                    const SizedBox(
+                      width: 10,
                     ),
-                  )
-                ],
-              ),
-              Text(
-                'Rafi Adi Pramana',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                    if (isSelected)
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: primaryTextColor.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Text(
+                          "Terpilih",
+                          style: primaryTextStyle.copyWith(
+                              color: primaryTextColor.withOpacity(0.9),
+                              fontWeight: FontWeight.bold),
+                        ),
+                      )
+                  ],
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                '681229736552',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
+                Text(
+                  name,
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                'Kost Bu Wiwik (Kota Semarang)',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
+                Text(
+                  phoneNumber,
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                'Semarang, Indonesia',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
+                Text(
+                  additionalDetail,
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                Text(
+                  '$city, $province',
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -182,29 +226,88 @@ class _HomeScreenState extends State<HomeScreen> {
                                   top: Radius.circular(10))),
                           context: context,
                           builder: (BuildContext context) {
-                            return Container(
-                              padding: const EdgeInsets.only(left: 20, top: 20),
-                              height: MediaQuery.of(context).size.height * 0.30,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Mau kirim produk ke mana?",
-                                      style: primaryTextStyle.copyWith(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold)),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Container(
-                                      margin: const EdgeInsets.only(top: 20),
-                                      child: const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [],
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Mau kirim produk ke mana?",
+                                          style: primaryTextStyle.copyWith(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold)),
+                                      Material(
+                                        type: MaterialType.transparency,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          icon: const Icon(Icons.close),
+                                          iconSize: 24,
+                                          padding: EdgeInsets.zero,
+                                          splashRadius: 20,
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Consumer<SendLocationProvider>(
+                                    builder: (context, sendLocation, _) {
+                                      final sendDataLocations =
+                                          sendLocation.sendLocation;
+                                      return SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            for (final sendDataLocation
+                                                in sendDataLocations)
+                                              locationCard(
+                                                sendDataLocation["type"],
+                                                sendDataLocation["isSelected"],
+                                                sendDataLocation[
+                                                    "receiverName"],
+                                                sendDataLocation["phone"],
+                                                sendDataLocation[
+                                                    "additionalDetail"],
+                                                sendDataLocation["city"],
+                                                sendDataLocation["province"],
+                                              )
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, AddLocationScreen.routeName);
+                                  },
+                                  child: Container(
+                                      margin: const EdgeInsets.all(10),
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Tambah Alamat',
+                                          style: whiteTextStyle.copyWith(
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      )),
+                                )
+                              ],
                             );
                           },
                         );
@@ -321,7 +424,8 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(8)),
                   child: SizedBox(
                     width: 100,
                     height: 75,
@@ -418,20 +522,20 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     Widget skeletonCategoryLoading() {
-      return SkeletonAvatar(
+      return const SkeletonAvatar(
         style: SkeletonAvatarStyle(
             height: 100,
             width: 100,
-            padding: const EdgeInsets.only(right: 10, top: 10)),
+            padding: EdgeInsets.only(right: 10, top: 10)),
       );
     }
 
     Widget skeletonSellerLoading() {
-      return SkeletonAvatar(
+      return const SkeletonAvatar(
         style: SkeletonAvatarStyle(
             height: 140,
             width: 120,
-            padding: const EdgeInsets.only(right: 10, top: 10)),
+            padding: EdgeInsets.only(right: 10, top: 10)),
       );
     }
 
@@ -608,7 +712,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Column(
-              children: [searchBar(), sendLocation('Kos Bu Wiwik')],
+              children: [
+                searchBar(),
+                sendLocation(
+                    context.watch<SendLocationProvider>().selectedLocation)
+              ],
             ),
             Container(
               width: double.infinity,

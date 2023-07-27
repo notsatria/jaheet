@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jahitin/provider/location_provider.dart';
+import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/location_recommendation.dart';
 import 'package:provider/provider.dart';
 
@@ -26,38 +27,41 @@ class _MainScreenState extends State<MainScreen> {
   late double longitude;
   late double latitude;
 
-  Future<void> getLocation() async {
+  Future<void> getLocation(LocationProvider locationProvider,
+      HomeScreenProvider homeScreenProvider) async {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
 
-    context.read<LocationProvider>().setLat(position.latitude);
-    context.read<LocationProvider>().setLong(position.longitude);
-
-    context.read<HomeScreenProvider>().updateLocation(
-          position.latitude,
-          position.longitude,
-        );
+    locationProvider.setLat(position.latitude);
+    locationProvider.setLong(position.longitude);
+    homeScreenProvider.updateLocation(
+      position.latitude,
+      position.longitude,
+    );
 
     setState(() {
       longitude = position.longitude;
       latitude = position.latitude;
     });
 
-    context.read<HomeScreenProvider>().fetchCategories();
-    context.read<HomeScreenProvider>().fetchNearestSellers();
-    context.read<HomeScreenProvider>().fetchRecommendedSellers();
+    homeScreenProvider.fetchCategories();
+    homeScreenProvider.fetchNearestSellers();
+    homeScreenProvider.fetchRecommendedSellers();
   }
 
   @override
   void initState() {
     super.initState();
-    getLocation();
+    getLocation(
+        context.read<LocationProvider>(), context.read<HomeScreenProvider>());
+    context.read<SendLocationProvider>().fetchSendLocation();
   }
 
   @override
   void dispose() {
-    getLocation();
+    getLocation(
+        context.read<LocationProvider>(), context.read<HomeScreenProvider>());
     super.dispose();
   }
 
