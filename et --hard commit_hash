@@ -1,0 +1,263 @@
+[33mcommit 15e46c60484cda05abcbab3a5e853fa16415ae6e[m[33m ([m[1;36mHEAD -> [m[1;32mchat_screen[m[33m, [m[1;31morigin/chat_screen[m[33m)[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Thu Jul 27 16:59:34 2023 +0700
+
+    Changes profile image
+
+[33mcommit 589e0cb8252b81c60bdbbe39c071820fbe119f4f[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Thu Jul 27 14:20:10 2023 +0700
+
+    Chat service: done (Need improvement)
+
+[33mcommit c3947b2c6abfea83d624975e035283c22dce43b5[m
+Merge: f5a1241 878854e
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Thu Jul 27 12:51:06 2023 +0700
+
+    Merge branch 'seller_main' of https://github.com/notsatria/jaheet into chat_screen
+
+[33mcommit f5a1241eca068c4b37063cd1e5eac182c09eda9c[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Thu Jul 27 12:50:39 2023 +0700
+
+    Fixing Chat Service
+
+[33mcommit 878854e7f51a25c1d678cc411b01780f8127d9c8[m[33m ([m[1;31morigin/seller_main[m[33m, [m[1;32mseller_main[m[33m)[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Wed Jul 26 21:14:16 2023 +0700
+
+    Added some widgets to seller order detail screen
+
+[33mcommit eaaadc45c9f23ef1f016f1377da267819cc7cae1[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Wed Jul 26 17:15:09 2023 +0700
+
+    Added seller detail order
+
+[33mcommit 33454bdccc6a529c36c54fc63f9d5dfb824555f0[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Wed Jul 26 17:14:27 2023 +0700
+
+    Added alert dialog
+
+[33mcommit 79807cdec2358bb60033588d8f46593c5e9d4afd[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Wed Jul 26 17:13:53 2023 +0700
+
+    Added new route
+
+[33mcommit 550147db6a4a568ed304259e5131b7160f44afcc[m[33m ([m[1;31morigin/dev[m[33m)[m
+Merge: 6b512d7 161f705
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Wed Jul 26 12:53:17 2023 +0700
+
+    Merge branch 'seller_main' of https://github.com/notsatria/jaheet into dev
+
+[33mcommit 161f70590095aa9f202a5d9097417316aa7aa133[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Wed Jul 26 12:40:57 2023 +0700
+
+    Added add product form screen
+
+[33mcommit b6484539b8cab1f3e84134bce90fc13b4344df8a[m
+Merge: 296dbbd a5a5c3f
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 20:07:58 2023 +0700
+
+    Merge branch 'dev' of https://github.com/notsatria/jaheet into seller_main
+
+[33mcommit a5a5c3f16f05c7a4359cf779949dc5d04f0fb825[m
+Merge: 040aea4 691b057
+Author: rafiadipramana <rafiadipramana@gmail.com>
+Date:   Tue Jul 25 20:06:30 2023 +0700
+
+    Merge branch 'dev' of https://github.com/notsatria/jaheet into dev
+
+[33mcommit 040aea491678d8eb3c8176882091653b738e79e3[m
+Author: rafiadipramana <rafiadipramana@gmail.com>
+Date:   Tue Jul 25 20:05:47 2023 +0700
+
+    Fixing unloaded state
+
+[33mcommit 6b512d78ac197971d502dc46f878824382a679a2[m[33m ([m[1;31morigin/profile_screen[m[33m, [m[1;32mprofile_screen[m[33m)[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 19:49:47 2023 +0700
+
+    Added show dialog before logout
+
+[33mcommit cd8ec2440894119dacf4dc3e25cb7ba019c33190[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 19:42:02 2023 +0700
+
+    Added isSeller field
+
+[33mcommit 296dbbd45a7d8840c1226c82e20ab4ff24a166e5[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 19:01:53 2023 +0700
+
+    Need to fix: chat functionalities
+
+[33mcommit 989e87ce8df3d53d01359a976b03102997a83f7d[m
+Merge: 4ce2477 691b057
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 13:47:25 2023 +0700
+
+    Merge branch 'dev' of https://github.com/notsatria/jaheet into seller_main
+
+[33mcommit 4ce2477d6295739fde86ee0616494099b62dfb41[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 13:47:09 2023 +0700
+
+    Changing some feature
+
+[33mcommit 691b0577393a2129c0fcf26d1f27bc107c3c9ef6[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 13:36:20 2023 +0700
+
+    Change route
+
+[33mcommit 93ea8a3f8a710c455853758bdbea7062e2d9f0c4[m
+Merge: 226e8fa 3b4dd1e
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 13:31:59 2023 +0700
+
+    Merge conflict
+
+[33mcommit 226e8fa30e9ef488ad312e907e38057e707248a5[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 13:29:06 2023 +0700
+
+    Commit
+
+[33mcommit 299dfa921324233b2fa179e49bd85ee4d3a094f6[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 13:26:08 2023 +0700
+
+    Git ADded Chatting feature from Seller
+
+[33mcommit 3b4dd1e61e3d97d07e111a6e4a2abd959a06087a[m
+Merge: 4e278c0 5a22391
+Author: haidarfathin <haidarhaidara9@gmail.com>
+Date:   Tue Jul 25 13:21:19 2023 +0700
+
+    Merge branch 'dev' of https://github.com/notsatria/jaheet into dev
+
+[33mcommit 4e278c0fa9bbe94fdc8a120c5364bdb2d90b0872[m
+Author: haidarfathin <haidarhaidara9@gmail.com>
+Date:   Tue Jul 25 13:20:56 2023 +0700
+
+    feat<checkout_creen>:adding pengiriman
+
+[33mcommit 6b9955c3b732a52786ca6197c02e4b6b8f1244c8[m
+Merge: 9b2f999 2aa8278
+Author: haidarfathin <haidarhaidara9@gmail.com>
+Date:   Tue Jul 25 13:18:33 2023 +0700
+
+    Merge branch 'checkout_screen--2' of https://github.com/notsatria/jaheet into dev
+
+[33mcommit 9b2f9990a29c39f52b0a9e6e2e745a1c4b4c17ed[m
+Author: haidarfathin <haidarhaidara9@gmail.com>
+Date:   Tue Jul 25 13:18:13 2023 +0700
+
+    fixing
+
+[33mcommit 5a223911278a9a1e0f054d053832b307a9f8ad05[m
+Merge: 4e79f4e 5cc7ebd
+Author: rafiadipramana <rafiadipramana@gmail.com>
+Date:   Tue Jul 25 12:20:28 2023 +0700
+
+    Merge branch 'home_screen' of https://github.com/notsatria/jaheet into dev
+
+[33mcommit 4e79f4edf67575acc222e2356a5cab1a397bb170[m
+Author: rafiadipramana <rafiadipramana@gmail.com>
+Date:   Tue Jul 25 12:20:06 2023 +0700
+
+    Resolve conflicting code
+
+[33mcommit bcdc2369ebf92475a8246c2df4acd2b19545390a[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 12:17:15 2023 +0700
+
+    Changed and Added seller screens
+
+[33mcommit caad4f9f6109a41ea4a50ed45e4c9ce6f46594db[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 12:16:31 2023 +0700
+
+    Added new route to Penjaheet scree
+
+[33mcommit c5c9c7271f0228c75d274b871d199e019821cb0c[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 12:15:44 2023 +0700
+
+    Added new field 'isSeller'
+
+[33mcommit 1c4ef83102020529643b3110337f7bfa1aa4f20e[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Tue Jul 25 12:15:12 2023 +0700
+
+    Added route
+
+[33mcommit 2aa8278ee32da570681832b88ea602d68b7d2c8b[m
+Merge: 3c96c31 27d065c
+Author: haidarfathin <haidarhaidara9@gmail.com>
+Date:   Mon Jul 24 21:55:31 2023 +0700
+
+    updating chekcout screen"
+
+[33mcommit 5cc7ebd4b3f4aed5eae6fa1c2a87243481c792fd[m
+Author: rafiadipramana <rafiadipramana@gmail.com>
+Date:   Mon Jul 24 21:54:50 2023 +0700
+
+    Added caching to detail screen
+
+[33mcommit b618ebf1731f7e33ba0cefeedf5fb9f9e5ca125a[m
+Merge: 3e77127 d8643a3
+Author: rafiadipramana <rafiadipramana@gmail.com>
+Date:   Mon Jul 24 14:57:42 2023 +0700
+
+    Merge branch 'seller_main' of https://github.com/notsatria/jaheet into home_screen
+
+[33mcommit 3e771274288ac267ff0ffa9b2f97d7774206f214[m
+Author: rafiadipramana <rafiadipramana@gmail.com>
+Date:   Mon Jul 24 14:54:35 2023 +0700
+
+    Added state caching for home screen
+
+[33mcommit 99e2fd8945ed8c6b80bcf09266acacb1139346a4[m
+Author: rafiadipramana <rafiadipramana@gmail.com>
+Date:   Mon Jul 24 11:56:59 2023 +0700
+
+    Fetch image from Firestrore
+
+[33mcommit d8643a3683a42b560f1a3baa2eadf4c2194dc147[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Sun Jul 23 21:21:35 2023 +0700
+
+    Finishing Registration Form
+
+[33mcommit e5c38a64ea4a60b9297eb83ef30d52ca34e1b216[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Sun Jul 23 15:46:48 2023 +0700
+
+    Added seller screen
+
+[33mcommit 2417196ba7447c31706454c98cefb81b2f02e47b[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Sun Jul 23 13:05:45 2023 +0700
+
+    Updated profile screen config
+
+[33mcommit 27d065c07b64a108285a7ebe21403097d7350ef7[m
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Sat Jul 22 15:31:56 2023 +0700
+
+    Commit
+
+[33mcommit e9a7d8e3206064022d0320596526c9c841469c88[m
+Merge: 1cf2a81 af594cb
+Author: notsatria <buanasatriaa@gmail.com>
+Date:   Sat Jul 22 15:30:32 2023 +0700
+
+    
