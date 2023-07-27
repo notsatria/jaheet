@@ -137,7 +137,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 title: Row(
                   children: [
                     Text(
-                      'Pesanan akan diantar ke rumah anda sesuai jam kerja',
+                      'Pesanan akan diantar ke rumah anda setelah selesai',
                       style: primaryTextStyle.copyWith(fontSize: 12),
                     ),
                     const Spacer(),

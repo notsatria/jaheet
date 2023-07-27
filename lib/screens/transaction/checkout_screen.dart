@@ -186,12 +186,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   color: secondaryColor,
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  'Metode pengiriman',
-                  style: primaryTextStyle.copyWith(
-                    fontWeight: semiBold,
-                    fontSize: 14,
-                  ),
+                RichText(
+                  text: TextSpan(
+                      text: 'Metode pengiriman',
+                      style: primaryTextStyle.copyWith(
+                        fontWeight: semiBold,
+                        fontSize: 14,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: '*',
+                          style: TextStyle(
+                            color: Colors.red.shade700,
+                          ),
+                        ),
+                      ]),
                 ),
                 const Spacer(),
                 Text(
@@ -552,7 +561,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               const SizedBox(height: 12),
               customContainer(
-                judul: 'Deskripsikan Pesanan (optional)',
+                judul: 'Deskripsi Pesanan (optional)',
                 child: deskripsiPesanan(),
               ),
               const SizedBox(height: 12),

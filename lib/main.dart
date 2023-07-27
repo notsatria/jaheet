@@ -1,10 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:jahitin/provider/address_screen_provider.dart';
 import 'package:jahitin/provider/checkout_screen_provider.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
+import 'package:jahitin/screens/home/address_screen.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
@@ -45,6 +47,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => DetailScreenProvider()),
         ChangeNotifierProvider(create: (_) => SearchScreenProvider()),
         ChangeNotifierProvider(create: (_) => CheckoutScreenProvider()),
+        ChangeNotifierProvider(create: (_) => AddressScreenProvider()),
       ],
       child: const MyApp(),
     ),
