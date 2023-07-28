@@ -60,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     Widget locationButton() {
       return Container(
-        margin: const EdgeInsets.all(15), // Jarak outline dari FAB
+        margin: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
@@ -119,10 +119,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               BottomNavigationBarItem(
                 icon: Container(
-                  margin: const EdgeInsets.only(
-                    top: 10,
-                    bottom: 10,
-                  ),
+                  margin: const EdgeInsets.symmetric(vertical: 10),
                   child: Icon(
                     currIndex == 1
                         ? Icons.library_books
