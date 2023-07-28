@@ -4,13 +4,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
-<<<<<<< HEAD
 import 'package:jahitin/screens/seller/order/seller_order_detail_screen.dart';
-=======
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/add_location.dart';
 import 'package:jahitin/screens/splash_screen.dart';
->>>>>>> 835e31e7ae8bde9688e9ca8591eaac8da798960c
 import 'package:jahitin/screens/seller/products/add_product_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
