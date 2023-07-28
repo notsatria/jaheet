@@ -22,6 +22,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   bool toggle = false;
   bool isExpanded = false;
+  late TabController _tabController;
 
   void toggleExpanded() {
     setState(() {
@@ -33,6 +34,17 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     int id = args['id'];
+    List<Tab> myTabs = <Tab>[
+      Tab(
+        child: Image.asset('/assets/icon/baju.png'),
+      ),
+      Tab(
+        child: Image.asset('/assets/icon/celana.png'),
+      ),
+      Tab(
+        child: Image.asset('/assets/icon/trus.png'),
+      ),
+    ];
 
     void _navigateToCheckout(BuildContext, int id) async {
       await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
@@ -310,30 +322,33 @@ class _DetailScreenState extends State<DetailScreen> {
     }
 
     Widget categoryPenjahit() {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          featuredServices(
-            'ATASAN',
-            120,
-            'assets/icon/shirt.png',
-          ),
-          featuredServices(
-            'BAWAHAN',
-            67,
-            'assets/icon/jeans.png',
-          ),
-          featuredServices(
-            'TERUSAN',
-            12,
-            'assets/icon/dress.png',
-          ),
-          featuredServices(
-            'PERBAIKAN',
-            6,
-            'assets/icon/sewing.png',
-          ),
-        ],
+      return Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            featuredServices(
+              'ATASAN',
+              120,
+              'assets/icon/shirt.png',
+            ),
+            featuredServices(
+              'BAWAHAN',
+              67,
+              'assets/icon/jeans.png',
+            ),
+            featuredServices(
+              'TERUSAN',
+              12,
+              'assets/icon/dress.png',
+            ),
+            featuredServices(
+              'PERBAIKAN',
+              6,
+              'assets/icon/sewing.png',
+            ),
+          ],
+        ),
       );
     }
 
@@ -552,6 +567,320 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
+    Widget penjahitScreen() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Consumer<DetailScreenProvider>(
+              builder: (context, detailScreenProvider, _) {
+            final detaildata = detailScreenProvider.detailScreenData;
+            final profileImage = detaildata?['profileImage'];
+            return imageHeader(profileImage);
+          }),
+          Consumer<DetailScreenProvider>(
+            builder: (context, detailScreenProvider, _) {
+              final detaildata = detailScreenProvider.detailScreenData;
+              final sellerName = detaildata?['name'];
+              final long = detaildata?['location'].longitude;
+              final lat = detaildata?['location'].latitude;
+              final kota = detaildata?['kota'];
+              final provinsi = detaildata?['provinsi'];
+
+              return titlePenjahit(sellerName, lat, long, kota, provinsi);
+            },
+          ),
+          const Divider(thickness: 4),
+          customContainer(
+            judul: "Deskripsi",
+            child: expandableDescription(
+              initialDescription:
+                  "Untuk mendapatkan lebar total layar (width) dalam Flutter, Anda dapat menggunakan widget MediaQuery. MediaQuery adalah widget yang menyediakan",
+              expandedDescription:
+                  "Untuk mendapatkan lebar total layar (width) dalam Flutter, Anda dapat menggunakan widget MediaQuery. MediaQuery adalah widget yang menyediakan informasi tentang media (termasuk lebar dan tinggi layar) kepada widget di dalamnya.",
+            ),
+          ),
+          const Divider(thickness: 4),
+          customContainer(
+            judul: "Gallery Penjahit",
+            child: galleryPenjahit(),
+          ),
+          const Divider(thickness: 4),
+          customContainer(
+            judul: "Layanan Unggulan",
+            child: categoryPenjahit(),
+          ),
+          const Divider(
+            thickness: 4,
+          ),
+          customContainer(
+            judul: "Rating dan Ulasan",
+            child: ratingUlasan(),
+          )
+        ],
+      );
+    }
+
+    Widget titleMarket(name, kota, provinsi) {
+      return Container(
+        margin: EdgeInsets.only(
+          top: defaultMargin,
+          left: defaultMargin,
+          right: defaultMargin,
+          bottom: 10,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: primaryTextStyle.copyWith(
+                fontSize: 20,
+                fontWeight: bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(
+                  Icons.pin_drop_outlined,
+                  size: 14,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Kota $kota, $provinsi',
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Icon(
+                          Icons.star_rounded,
+                          color: Colors.amber,
+                          size: 24,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          '4.5',
+                          style: primaryTextStyle.copyWith(
+                            fontWeight: bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      '  Rating & Ulasan',
+                      style: subtitleTextStyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    )
+                  ],
+                ),
+                Container(
+                  width: 1.5,
+                  height: 40,
+                  color: Colors.grey.shade300,
+                ),
+                Column(
+                  children: [
+                    Text(
+                      '5 Jam',
+                      style: primaryTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      '  Pesanan diproses',
+                      style: subtitleTextStyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    )
+                  ],
+                ),
+                Container(
+                  width: 1.5,
+                  height: 40,
+                  color: Colors.grey.shade300,
+                ),
+                Column(
+                  children: [
+                    Text(
+                      '24 Jam',
+                      style: primaryTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      '  Jam operasi toko',
+                      style: subtitleTextStyle.copyWith(
+                        fontSize: 10,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget allProducts() {
+      return Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: defaultMargin,
+          vertical: 8,
+        ),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                'Semua produk',
+                style: primaryTextStyle.copyWith(fontWeight: bold),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget tabBarView() {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height - 157,
+        child: TabBarView(
+          controller: _tabController,
+          children: [],
+        ),
+      );
+    }
+
+    Widget gridView() {
+      return Container(
+        margin: const EdgeInsets.only(right: 16, left: 16, top: 16),
+        child: GridView(
+          padding: const EdgeInsets.only(bottom: 16, left: 5, right: 5),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 12,
+            childAspectRatio: 1 / 1.56,
+          ),
+          children: [
+            for (int i = 0; i < 10; i++)
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [cardShadow],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(8),
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 175,
+                        child: Image.asset('/assets/images/fashion.png',
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'halo',
+                              style: primaryTextStyle.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Color.fromARGB(255, 250, 229, 36),
+                                ),
+                                Text(
+                                  '4.5',
+                                  style: primaryTextStyle.copyWith(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    Widget marketScreen() {
+      return Column(
+        children: [
+          Consumer<DetailScreenProvider>(
+              builder: (context, detailScreenProvider, _) {
+            final detaildata = detailScreenProvider.detailScreenData;
+            final profileImage = detaildata?['profileImage'];
+            return imageHeader(profileImage);
+          }),
+          Consumer<DetailScreenProvider>(
+            builder: (context, detailScreenProvider, _) {
+              final detaildata = detailScreenProvider.detailScreenData;
+              final sellerName = detaildata?['name'];
+
+              final kota = detaildata?['kota'];
+              final provinsi = detaildata?['provinsi'];
+
+              return titleMarket(sellerName, kota, provinsi);
+            },
+          ),
+          const Divider(
+            thickness: 1.5,
+          ),
+          tabBarView(),
+        ],
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: BottomAppBar(
@@ -573,58 +902,7 @@ class _DetailScreenState extends State<DetailScreen> {
         body: Stack(
           children: [
             SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Consumer<DetailScreenProvider>(
-                      builder: (context, detailScreenProvider, _) {
-                    final detaildata = detailScreenProvider.detailScreenData;
-                    final profileImage = detaildata?['profileImage'];
-                    return imageHeader(profileImage);
-                  }),
-                  Consumer<DetailScreenProvider>(
-                    builder: (context, detailScreenProvider, _) {
-                      final detaildata = detailScreenProvider.detailScreenData;
-                      final sellerName = detaildata?['name'];
-                      final long = detaildata?['location'].longitude;
-                      final lat = detaildata?['location'].latitude;
-                      final kota = detaildata?['kota'];
-                      final provinsi = detaildata?['provinsi'];
-                      // final sellerId = detaildata?['id'];
-
-                      return titlePenjahit(
-                          sellerName, lat, long, kota, provinsi);
-                    },
-                  ),
-                  const Divider(thickness: 4),
-                  customContainer(
-                    judul: "Deskripsi",
-                    child: expandableDescription(
-                      initialDescription:
-                          "Untuk mendapatkan lebar total layar (width) dalam Flutter, Anda dapat menggunakan widget MediaQuery. MediaQuery adalah widget yang menyediakan",
-                      expandedDescription:
-                          "Untuk mendapatkan lebar total layar (width) dalam Flutter, Anda dapat menggunakan widget MediaQuery. MediaQuery adalah widget yang menyediakan informasi tentang media (termasuk lebar dan tinggi layar) kepada widget di dalamnya.",
-                    ),
-                  ),
-                  const Divider(thickness: 4),
-                  customContainer(
-                    judul: "Gallery Penjahit",
-                    child: galleryPenjahit(),
-                  ),
-                  const Divider(thickness: 4),
-                  customContainer(
-                    judul: "Layanan Unggulan",
-                    child: categoryPenjahit(),
-                  ),
-                  const Divider(
-                    thickness: 4,
-                  ),
-                  customContainer(
-                    judul: "Rating dan Ulasan",
-                    child: ratingUlasan(),
-                  )
-                ],
-              ),
+              child: marketScreen(),
             ),
             floatingBackButton(),
           ],

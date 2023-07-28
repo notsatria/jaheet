@@ -74,6 +74,34 @@ class SendLocationProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> addSendLocation(
+    String type,
+    String receiverName,
+    String phoneNumber,
+    String additionalInformation,
+    String city,
+    String province,
+  ) async {
+    await getLoggedInUID();
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userUid)
+          .collection('sendLocation')
+          .add({
+        "type": type,
+        "receiverName": receiverName,
+        "phone": phoneNumber,
+        "additionalDetail": additionalInformation,
+        "city": city,
+        "province": province,
+        "isSelected": false,
+      });
+    } catch (error) {
+      print('Error adding data: $error');
+    }
+  }
+
   Future<void> getLoggedInUID() async {
     User user = FirebaseAuth.instance.currentUser!;
     _userUid = user.uid;

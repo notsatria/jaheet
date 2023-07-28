@@ -24,10 +24,10 @@ class _SlideScreenState extends State<SlideScreen> {
       ContentConfig(
         description:
             'Jaheet merupakan aplikasi E-Commerce platform mobile untuk menunjang digitalisasi pada dunia fashion',
-        pathImage: 'assets/images/fashion.png',
+        pathImage: 'assets/images/olshop.gif',
         widthImage: 300,
-        backgroundColor: secondaryColor,
-        styleDescription: whiteTextStyle.copyWith(
+        backgroundColor: Colors.white,
+        styleDescription: primaryTextStyle.copyWith(
           fontSize: 16,
           fontWeight: medium,
         ),
@@ -37,10 +37,10 @@ class _SlideScreenState extends State<SlideScreen> {
       ContentConfig(
         description:
             'Jaheet memudahkan anda untuk mencari jasa jahit yang sesuai dengan kebutuhan anda tanpa harus keluar rumah',
-        pathImage: 'assets/images/search.png',
+        pathImage: 'assets/images/relax.gif',
         widthImage: 300,
-        backgroundColor: secondaryColor,
-        styleDescription: whiteTextStyle.copyWith(
+        backgroundColor: Colors.white,
+        styleDescription: primaryTextStyle.copyWith(
           fontSize: 16,
           fontWeight: medium,
         ),
@@ -50,10 +50,10 @@ class _SlideScreenState extends State<SlideScreen> {
       ContentConfig(
         description:
             'Jaheet memudahkan penjahit untuk memasarkan jasa jahitnya secara online dan memperluas jangkauan pasar',
-        pathImage: 'assets/images/tailor.png',
+        pathImage: 'assets/images/jahit.gif',
         widthImage: 300,
-        backgroundColor: secondaryColor,
-        styleDescription: whiteTextStyle.copyWith(
+        backgroundColor: Colors.white,
+        styleDescription: primaryTextStyle.copyWith(
           fontSize: 16,
           fontWeight: medium,
         ),
@@ -77,7 +77,7 @@ class _SlideScreenState extends State<SlideScreen> {
       onDonePress: onDonePress,
       onSkipPress: onSkipPRess,
       nextButtonStyle: TextButton.styleFrom(
-        foregroundColor: backgroundColor1,
+        foregroundColor: primaryColor,
       ),
       skipButtonStyle: TextButton.styleFrom(
         foregroundColor: primaryColor,
