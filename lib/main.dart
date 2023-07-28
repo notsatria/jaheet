@@ -53,7 +53,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => SearchScreenProvider()),
         ChangeNotifierProvider(create: (_) => CheckoutScreenProvider()),
         ChangeNotifierProvider(create: (_) => AddressScreenProvider()),
-        ChangeNotifierProvider(create: (_) => SendLocationProvider())
+        ChangeNotifierProvider(create: (_) => SendLocationProvider()),
       ],
       child: const MyApp(),
     ),

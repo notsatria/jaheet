@@ -55,23 +55,29 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Widget jahitinLogo() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            'assets/icon/jaheetlogo.png',
-            width: 200,
-            height: 200,
-          ),
-          Text(
-            'Jaheet',
-            style: primaryTextStyle.copyWith(
-              fontSize: 32,
-              fontWeight: semiBold,
-              color: backgroundColor1,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/logo.png',
+              width: 200,
+              height: 200,
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 14,
+            ),
+            Text(
+              'Jaheet',
+              style: primaryTextStyle.copyWith(
+                fontSize: 32,
+                fontWeight: bold,
+                color: primaryColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -79,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: secondaryColor,
+      backgroundColor: Colors.white,
       body: jahitinLogo(),
     );
   }
