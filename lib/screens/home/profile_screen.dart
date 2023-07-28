@@ -209,31 +209,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 });
                 if (isSeller == true) {
                   Navigator.pushNamed(context, SellerMainScreen.routeName);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: primaryColor,
-                      content: Text(
-                        'Selamat Datang Penjahit',
-                        style: whiteTextStyle.copyWith(
-                          fontWeight: semiBold,
-                        ),
-                      ),
-                    ),
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Selamat Datang'),
+                        content:
+                            const Text('Anda telah masuk sebagai penjahit'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'))
+                        ],
+                      );
+                    },
                   );
                 } else {
                   Navigator.pushNamed(
                       context, RegistrationFormScreen.routeName);
                   // scaffold messanger
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: alertColor,
-                      content: Text(
-                        'Anda belum terdaftar sebagai penjahit',
-                        style: whiteTextStyle.copyWith(
-                          fontWeight: semiBold,
-                        ),
-                      ),
-                    ),
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Seller Registration'),
+                        content: const Text(
+                            'Anda belum terdaftar sebagai penjahit, silahkan registrasi terlebih dahulu'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'))
+                        ],
+                      );
+                    },
                   );
                 }
               },

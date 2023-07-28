@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:jahitin/screens/home/chatroom_screen.dart';
 import 'package:jahitin/screens/seller/chat/seller_chatroom_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
 
@@ -96,10 +95,13 @@ class SellerChatScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 25.0,
-                child: ClipOval(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
                   child: Image.network(
                     profileImage ?? 'https://i.stack.imgur.com/l60Hf.png',
                     fit: BoxFit.cover,
+                    width: 50,
+                    height: 50,
                   ),
                 ),
               ),
@@ -118,7 +120,7 @@ class SellerChatScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Saya ingin memesan jasa jahit Anda',
+                      '...',
                       style: subtitleTextStyle.copyWith(
                         fontSize: 14,
                         overflow: TextOverflow.ellipsis,
@@ -129,7 +131,7 @@ class SellerChatScreen extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'Hari ini',
+                'Online',
                 style: subtitleTextStyle.copyWith(
                   fontSize: 12,
                 ),

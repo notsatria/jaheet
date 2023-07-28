@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
+import 'package:jahitin/screens/seller/order/seller_order_detail_screen.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/add_location.dart';
 import 'package:jahitin/screens/splash_screen.dart';
@@ -77,6 +78,8 @@ class MyApp extends StatelessWidget {
         RegistrationFormScreen.routeName: (context) =>
             const RegistrationFormScreen(),
         AddProductScreen.routeName: (context) => const AddProductScreen(),
+        SellerOrderDetailScreen.routeName: (context) =>
+            const SellerOrderDetailScreen(),
         AddLocationScreen.routeName: (context) => const AddLocationScreen()
       },
     );
