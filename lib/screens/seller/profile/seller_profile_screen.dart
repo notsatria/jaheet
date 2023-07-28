@@ -14,6 +14,8 @@ class SellerProfileScreen extends StatefulWidget {
 
 class _SellerProfileScreenState extends State<SellerProfileScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference seller = FirebaseFirestore.instance.collection('seller');
@@ -54,29 +56,23 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget profileHeader() {
+    Widget profileHeader({String? profileImage, String? tokoName}) {
       return Container(
         margin: const EdgeInsets.only(
           top: 20,
         ),
         child: ListTile(
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             radius: 30,
             backgroundImage: NetworkImage(
-              'https://firebasestorage.googleapis.com/v0/b/jaheet-5fa13.appspot.com/o/seller_profile_images%2Fseller_profile_image_7.png?alt=media',
+              profileImage ?? 'https://i.stack.imgur.com/l60Hf.png',
             ),
           ),
           title: Text(
-            tokoName,
+            tokoName ?? 'Toko Saya',
             style: primaryTextStyle.copyWith(
               fontSize: 18,
               fontWeight: bold,
-            ),
-          ),
-          subtitle: Text(
-            tokoAddress,
-            style: subtitleTextStyle.copyWith(
-              fontSize: 14,
             ),
           ),
           trailing: IconButton(
@@ -222,7 +218,21 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             horizontal: defaultMargin,
           ),
           child: Column(children: [
-            profileHeader(),
+            FutureBuilder(
+              future:
+                  users.doc(uid).get().then((value) => value.get('sellerId')),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return profileHeader(
+                      profileImage: snapshot.data!.get('profileImage'),
+                      tokoName: snapshot.data!.get('name'));
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
             accountProfileBlock(),
             generalProfileBlock(),
           ]),
