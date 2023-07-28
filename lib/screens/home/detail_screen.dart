@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
+import 'package:jahitin/screens/home/chatroom_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -30,9 +31,14 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     int id = args['id'];
-    double fullWidth = MediaQuery.of(context).size.width;
 
-    Widget imageHeader() {
+    void _navigateToCheckout(BuildContext, int id) async {
+      await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
+      Navigator.pushNamed(context, ServiceScreen.routeName,
+          arguments: {'id': id});
+    }
+
+    Widget imageHeader(String profileImage) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           double width = constraints.maxWidth;
@@ -41,8 +47,8 @@ class _DetailScreenState extends State<DetailScreen> {
           return SizedBox(
             width: width,
             height: height,
-            child: Image.asset(
-              'assets/images/dummy_tailor_bg.png',
+            child: Image.network(
+              profileImage,
               fit: BoxFit.cover,
             ),
           );
@@ -266,87 +272,65 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
-    Widget category(
-        {required String nama,
-        required int totalOrder,
-        required int totalPengerjaan}) {
-      return InkWell(
-        onTap: () {},
-        child: Container(
-          decoration: BoxDecoration(
-            color: primaryColor,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          width: fullWidth,
-          height: 74,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    Widget featuredServices(
+      String layanan,
+      int totalOrder,
+      String image,
+    ) {
+      return SizedBox(
+        width: 90,
+        height: 90,
+        child: Column(
+          children: [
+            Image.asset(
+              image,
+              width: 50,
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Text(
+              layanan,
+              style: primaryTextStyle.copyWith(fontSize: 14, fontWeight: bold),
+            ),
+            RichText(
+              text: TextSpan(
+                  text: 'Total order: ',
+                  style: primaryTextStyle.copyWith(fontSize: 11),
                   children: [
-                    Text(
-                      nama,
-                      style: whiteTextStyle.copyWith(
-                        fontSize: 14,
-                        fontWeight: semiBold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Order: $totalOrder',
-                          style: whiteTextStyle.copyWith(
-                            fontWeight: light,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.circle,
-                          size: 4,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Pengerjaan: ~$totalPengerjaan hari',
-                          style: whiteTextStyle.copyWith(
-                            fontWeight: light,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 20,
-                  color: backgroundColor1,
-                ),
-              )
-            ],
-          ),
+                    TextSpan(
+                        text: totalOrder.toString(), style: secondaryTextStyle)
+                  ]),
+            ),
+          ],
         ),
       );
     }
 
     Widget categoryPenjahit() {
-      return Column(
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          category(nama: "ATASAN", totalOrder: 120, totalPengerjaan: 2),
-          const SizedBox(height: 12),
-          category(nama: "BAWAHAN", totalOrder: 70, totalPengerjaan: 2),
-          const SizedBox(height: 12),
-          category(nama: "PERBAIKAN", totalOrder: 30, totalPengerjaan: 2),
-          const SizedBox(height: 12),
-          category(nama: "TERUSAN", totalOrder: 10, totalPengerjaan: 5),
+          featuredServices(
+            'ATASAN',
+            120,
+            'assets/icon/shirt.png',
+          ),
+          featuredServices(
+            'BAWAHAN',
+            67,
+            'assets/icon/jeans.png',
+          ),
+          featuredServices(
+            'TERUSAN',
+            12,
+            'assets/icon/dress.png',
+          ),
+          featuredServices(
+            'PERBAIKAN',
+            6,
+            'assets/icon/sewing.png',
+          ),
         ],
       );
     }
@@ -502,17 +486,25 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
-    Widget bottomNavbar() {
+    Widget bottomNavbar(String receiverUserName, int receiverUserID,
+        String receiverProfileImage) {
       return Container(
         margin: EdgeInsets.all(defaultMargin - 5),
-        width: fullWidth,
         height: 45,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return ChatRoomScreen(
+                      receiverUserName: receiverUserName,
+                      receiverUserID: receiverUserID.toString(),
+                      receiverProfileImage: receiverProfileImage);
+                }));
+              },
               child: Container(
-                width: 55,
+                width: 50,
                 height: 55,
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -530,24 +522,27 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, ServiceScreen.routeName);
-              },
-              child: Container(
-                width: fullWidth - 100,
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                    child: Text(
-                  'Pesan Jasa',
-                  style: whiteTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: semiBold,
+            const SizedBox(width: 16),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  _navigateToCheckout(context, id);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                )),
+                  child: Center(
+                    child: Text(
+                      'Pesan Jasa',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             )
           ],
@@ -559,7 +554,18 @@ class _DetailScreenState extends State<DetailScreen> {
       child: Scaffold(
         bottomNavigationBar: BottomAppBar(
           elevation: 2,
-          child: bottomNavbar(),
+          child: Consumer<DetailScreenProvider>(
+              builder: (context, detailScreenProvider, _) {
+            final detaildata = detailScreenProvider.detailScreenData;
+            final username = detaildata?['name'];
+            final sellerId = detaildata?['id'];
+            final profileImage = detaildata?['profileImage'];
+            return bottomNavbar(
+              username,
+              sellerId,
+              profileImage,
+            );
+          }),
         ),
         backgroundColor: backgroundColor1,
         body: Stack(
@@ -568,38 +574,12 @@ class _DetailScreenState extends State<DetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  imageHeader(),
-                  // FutureBuilder(
-                  //   future: FirebaseFirestore.instance
-                  //       .collection('seller')
-                  //       .where('id', isEqualTo: id)
-                  //       .get(),
-                  //   builder: (context, snapshot) {
-                  //     if (snapshot.connectionState == ConnectionState.waiting) {
-                  //       return const CircularProgressIndicator();
-                  //     }
-                  //     if (snapshot.hasError) {
-                  //       return Text('Error: ${snapshot.error}');
-                  //     }
-                  //     if (snapshot.hasData) {
-                  //       final sellers = snapshot.data!.docs;
-                  //       if (sellers.isNotEmpty) {
-                  //         final sellerData = sellers.first.data();
-                  //         final sellerName = sellerData['name'];
-                  //         final long = sellerData['location'].longitude;
-                  //         final lat = sellerData['location'].latitude;
-                  //         final kota = sellerData['kota'];
-                  //         final provinsi = sellerData['provinsi'];
-                  //         return titlePenjahit(
-                  //             sellerName, lat, long, kota, provinsi);
-                  //       } else {
-                  //         return const CircularProgressIndicator();
-                  //       }
-                  //     }
-
-                  //     return const SizedBox();
-                  //   },
-                  // ),
+                  Consumer<DetailScreenProvider>(
+                      builder: (context, detailScreenProvider, _) {
+                    final detaildata = detailScreenProvider.detailScreenData;
+                    final profileImage = detaildata?['profileImage'];
+                    return imageHeader(profileImage);
+                  }),
                   Consumer<DetailScreenProvider>(
                     builder: (context, detailScreenProvider, _) {
                       final detaildata = detailScreenProvider.detailScreenData;
@@ -608,12 +588,12 @@ class _DetailScreenState extends State<DetailScreen> {
                       final lat = detaildata?['location'].latitude;
                       final kota = detaildata?['kota'];
                       final provinsi = detaildata?['provinsi'];
+                      // final sellerId = detaildata?['id'];
 
                       return titlePenjahit(
                           sellerName, lat, long, kota, provinsi);
                     },
                   ),
-
                   const Divider(thickness: 4),
                   customContainer(
                     judul: "Deskripsi",
@@ -631,7 +611,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   const Divider(thickness: 4),
                   customContainer(
-                    judul: "Jasa Jahit dan Permak",
+                    judul: "Layanan Unggulan",
                     child: categoryPenjahit(),
                   ),
                   const Divider(
