@@ -31,67 +31,217 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
     getSellerData();
   }
 
-  Future<void> getSellerData() async {
+  // Future<void> getSellerData() async {
+  //   final uid = auth.currentUser!.uid;
+  //   final userData =
+  //       await users.doc(uid).get().then((value) => value.get('sellerId'));
+
+  //   print(userData);
+
+  //   if (userData != null) {
+  //     final sellerSnapshot = await seller.doc('$userData').get();
+
+  //     print(sellerSnapshot.id);
+
+  //     if (sellerSnapshot.exists) {
+  //       setState(() {
+  //         tokoName = sellerSnapshot.get('name');
+  //         tokoImageProfile = sellerSnapshot.get('profileImage');
+  //         tokoAddress = sellerSnapshot.get('address');
+  //         tokoDescription = sellerSnapshot.get('description');
+  //       });
+  //     }
+  //   }
+  // }
+
+  Future<Map<String, dynamic>> getSellerData() async {
     final uid = auth.currentUser!.uid;
     final userData =
         await users.doc(uid).get().then((value) => value.get('sellerId'));
 
-    print(userData);
-
     if (userData != null) {
       final sellerSnapshot = await seller.doc('$userData').get();
-
-      print(sellerSnapshot.id);
-
       if (sellerSnapshot.exists) {
-        setState(() {
-          tokoName = sellerSnapshot.get('name');
-          tokoImageProfile = sellerSnapshot.get('profileImage');
-          tokoAddress = sellerSnapshot.get('address');
-          tokoDescription = sellerSnapshot.get('description');
-        });
+        return sellerSnapshot.data() as Map<String, dynamic>;
       }
     }
+
+    // If seller data is not found, return an empty Map or null.
+    return {};
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget profileHeader({String? profileImage, String? tokoName}) {
-      return Container(
-        margin: const EdgeInsets.only(
-          top: 20,
+    Widget sellerProfileHeader({String? profileImage, String? tokoName}) {
+      return Stack(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(
+              top: 20,
+            ),
+            width: double.infinity,
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              image: DecorationImage(
+                image: NetworkImage(
+                  profileImage ?? 'https://i.stack.imgur.com/l60Hf.png',
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(
+              top: 20,
+            ),
+            width: double.infinity,
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.black.withOpacity(0.3),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(
+              top: 20,
+            ),
+            padding: EdgeInsets.symmetric(
+                horizontal: defaultMargin, vertical: defaultMargin / 2),
+            width: double.infinity,
+            height: 180,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tokoName ?? 'Toko Name',
+                  style: whiteTextStyle.copyWith(
+                    fontSize: 24,
+                    fontWeight: semiBold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.verified,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    Text(
+                      'Toko Penjahit',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: medium,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget featuredServices(
+      String layanan,
+      int totalOrder,
+      String image,
+    ) {
+      return SizedBox(
+        width: 75,
+        height: 100,
+        child: Column(
+          children: [
+            Image.asset(
+              image,
+              width: 45,
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Text(
+              layanan,
+              style: primaryTextStyle.copyWith(
+                fontSize: 14,
+                fontWeight: bold,
+              ),
+            ),
+            RichText(
+              text: TextSpan(
+                text: 'Total order: ',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 11,
+                ),
+                children: [
+                  TextSpan(
+                    text: totalOrder.toString(),
+                    style: secondaryTextStyle,
+                  )
+                ],
+              ),
+            ),
+          ],
         ),
-        child: ListTile(
-          leading: CircleAvatar(
-            radius: 30,
-            backgroundImage: NetworkImage(
-              profileImage ?? 'https://i.stack.imgur.com/l60Hf.png',
+      );
+    }
+
+    Widget categoryPenjahit() {
+      return Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'ABOUT SELLER',
+              style: primaryTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: bold,
+              ),
             ),
-          ),
-          title: Text(
-            tokoName ?? 'Toko Saya',
-            style: primaryTextStyle.copyWith(
-              fontSize: 18,
-              fontWeight: bold,
+            const SizedBox(
+              height: 20,
             ),
-          ),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.exit_to_app,
-              color: alertColor,
-              size: 30,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                featuredServices(
+                  'ATASAN',
+                  120,
+                  'assets/icon/shirt.png',
+                ),
+                featuredServices(
+                  'BAWAHAN',
+                  67,
+                  'assets/icon/jeans.png',
+                ),
+                featuredServices(
+                  'TERUSAN',
+                  12,
+                  'assets/icon/dress.png',
+                ),
+                featuredServices(
+                  'PERBAIKAN',
+                  6,
+                  'assets/icon/sewing.png',
+                ),
+              ],
             ),
-            onPressed: () {
-              Navigator.pushNamed(context, MainScreen.routeName);
-            },
-          ),
+          ],
         ),
       );
     }
 
     Widget accountProfileBlock() {
       return Container(
-        margin: const EdgeInsets.only(top: 40),
+        margin: const EdgeInsets.only(top: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -125,19 +275,6 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               child: const ListTile(
                 leading: Text(
                   'Produk Saya',
-                ),
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                //
-              },
-              child: const ListTile(
-                leading: Text(
-                  'Help',
                 ),
                 trailing: Icon(
                   Icons.chevron_right_rounded,
@@ -180,24 +317,11 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
             ),
             GestureDetector(
               onTap: () {
-                //
+                Navigator.pushNamed(context, MainScreen.routeName);
               },
               child: const ListTile(
                 leading: Text(
-                  'Terms of Service',
-                ),
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                //
-              },
-              child: const ListTile(
-                leading: Text(
-                  'Rate App',
+                  'Keluar',
                 ),
                 trailing: Icon(
                   Icons.chevron_right_rounded,
@@ -217,25 +341,33 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
           margin: EdgeInsets.symmetric(
             horizontal: defaultMargin,
           ),
-          child: Column(children: [
-            FutureBuilder(
-              future:
-                  users.doc(uid).get().then((value) => value.get('sellerId')),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return profileHeader(
-                      profileImage: snapshot.data!.get('profileImage'),
-                      tokoName: snapshot.data!.get('name'));
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            ),
-            accountProfileBlock(),
-            generalProfileBlock(),
-          ]),
+          child: Column(
+            children: [
+              FutureBuilder<Map<String, dynamic>>(
+                future: getSellerData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasData) {
+                    return sellerProfileHeader(
+                      profileImage: snapshot.data!['profileImage'],
+                      tokoName: snapshot.data!['name'],
+                    );
+                  } else {
+                    // Handle the case when seller data is not available.
+                    return const Center(
+                      child: Text('Seller data not found.'),
+                    );
+                  }
+                },
+              ),
+              categoryPenjahit(),
+              accountProfileBlock(),
+              generalProfileBlock(),
+            ],
+          ),
         ),
       ),
     );
