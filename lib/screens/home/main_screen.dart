@@ -73,8 +73,10 @@ class _MainScreenState extends State<MainScreen> {
           onPressed: () {
             Navigator.pushNamed(context, LocationRecommendationScreen.routeName,
                 arguments: {
-                  'longitude': context.watch<LocationProvider>().lat,
-                  'latitude': context.watch<LocationProvider>().long
+                  'longitude':
+                      Provider.of<LocationProvider>(context, listen: false).lat,
+                  'latitude':
+                      Provider.of<LocationProvider>(context, listen: false).long
                 });
           },
           child: Icon(
