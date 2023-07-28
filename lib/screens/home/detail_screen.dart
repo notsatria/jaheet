@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
+import 'package:jahitin/screens/home/chatroom_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -273,87 +274,65 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
-    Widget category(
-        {required String nama,
-        required int totalOrder,
-        required int totalPengerjaan}) {
-      return InkWell(
-        onTap: () {},
-        child: Container(
-          decoration: BoxDecoration(
-            color: primaryColor,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          width: double.maxFinite,
-          height: 74,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    Widget featuredServices(
+      String layanan,
+      int totalOrder,
+      String image,
+    ) {
+      return SizedBox(
+        width: 90,
+        height: 90,
+        child: Column(
+          children: [
+            Image.asset(
+              image,
+              width: 50,
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Text(
+              layanan,
+              style: primaryTextStyle.copyWith(fontSize: 14, fontWeight: bold),
+            ),
+            RichText(
+              text: TextSpan(
+                  text: 'Total order: ',
+                  style: primaryTextStyle.copyWith(fontSize: 11),
                   children: [
-                    Text(
-                      nama,
-                      style: whiteTextStyle.copyWith(
-                        fontSize: 14,
-                        fontWeight: semiBold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Order: $totalOrder',
-                          style: whiteTextStyle.copyWith(
-                            fontWeight: light,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.circle,
-                          size: 4,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Pengerjaan: ~$totalPengerjaan hari',
-                          style: whiteTextStyle.copyWith(
-                            fontWeight: light,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 20,
-                  color: backgroundColor1,
-                ),
-              )
-            ],
-          ),
+                    TextSpan(
+                        text: totalOrder.toString(), style: secondaryTextStyle)
+                  ]),
+            ),
+          ],
         ),
       );
     }
 
     Widget categoryPenjahit() {
-      return Column(
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          category(nama: "ATASAN", totalOrder: 120, totalPengerjaan: 2),
-          const SizedBox(height: 12),
-          category(nama: "BAWAHAN", totalOrder: 70, totalPengerjaan: 2),
-          const SizedBox(height: 12),
-          category(nama: "PERBAIKAN", totalOrder: 30, totalPengerjaan: 2),
-          const SizedBox(height: 12),
-          category(nama: "TERUSAN", totalOrder: 10, totalPengerjaan: 5),
+          featuredServices(
+            'ATASAN',
+            120,
+            'assets/icon/shirt.png',
+          ),
+          featuredServices(
+            'BAWAHAN',
+            67,
+            'assets/icon/jeans.png',
+          ),
+          featuredServices(
+            'TERUSAN',
+            12,
+            'assets/icon/dress.png',
+          ),
+          featuredServices(
+            'PERBAIKAN',
+            6,
+            'assets/icon/sewing.png',
+          ),
         ],
       );
     }
@@ -509,7 +488,8 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
-    Widget bottomNavbar() {
+    Widget bottomNavbar(String receiverUserName, int receiverUserID,
+        String receiverProfileImage) {
       return Container(
         margin: EdgeInsets.all(defaultMargin - 5),
         height: 45,
@@ -518,7 +498,12 @@ class _DetailScreenState extends State<DetailScreen> {
           children: [
             InkWell(
               onTap: () {
-                //
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return ChatRoomScreen(
+                      receiverUserName: receiverUserName,
+                      receiverUserID: receiverUserID.toString(),
+                      receiverProfileImage: receiverProfileImage);
+                }));
               },
               child: Container(
                 width: 50,
@@ -571,7 +556,18 @@ class _DetailScreenState extends State<DetailScreen> {
       child: Scaffold(
         bottomNavigationBar: BottomAppBar(
           elevation: 2,
-          child: bottomNavbar(),
+          child: Consumer<DetailScreenProvider>(
+              builder: (context, detailScreenProvider, _) {
+            final detaildata = detailScreenProvider.detailScreenData;
+            final username = detaildata?['name'];
+            final sellerId = detaildata?['id'];
+            final profileImage = detaildata?['profileImage'];
+            return bottomNavbar(
+              username,
+              sellerId,
+              profileImage,
+            );
+          }),
         ),
         backgroundColor: backgroundColor1,
         body: Stack(
@@ -617,7 +613,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   const Divider(thickness: 4),
                   customContainer(
-                    judul: "Jasa Jahit dan Permak",
+                    judul: "Layanan Unggulan",
                     child: categoryPenjahit(),
                   ),
                   const Divider(
