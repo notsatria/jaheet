@@ -261,32 +261,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                     builder: (context, sendLocation, _) {
                                       final sendDataLocations =
                                           sendLocation.sendLocation;
-                                      return SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            for (final sendDataLocation
-                                                in sendDataLocations)
-                                              locationCard(
-                                                sendDataLocation["type"],
-                                                sendDataLocation["isSelected"],
-                                                sendDataLocation[
-                                                    "receiverName"],
-                                                sendDataLocation["phone"],
-                                                sendDataLocation[
-                                                    "additionalDetail"],
-                                                sendDataLocation["city"],
-                                                sendDataLocation["province"],
-                                              )
-                                          ],
-                                        ),
-                                      );
+                                      return sendDataLocations.isNotEmpty
+                                          ? SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  for (final sendDataLocation
+                                                      in sendDataLocations)
+                                                    locationCard(
+                                                      sendDataLocation["type"],
+                                                      sendDataLocation[
+                                                          "isSelected"],
+                                                      sendDataLocation[
+                                                          "receiverName"],
+                                                      sendDataLocation["phone"],
+                                                      sendDataLocation[
+                                                          "additionalDetail"],
+                                                      sendDataLocation["city"],
+                                                      sendDataLocation[
+                                                          "province"],
+                                                    )
+                                                ],
+                                              ),
+                                            )
+                                          : Container(
+                                              child: Text("No data available"),
+                                            ); // Widget yang akan ditampilkan jika sendDataLocations kosong
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10),
                                 InkWell(
                                   onTap: () {
                                     Navigator.pushNamed(

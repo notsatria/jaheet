@@ -23,10 +23,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int currIndex = 0;
 
-  // Location
-  late double longitude;
-  late double latitude;
-
   Future<void> getLocation(LocationProvider locationProvider,
       HomeScreenProvider homeScreenProvider) async {
     Position position = await Geolocator.getCurrentPosition(
@@ -39,11 +35,6 @@ class _MainScreenState extends State<MainScreen> {
       position.latitude,
       position.longitude,
     );
-
-    setState(() {
-      longitude = position.longitude;
-      latitude = position.latitude;
-    });
 
     homeScreenProvider.fetchCategories();
     homeScreenProvider.fetchNearestSellers();
@@ -59,10 +50,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
-  void dispose() {
+  void deactivate() {
     getLocation(
         context.read<LocationProvider>(), context.read<HomeScreenProvider>());
-    super.dispose();
+    super.deactivate();
   }
 
   @override
@@ -81,7 +72,10 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: secondaryColor,
           onPressed: () {
             Navigator.pushNamed(context, LocationRecommendationScreen.routeName,
-                arguments: {'longitude': longitude, 'latitude': latitude});
+                arguments: {
+                  'longitude': context.watch<LocationProvider>().lat,
+                  'latitude': context.watch<LocationProvider>().long
+                });
           },
           child: Icon(
             Icons.location_on,

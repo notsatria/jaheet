@@ -33,8 +33,44 @@ class AddLocationScreen extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      appBar: appBar(),
-    );
+    Widget namaTokoForm() {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 8,
+        ),
+        height: 50,
+        decoration: BoxDecoration(
+          color: backgroundColor4,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                decoration: InputDecoration.collapsed(
+                  hintText: 'Nama Toko',
+                  hintStyle: TextStyle(
+                    color: subtitleTextColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget form() {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+        child: Column(
+          children: [namaTokoForm(), namaTokoForm()],
+        ),
+      );
+    }
+
+    return Scaffold(appBar: appBar(), body: form());
   }
 }
