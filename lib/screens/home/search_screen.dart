@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
@@ -105,12 +106,12 @@ class _SearchScreenState extends State<SearchScreen>
     }
 
     Widget searchOption() {
-      return Container(
+      return SizedBox(
         width: double.infinity,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.0),
-            border: Border(
+            border: const Border(
               bottom: BorderSide(
                 color: Color.fromARGB(177, 158, 158, 158),
                 width: 2,
@@ -124,7 +125,7 @@ class _SearchScreenState extends State<SearchScreen>
               fontWeight: FontWeight.bold,
             ),
             indicatorColor: primaryColor,
-            unselectedLabelColor: Color.fromARGB(177, 158, 158, 158),
+            unselectedLabelColor: const Color.fromARGB(177, 158, 158, 158),
             controller: _tabController,
             indicatorPadding: EdgeInsets.zero,
             tabs: myTabs,
@@ -249,6 +250,106 @@ class _SearchScreenState extends State<SearchScreen>
       );
     }
 
+    Widget filterBar() {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: 28,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey.shade500,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8)),
+                child: const Center(
+                    child: Icon(
+                  Icons.tune,
+                  size: 18,
+                )),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              Container(
+                height: 28,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade500),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Text('Paling dekat'),
+                ),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              Container(
+                height: 28,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade500),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Text('Home Service'),
+                ),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              Container(
+                height: 28,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade500),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Text('Drop off'),
+                ),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              Container(
+                height: 28,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade500),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Text('Drop off'),
+                ),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              Container(
+                height: 28,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade500),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Text('Drop off'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     Widget searchResultsListView() {
       return Expanded(
         child: ListView.builder(
@@ -341,6 +442,10 @@ class _SearchScreenState extends State<SearchScreen>
                 child: Column(
                   children: [
                     searchOption(),
+                    // const SizedBox(
+                    //   height: 12,
+                    // ),
+                    // filterBar(),
                     Flexible(
                       child: SingleChildScrollView(
                         child: tabBarView(),
