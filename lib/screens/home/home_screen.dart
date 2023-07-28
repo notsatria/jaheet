@@ -3,6 +3,7 @@ import 'package:jahitin/provider/location_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/add_location.dart';
+import 'package:jahitin/screens/home/address_screen.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:jahitin/screens/home/search_screen.dart';
 import 'package:jahitin/services/haversine.dart';
@@ -206,6 +207,59 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+    Widget addMoreLocation(String name) {
+      return InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, AddressScreen.routeName);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          margin: const EdgeInsets.only(right: 10),
+          decoration: BoxDecoration(
+            border: Border.all(width: 1.0, color: subtitleTextColor),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: SizedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: backgroundColor1,
+                      boxShadow: [
+                        BoxShadow(
+                            color: const Color.fromARGB(255, 0, 0, 0)
+                                .withOpacity(0.25),
+                            offset: const Offset(0, 4),
+                            blurRadius: 4)
+                      ]),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: secondaryColor,
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  style: primaryTextStyle.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: secondaryColor),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     Widget sendLocation(String? location) {
       return Container(
         margin: const EdgeInsets.only(left: 15, right: 15),
@@ -283,37 +337,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       sendDataLocation["city"],
                                                       sendDataLocation[
                                                           "province"],
-                                                    )
+                                                    ),
+                                                  addMoreLocation(
+                                                      "Cek Alamat Lainnya")
                                                 ],
                                               ),
                                             )
-                                          : Container(
-                                              child: Text("No data available"),
+                                          : SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  addMoreLocation(
+                                                      "Tambahkan Alamat\nPengiriman")
+                                                ],
+                                              ),
                                             ); // Widget yang akan ditampilkan jika sendDataLocations kosong
                                     },
                                   ),
                                 ),
-                                SizedBox(height: 10),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, AddLocationScreen.routeName);
-                                  },
-                                  child: Container(
-                                      margin: const EdgeInsets.all(10),
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: primaryColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'Tambah Alamat',
-                                          style: whiteTextStyle.copyWith(
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      )),
-                                )
+                                const SizedBox(height: 20),
                               ],
                             );
                           },
@@ -321,11 +366,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       child: Row(
                         children: [
-                          Text(
-                            'Dikirim ke ',
-                            style:
-                                primaryTextStyle.copyWith(color: Colors.white),
-                          ),
+                          location.isNotEmpty
+                              ? Text(
+                                  'Dikirim ke ',
+                                  style: primaryTextStyle.copyWith(
+                                      color: Colors.white),
+                                )
+                              : Text(
+                                  'Tambah atau pilih alamat',
+                                  style: primaryTextStyle.copyWith(
+                                      color: Colors.white),
+                                ),
                           Text(
                             location,
                             style: primaryTextStyle.copyWith(

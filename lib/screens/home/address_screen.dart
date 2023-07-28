@@ -1,32 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/address_screen_provider.dart';
+import 'package:jahitin/provider/send_location_provider.dart';
+import 'package:jahitin/screens/home/add_location.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
 
-class AddressScreen extends StatefulWidget {
+class AddressScreen extends StatelessWidget {
   const AddressScreen({super.key});
 
-  @override
-  State<AddressScreen> createState() => _AddressScreenState();
-}
-
-class _AddressScreenState extends State<AddressScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Panggil fetchAddressUser() untuk mengambil data dari Firebase Firestore
-    Future.delayed(Duration.zero, () {
-      final addressScreenProvider =
-          Provider.of<AddressScreenProvider>(context, listen: false);
-      addressScreenProvider.fetchAddressUser();
-    });
-  }
+  static const routeName = '/address-screen';
 
   @override
   Widget build(BuildContext context) {
-    final addressScreenProvider =
-        Provider.of<AddressScreenProvider>(context, listen: false);
     PreferredSizeWidget appBar() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -51,7 +37,9 @@ class _AddressScreenState extends State<AddressScreen> {
           Padding(
             padding: EdgeInsets.only(right: defaultMargin, top: defaultMargin),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, AddLocationScreen.routeName);
+              },
               child: Text(
                 'Tambah alamat',
                 style: secondaryTextStyle.copyWith(
@@ -83,162 +71,132 @@ class _AddressScreenState extends State<AddressScreen> {
       );
     }
 
-    // Widget addressCard() {
-    //   return Card(
-    //     elevation: 2,
-    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    //     child: Container(
-    //       width: double.maxFinite,
-    //       padding: const EdgeInsets.all(16),
-    //       child: Column(
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         children: [
-    //           Text(
-    //             'label',
-    //             style: primaryTextStyle.copyWith(
-    //               fontSize: 12,
-    //               fontWeight: bold,
-    //             ),
-    //           ),
-    //           // const SizedBox(width: 10),
-    //           // Container(
-    //           //   padding: const EdgeInsets.all(4),
-    //           //   decoration: BoxDecoration(
-    //           //       color: secondaryColor,
-    //           //       borderRadius: BorderRadius.circular(4)),
-    //           //   child: Center(
-    //           //     child: Text(
-    //           //       'Utama',
-    //           //       style: whiteTextStyle.copyWith(
-    //           //         fontSize: 8,
-    //           //         fontWeight: bold,
-    //           //       ),
-    //           //     ),
-    //           //   ),
-    //           // ),
-    //           const SizedBox(
-    //             height: 8,
-    //           ),
-    //           Text(
-    //             'nama saya',
-    //             style: primaryTextStyle.copyWith(
-    //               fontSize: 14,
-    //               fontWeight: bold,
-    //             ),
-    //           ),
-    //           Text(
-    //             'nomortelepon',
-    //             style: subtitleTextStyle.copyWith(
-    //               fontSize: 12,
-    //             ),
-    //           ),
-    //           Text(
-    //             'alamat jalan kecamatan kelurahan kota kabupaten provinsi',
-    //             style: subtitleTextStyle.copyWith(
-    //               fontSize: 12,
-    //             ),
-    //             maxLines: 2,
-    //           ),
-    //           const SizedBox(
-    //             height: 12,
-    //           ),
-    //           InkWell(
-    //             child: Container(
-    //               padding: const EdgeInsets.all(8),
-    //               decoration: BoxDecoration(
-    //                 border: Border.all(color: Colors.grey.shade300),
-    //                 borderRadius: BorderRadius.circular(10),
-    //               ),
-    //               child: Center(
-    //                 child: Text(
-    //                   'Ubah Alamat',
-    //                   style: primaryTextStyle.copyWith(
-    //                     fontSize: 12,
-    //                     fontWeight: bold,
-    //                     color: Colors.grey.shade600,
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // }
     Widget addressCard(Map<String, dynamic> addressData) {
-      return Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Container(
-          width: double.maxFinite,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                addressData['type'] ??
-                    '', // Ubah 'label' dengan field yang sesuai
-                style: primaryTextStyle.copyWith(
-                  fontSize: 12,
-                  fontWeight: bold,
-                ),
-              ),
-              // Tambahkan kode untuk menampilkan label 'Utama' jika diperlukan
-              // ...
-              const SizedBox(
-                height: 8,
-              ),
-              Text(
-                addressData['type'] ??
-                    '', // Ubah 'name' dengan field yang sesuai
-                style: primaryTextStyle.copyWith(
-                  fontSize: 14,
-                  fontWeight: bold,
-                ),
-              ),
-              Text(
-                addressData['phone'] ??
-                    '', // Ubah 'phone' dengan field yang sesuai
-                style: subtitleTextStyle.copyWith(
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                addressData['additionalDetail'] ??
-                    '', // Ubah 'address' dengan field yang sesuai
-                style: subtitleTextStyle.copyWith(
-                  fontSize: 12,
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              InkWell(
-                onTap: () {
-                  // Tambahkan aksi untuk mengubah alamat
-                  // ...
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
+      return Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () {
+            Map<String, dynamic> selectedLocation = {
+              "type": addressData['type'],
+              "isSelected": true,
+              "receiverName": addressData['receiverName'],
+              "phone": addressData['phone'],
+              "additionalDetail": addressData['additionalDetail'],
+              "city": addressData['city'],
+              "province": addressData['province'],
+            };
+            context
+                .read<SendLocationProvider>()
+                .setSelectedLocation(selectedLocation);
+          },
+          child: Container(
+            decoration: addressData['isSelected']
+                ? BoxDecoration(
+                    color: secondaryColor.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Ubah Alamat',
+                    border: Border.all(
+                        color: secondaryColor.withOpacity(0.5), width: 2))
+                : BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                        color: primaryTextColor.withOpacity(0.5), width: 1)),
+            width: double.maxFinite,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      addressData['type'] ??
+                          '', // Ubah 'label' dengan field yang sesuai
                       style: primaryTextStyle.copyWith(
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: bold,
-                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    addressData['isSelected']
+                        ? Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            decoration: BoxDecoration(
+                                color: secondaryColor,
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Text(
+                              'Terpilih',
+                              style: primaryTextStyle.copyWith(
+                                color: backgroundColor1,
+                                fontSize: 14,
+                                fontWeight: bold,
+                              ),
+                            ),
+                          )
+                        : const SizedBox()
+                  ],
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  addressData['receiverName'] ??
+                      '', // Ubah 'name' dengan field yang sesuai
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: bold,
+                  ),
+                ),
+                Text(
+                  addressData['phone'] ??
+                      '', // Ubah 'phone' dengan field yang sesuai
+                  style: subtitleTextStyle.copyWith(
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  addressData['additionalDetail'] ??
+                      '', // Ubah 'address' dengan field yang sesuai
+                  style: subtitleTextStyle.copyWith(
+                    fontSize: 14,
+                  ),
+                  maxLines: 2,
+                ),
+                Text(
+                  '${addressData['city']}, ${addressData['province']}',
+                  style: subtitleTextStyle.copyWith(
+                    fontSize: 14,
+                  ),
+                  maxLines: 2,
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                InkWell(
+                  onTap: () {
+                    // Tambahkan aksi untuk mengubah alamat
+                    // ...
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Ubah Alamat',
+                        style: primaryTextStyle.copyWith(
+                          fontSize: 12,
+                          fontWeight: bold,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -258,12 +216,11 @@ class _AddressScreenState extends State<AddressScreen> {
           padding: EdgeInsets.all(defaultMargin),
           child: Column(
             children: [
-              Consumer<AddressScreenProvider>(
-                builder: (context, addressScreenProvider, _) {
-                  final addressUser = addressScreenProvider.addresUser;
-                  // Looping data addressUser untuk membuat card alamat
+              Consumer<SendLocationProvider>(
+                builder: (context, sendLocation, _) {
+                  final sendLocations = sendLocation.sendLocation;
                   return Column(
-                    children: addressUser.map((addressData) {
+                    children: sendLocations.map((addressData) {
                       return addressCard(addressData);
                     }).toList(),
                   );
