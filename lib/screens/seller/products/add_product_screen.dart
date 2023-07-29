@@ -215,7 +215,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     Widget submitButton() {
       return Container(
-        margin: const EdgeInsets.only(top: 20),
+        margin: const EdgeInsets.all(20),
         height: 50,
         width: double.infinity,
         child: TextButton(
@@ -298,6 +298,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     return SafeArea(
       child: Scaffold(
+        bottomNavigationBar: BottomAppBar(
+          child: submitButton(),
+        ),
         appBar: appBar(),
         resizeToAvoidBottomInset: false,
         body: Container(
@@ -315,7 +318,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               galeriText(),
               const SizedBox(height: 10),
               imagePicker(),
-              submitButton(),
             ],
           ),
         ),

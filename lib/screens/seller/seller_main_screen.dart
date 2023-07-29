@@ -39,7 +39,7 @@ class SellerMainScreenState extends State<SellerMainScreen> {
       height: kBottomNavigationBarHeight + 20,
       iconSize: 28,
       icons: [
-        currIndex == 0 ? Icons.home : Icons.home_outlined,
+        currIndex == 0 ? Icons.dashboard_rounded : Icons.dashboard_outlined,
         currIndex == 1 ? Icons.library_books : Icons.library_books_outlined,
         currIndex == 2 ? Icons.chat : Icons.chat_outlined,
         currIndex == 3 ? Icons.person : Icons.person_outlined,

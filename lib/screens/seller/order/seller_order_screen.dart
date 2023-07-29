@@ -1,11 +1,53 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:jahitin/screens/seller/seller_main_screen.dart';
+import 'package:intl/intl.dart';
 
 import '../../../constant/theme.dart';
+import '../seller_main_screen.dart';
 import 'seller_order_detail_screen.dart';
 
-class SellerOrderScreen extends StatelessWidget {
+class SellerOrderScreen extends StatefulWidget {
+  static const routeName = '/seller-order-screen';
   const SellerOrderScreen({super.key});
+
+  @override
+  State<SellerOrderScreen> createState() => _SellerOrderScreenState();
+}
+
+class _SellerOrderScreenState extends State<SellerOrderScreen> {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference seller = FirebaseFirestore.instance.collection('seller');
+  CollectionReference orders = FirebaseFirestore.instance.collection('orders');
+
+  Future<List<Map<String, dynamic>>> getOrdersData() async {
+    final uid = auth.currentUser!.uid;
+    final sellerId =
+        await users.doc(uid).get().then((value) => value.get('sellerId'));
+
+    if (sellerId != null) {
+      final orderSnapshot =
+          await orders.where('sellerid', isEqualTo: sellerId).get();
+      if (orderSnapshot.docs.isNotEmpty) {
+        // Return a list of order data maps
+        return orderSnapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      }
+    }
+
+    // If seller data is not found or no order data is found for the seller, return an empty List.
+    return [];
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getOrdersData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +74,62 @@ class SellerOrderScreen extends StatelessWidget {
       );
     }
 
-    Widget cardPesananku() {
+    DateTime parseOrderDateString(String orderDateStr) {
+      int year = int.parse(orderDateStr.substring(0, 4));
+      int month = int.parse(orderDateStr.substring(4, 6));
+      int day = int.parse(orderDateStr.substring(6, 8));
+      int hour = int.parse(orderDateStr.substring(8, 10));
+      int minute = int.parse(orderDateStr.substring(10, 12));
+      int second = int.parse(orderDateStr.substring(12, 14));
+
+      return DateTime(year, month, day, hour, minute, second);
+    }
+
+    String formatDateTime(DateTime dateTime) {
+      // Use the intl package to format the date
+      String formattedDate =
+          DateFormat('MMMM dd, yyyy, h:mm a').format(dateTime);
+      return formattedDate;
+    }
+
+    Widget cardPesananku(Map<String, dynamic> orderData) {
+      String orderDateString = orderData['order-date'];
+      DateTime orderDate = parseOrderDateString(orderDateString);
+      String formattedDate = formatDateTime(orderDate);
+
+      Color statusColor =
+          Colors.grey.shade300; // Default color for "Menunggu Konfirmasi"
+
+      switch (orderData['order_status']) {
+        case 'Menunggu Konfirmasi':
+          statusColor = Colors.grey.shade300;
+          break;
+        case 'Diproses':
+          statusColor = Colors.amber.shade200;
+          break;
+        case 'Menunggu Pembayaran':
+          statusColor = Colors.orange.shade300;
+          break;
+        case 'Dikirim':
+          statusColor = Colors.blue.shade300;
+          break;
+        case 'Selesai':
+          statusColor = Colors.green.shade200;
+          break;
+        default:
+          statusColor = Colors.grey.shade300;
+      }
+
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, SellerOrderDetailScreen.routeName);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SellerOrderDetailScreen(
+                orderData: orderData,
+              ),
+            ),
+          );
         },
         child: Container(
           margin: const EdgeInsets.only(top: 6),
@@ -54,7 +148,7 @@ class SellerOrderScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'ATASAN',
+                        orderData['kategori'],
                         style: primaryTextStyle.copyWith(
                           fontWeight: bold,
                           fontSize: 18,
@@ -74,17 +168,17 @@ class SellerOrderScreen extends StatelessWidget {
                     thickness: 1,
                   ),
                   Text(
-                    'Order ID: 1234567890',
+                    'Order ID: ${orderData['orderid']}',
                     style: subtitleTextStyle.copyWith(fontWeight: semiBold),
                   ),
                   const SizedBox(
                     height: 5,
                   ),
                   Text(
-                    'Baju Kemeja',
+                    orderData['jenis'],
                     style: primaryTextStyle.copyWith(
-                      fontWeight: semiBold,
-                      fontSize: 16,
+                      fontWeight: bold,
+                      fontSize: 18,
                     ),
                   ),
                   const SizedBox(
@@ -95,7 +189,7 @@ class SellerOrderScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Tanggal: 12/12/2021',
+                          formattedDate,
                           style: subtitleTextStyle,
                         ),
                       ),
@@ -106,15 +200,15 @@ class SellerOrderScreen extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(6.0),
                             decoration: BoxDecoration(
-                              color: Colors.yellow.shade200,
+                              color: statusColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              'Menunggu Konfirmasi',
+                              orderData['order_status'],
                               style: primaryTextStyle.copyWith(
                                 fontWeight: semiBold,
                                 fontSize: 12,
-                                color: Colors.amber,
+                                color: Colors.black45,
                               ),
                             ),
                           ),
@@ -134,15 +228,36 @@ class SellerOrderScreen extends StatelessWidget {
       child: Scaffold(
         appBar: appBar(),
         body: Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: defaultMargin,
-            ),
-            child: ListView(
-              children: [
-                cardPesananku(),
-                cardPesananku(),
-              ],
-            )),
+          margin: EdgeInsets.symmetric(
+            horizontal: defaultMargin,
+          ),
+          child: FutureBuilder(
+            future: getOrdersData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return const Text('Error fetching data');
+              } else {
+                final orderList = snapshot.data as List<Map<String, dynamic>>;
+                if (orderList.isEmpty) {
+                  return const Center(
+                    child: Text('No orders found for this seller.'),
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: orderList.length,
+                    itemBuilder: (context, index) {
+                      return cardPesananku(orderList[index]);
+                    },
+                  );
+                }
+              }
+            },
+          ),
+        ),
       ),
     );
   }
