@@ -1,3 +1,4 @@
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jahitin/provider/location_provider.dart';
@@ -60,12 +61,11 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     Widget locationButton() {
       return Container(
-        margin: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
             color: Colors.white, // Warna outline putih
-            width: 10.0, // Lebar outline
+            // Lebar outline
           ),
         ),
         child: FloatingActionButton(
@@ -88,81 +88,21 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     Widget customBottomNav() {
-      return ClipRRect(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
-        child: BottomAppBar(
-          clipBehavior: Clip.antiAlias,
-          child: BottomNavigationBar(
-            selectedItemColor: primaryColor,
-            currentIndex: currIndex,
-            onTap: (value) {
-              setState(() {
-                currIndex = value;
-              });
-            },
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: backgroundColor1,
-            items: [
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: const EdgeInsets.only(
-                    top: 10,
-                    bottom: 10,
-                  ),
-                  child: Icon(
-                    currIndex == 0 ? Icons.home : Icons.home_outlined,
-                    color: primaryColor,
-                    size: 28,
-                  ),
-                ),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  child: Icon(
-                    currIndex == 1
-                        ? Icons.library_books
-                        : Icons.library_books_outlined,
-                    color: primaryColor,
-                    size: 28,
-                  ),
-                ),
-                label: 'Transaction',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: const EdgeInsets.only(
-                    top: 10,
-                    bottom: 10,
-                  ),
-                  child: Icon(
-                    currIndex == 2 ? Icons.chat : Icons.chat_outlined,
-                    color: primaryColor,
-                    size: 28,
-                  ),
-                ),
-                label: 'Chat',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: const EdgeInsets.only(
-                    top: 10,
-                    bottom: 10,
-                  ),
-                  child: Icon(
-                    currIndex == 3 ? Icons.person : Icons.person_outlined,
-                    color: primaryColor,
-                    size: 28,
-                  ),
-                ),
-                label: 'Profile',
-              ),
-            ],
-          ),
-        ),
+      return AnimatedBottomNavigationBar(
+        activeColor: primaryColor,
+        inactiveColor: Colors.grey,
+        height: kBottomNavigationBarHeight + 20,
+        iconSize: 28,
+        icons: [
+          currIndex == 0 ? Icons.home : Icons.home_outlined,
+          currIndex == 1 ? Icons.library_books : Icons.library_books_outlined,
+          currIndex == 2 ? Icons.chat : Icons.chat_outlined,
+          currIndex == 3 ? Icons.person : Icons.person_outlined,
+        ],
+        activeIndex: currIndex,
+        gapLocation: GapLocation.center,
+        notchSmoothness: NotchSmoothness.softEdge,
+        onTap: (index) => setState(() => currIndex = index),
       );
     }
 
@@ -172,7 +112,7 @@ class _MainScreenState extends State<MainScreen> {
           return const HomeScreen();
 
         case 1:
-          return const TransactionScreen();
+          return TransactionScreen();
 
         case 2:
           return const ChatScreen();

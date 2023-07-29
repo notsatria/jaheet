@@ -181,7 +181,7 @@ class _SearchScreenState extends State<SearchScreen>
                           ),
                           Expanded(
                             child: Container(
-                              padding: EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(12),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -206,7 +206,7 @@ class _SearchScreenState extends State<SearchScreen>
                                   ),
                                   Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.star,
                                         color:
                                             Color.fromARGB(255, 250, 229, 36),
@@ -229,9 +229,6 @@ class _SearchScreenState extends State<SearchScreen>
                   ),
               ],
             ),
-          );
-          return SizedBox(
-            height: 16,
           );
         },
       );
@@ -424,10 +421,10 @@ class _SearchScreenState extends State<SearchScreen>
 
     Widget skeletonListTile() {
       return SkeletonListTile(
-        leadingStyle: SkeletonAvatarStyle(width: 80, height: 80),
-        titleStyle: SkeletonLineStyle(height: 20),
+        leadingStyle: const SkeletonAvatarStyle(width: 80, height: 80),
+        titleStyle: const SkeletonLineStyle(height: 20),
         hasSubtitle: true,
-        subtitleStyle: SkeletonLineStyle(randomLength: true),
+        subtitleStyle: const SkeletonLineStyle(randomLength: true),
       );
     }
 
@@ -471,7 +468,7 @@ class _SearchScreenState extends State<SearchScreen>
                   if (!snapshot.hasData ||
                       snapshot.data == null ||
                       snapshot.data == []) {
-                    return Center(child: Text('No data found.'));
+                    return const Center(child: Text('No data found.'));
                   }
 
                   // Store all sellers in _sellerData list

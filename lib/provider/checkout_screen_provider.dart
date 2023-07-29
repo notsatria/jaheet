@@ -20,6 +20,8 @@ class CheckoutScreenProvider extends ChangeNotifier {
 
   int _sellerId = 0;
 
+  final String _status = 'Menunggu konfirmasi';
+
   final Map<String, dynamic> _detailJasa = {
     'kategori': '',
     'jenis': '',
@@ -114,6 +116,7 @@ class CheckoutScreenProvider extends ChangeNotifier {
       'order-date': _date,
       'sellerid': _sellerId,
       'orderid': generateOrderId(),
+      'status': _status,
     });
   }
 }

@@ -6,6 +6,7 @@ import 'package:jahitin/provider/checkout_screen_provider.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
+import 'package:jahitin/provider/transaction_screen_provider.dart';
 import 'package:jahitin/screens/home/address_screen.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/splash_screen.dart';
@@ -54,6 +55,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => CheckoutScreenProvider()),
         ChangeNotifierProvider(create: (_) => AddressScreenProvider()),
         ChangeNotifierProvider(create: (_) => SendLocationProvider()),
+        ChangeNotifierProvider(create: (_) => TransactionScreenProvider()),
       ],
       child: const MyApp(),
     ),
