@@ -6,16 +6,15 @@ import 'package:jahitin/provider/checkout_screen_provider.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
-import 'package:jahitin/screens/home/address_screen.dart';
-import 'package:jahitin/screens/home/transaction_screen.dart';
-import 'package:jahitin/screens/splash_screen.dart';
-import 'package:jahitin/screens/seller/order/seller_order_detail_screen.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/add_location.dart';
-import 'package:jahitin/screens/splash_screen.dart';
+import 'package:jahitin/screens/home/address_screen.dart';
+import 'package:jahitin/screens/home/transaction_screen.dart';
+import 'package:jahitin/screens/seller/order/seller_order_screen.dart';
 import 'package:jahitin/screens/seller/products/add_product_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
+import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/transaction/checkout_screen.dart';
 import 'package:jahitin/screens/transaction/payment_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
@@ -89,10 +88,10 @@ class MyApp extends StatelessWidget {
         LocationRecommendationScreen.routeName: (context) =>
             const LocationRecommendationScreen(),
         SellerMainScreen.routeName: (context) => const SellerMainScreen(),
+        SellerOrderScreen.routeName: (context) => const SellerOrderScreen(),
         RegistrationFormScreen.routeName: (context) =>
             const RegistrationFormScreen(),
         AddProductScreen.routeName: (context) => const AddProductScreen(),
-     
         AddLocationScreen.routeName: (context) => const AddLocationScreen(),
         AddressScreen.routeName: (context) => const AddressScreen()
       },

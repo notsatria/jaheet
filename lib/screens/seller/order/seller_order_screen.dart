@@ -8,6 +8,7 @@ import '../seller_main_screen.dart';
 import 'seller_order_detail_screen.dart';
 
 class SellerOrderScreen extends StatefulWidget {
+  static const routeName = '/seller-order-screen';
   const SellerOrderScreen({super.key});
 
   @override
@@ -96,6 +97,29 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
       DateTime orderDate = parseOrderDateString(orderDateString);
       String formattedDate = formatDateTime(orderDate);
 
+      Color statusColor =
+          Colors.grey.shade300; // Default color for "Menunggu Konfirmasi"
+
+      switch (orderData['order_status']) {
+        case 'Menunggu Konfirmasi':
+          statusColor = Colors.grey.shade300;
+          break;
+        case 'Diproses':
+          statusColor = Colors.amber.shade200;
+          break;
+        case 'Menunggu Pembayaran':
+          statusColor = Colors.orange.shade300;
+          break;
+        case 'Dikirim':
+          statusColor = Colors.blue.shade300;
+          break;
+        case 'Selesai':
+          statusColor = Colors.green.shade200;
+          break;
+        default:
+          statusColor = Colors.grey.shade300;
+      }
+
       return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -176,15 +200,15 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                           child: Container(
                             padding: const EdgeInsets.all(6.0),
                             decoration: BoxDecoration(
-                              color: Colors.yellow.shade200,
+                              color: statusColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              'Menunggu Konfirmasi',
+                              orderData['order_status'],
                               style: primaryTextStyle.copyWith(
                                 fontWeight: semiBold,
                                 fontSize: 12,
-                                color: Colors.amber,
+                                color: Colors.black45,
                               ),
                             ),
                           ),
