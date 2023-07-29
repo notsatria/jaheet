@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
@@ -15,15 +18,91 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  FirebaseAuth auth = FirebaseAuth.instance;
   final ImagePicker picker = ImagePicker();
   List<XFile>? images = [];
-  List<String> selectedCategories = [];
-  static const List<String> categoryOptions = [
-    'Atasan',
-    'Bawahan',
-    'Perbaikan',
-    'Terusan',
-  ];
+
+  TextEditingController atasanMinPriceController = TextEditingController();
+  TextEditingController atasanMaxPriceController = TextEditingController();
+  TextEditingController bawahanMinPriceController = TextEditingController();
+  TextEditingController bawahanMaxPriceController = TextEditingController();
+  TextEditingController terusanMinPriceController = TextEditingController();
+  TextEditingController terusanMaxPriceController = TextEditingController();
+  TextEditingController perbaikanMinPriceController = TextEditingController();
+  TextEditingController perbaikanMaxPriceController = TextEditingController();
+
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference seller = FirebaseFirestore.instance.collection('seller');
+
+  Future<String?> uploadImageToFirebase(File imageFile) async {
+    try {
+      final uid = auth.currentUser!.uid;
+      final sellerId =
+          await users.doc(uid).get().then((value) => value.get('sellerId'));
+
+      final fileName =
+          'seller_${sellerId}_gallery/${DateTime.now().millisecondsSinceEpoch}.png';
+
+      final storageRef = FirebaseStorage.instance.ref().child(fileName);
+      final uploadTask = storageRef.putFile(imageFile);
+
+      final TaskSnapshot snapshot = await uploadTask;
+
+      if (snapshot.state == TaskState.success) {
+        final downloadUrl = await snapshot.ref.getDownloadURL();
+        return downloadUrl;
+      }
+    } catch (e) {
+      print('Error uploading image to Firebase Storage: $e');
+    }
+    return null;
+  }
+
+  Future<void> uploadImagesAndAddToFirestore(
+      String title, String minPrice, String maxPrice) async {
+    final uid = auth.currentUser!.uid;
+    final sellerId =
+        await users.doc(uid).get().then((value) => value.get('sellerId'));
+
+    if (images!.isNotEmpty) {
+      // Upload images to Firebase Storage
+      List<String> imageUrls = [];
+      for (final imageFile in images!) {
+        final imageUrl = await uploadImageToFirebase(File(imageFile.path));
+        if (imageUrl != null) {
+          imageUrls.add(imageUrl);
+        }
+      }
+
+      // Clear existing jasa documents for the current seller and title
+      await FirebaseFirestore.instance
+          .collection('seller')
+          .doc('$sellerId')
+          .collection('jasa')
+          .where('title', isEqualTo: title)
+          .get()
+          .then((snapshot) {
+        for (var doc in snapshot.docs) {
+          doc.reference.delete();
+        }
+      });
+
+      // Create new jasa documents with the uploaded image URLs
+      for (final imageUrl in imageUrls) {
+        await FirebaseFirestore.instance
+            .collection('seller')
+            .doc('$sellerId')
+            .collection('jasa')
+            .add({
+          'title': title,
+          'minPrice': minPrice,
+          'maxPrice': maxPrice,
+          'imageUrl': imageUrl,
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     PreferredSizeWidget appBar() {
@@ -49,86 +128,58 @@ class _AddProductScreenState extends State<AddProductScreen> {
       );
     }
 
-    Widget namaJasaForm() {
-      return Container(
-        margin: const EdgeInsets.only(top: 20),
-        child: TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Nama Jasa',
-            hintText: 'Masukkan nama jasa',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      );
-    }
-
-    Widget deskripsiForm() {
-      return Container(
-        margin: const EdgeInsets.only(top: 20),
-        child: TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Deskripsi',
-            hintText: 'Masukkan deskripsi jasa',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      );
-    }
-
-    Widget hargaForm() {
-      return Container(
-        margin: const EdgeInsets.only(top: 20),
-        child: TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Harga',
-            hintText: 'Contoh: Rp 100.000 - Rp 200.000',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      );
-    }
-
-    //kategori form menggunakan checkbox
-    Widget kategoriForm() {
-      return Container(
-        margin: const EdgeInsets.only(top: 20),
+    Widget hargaForm(String title, TextEditingController minPriceController,
+        TextEditingController maxPriceController) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Kategori',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+            Text(
+              title.toUpperCase(),
+              style: primaryTextStyle.copyWith(
+                fontSize: 18,
+                fontWeight: bold,
               ),
             ),
-            const SizedBox(height: 10),
-            Wrap(
-              direction: Axis.horizontal,
-              spacing: 2,
-              children: List.generate(categoryOptions.length, (index) {
-                String category = categoryOptions[index];
-                return CheckboxListTile(
-                  title: Text(category),
-                  value: selectedCategories.contains(category),
-                  onChanged: (bool? value) {
-                    setState(() {
-                      if (value == true) {
-                        selectedCategories.add(category);
-                      } else {
-                        selectedCategories.remove(category);
-                      }
-                    });
-                  },
-                  controlAffinity: ListTileControlAffinity.leading,
-                );
-              }),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  width: 140,
+                  child: TextFormField(
+                    controller: minPriceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Harga Minimum',
+                      hintText: 'Rp 100.000',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  '_',
+                  style: navyTextStyle.copyWith(fontSize: 30),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  width: 140,
+                  child: TextFormField(
+                    controller: maxPriceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Harga Maksimum',
+                      hintText: 'Rp 500.000',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -204,11 +255,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
     }
 
     Widget galeriText() {
-      return Text(
-        '*Silahkan upload foto jasa Anda, foto ini akan tampil pada informasi produk/jasa Anda (Maksimal 4 Gambar)',
-        style: navyTextStyle.copyWith(
-          fontSize: 14,
-          fontWeight: light,
+      return Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Text(
+          '*Silahkan upload foto jasa Anda, foto ini akan tampil pada informasi produk/jasa Anda (Maksimal 4 Gambar)',
+          style: navyTextStyle.copyWith(
+            fontSize: 14,
+            fontWeight: light,
+          ),
         ),
       );
     }
@@ -221,19 +275,29 @@ class _AddProductScreenState extends State<AddProductScreen> {
         child: TextButton(
           onPressed: () async {
             try {
-              // await addSeller();
-              // await updateUser();
-
-              // namaTokoController.clear();
-              // kelurahanTokoController.clear();
-              // kecamatanTokoController.clear();
-              // kotaTokoController.clear();
-              // provinsiTokoController.clear();
-              // alamatTokoController.clear();
-              // deskripsiTokoController.clear();
+              uploadImagesAndAddToFirestore(
+                'ATASAN',
+                atasanMinPriceController.text,
+                atasanMaxPriceController.text,
+              );
+              uploadImagesAndAddToFirestore(
+                'BAWAHAN',
+                bawahanMinPriceController.text,
+                bawahanMaxPriceController.text,
+              );
+              uploadImagesAndAddToFirestore(
+                'TERUSAN',
+                terusanMinPriceController.text,
+                terusanMaxPriceController.text,
+              );
+              uploadImagesAndAddToFirestore(
+                'PERBAIKAN',
+                perbaikanMinPriceController.text,
+                perbaikanMaxPriceController.text,
+              );
 
               // setState(() {
-              //   image = null;
+              //   images = null;
               // });
 
               // Tampilkan circullar progress indicator
@@ -244,7 +308,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: const Text('Pendaftaran Gagal'),
+                    title: const Text('Update Data Gagal'),
                     content: const Text('Silahkan coba lagi'),
                     actions: [
                       TextButton(
@@ -263,9 +327,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: const Text('Pendaftaran Berhasil'),
-                    content:
-                        const Text('Silahkan tunggu konfirmasi dari admin'),
+                    title: const Text('Produk Berhasil Diperbarui'),
+                    content: const Text('Silahkan cek kembali produk Anda'),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -311,10 +374,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
           child: ListView(
             children: [
-              namaJasaForm(),
-              deskripsiForm(),
-              hargaForm(),
-              kategoriForm(),
+              hargaForm(
+                  'ATASAN', atasanMinPriceController, atasanMaxPriceController),
+              hargaForm('BAWAHAN', bawahanMinPriceController,
+                  bawahanMaxPriceController),
+              hargaForm('TERUSAN', terusanMinPriceController,
+                  terusanMaxPriceController),
+              hargaForm('PERBAIKAN', perbaikanMinPriceController,
+                  perbaikanMaxPriceController),
               galeriText(),
               const SizedBox(height: 10),
               imagePicker(),
