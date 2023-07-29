@@ -17,10 +17,38 @@ class DetailScreen extends StatefulWidget {
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _DetailScreenState extends State<DetailScreen>
+    with SingleTickerProviderStateMixin {
   bool toggle = false;
   bool isExpanded = false;
   late TabController _tabController;
+
+  List<Tab> myTabs = <Tab>[
+    Tab(
+      // child: Image.asset(
+      //   'assets/icon/baju.png',
+      //   width: 25,
+      //   height: 25,
+      // ),
+      text: 'Produk',
+    ),
+    Tab(
+      // child: Image.asset(
+      //   'assets/icon/celana.png',
+      //   width: 25,
+      //   height: 25,
+      // ),
+      text: 'Category',
+    ),
+    Tab(
+      // child: Image.asset(
+      //   'assets/icon/trus.png',
+      //   width: 25,
+      //   height: 25,
+      // ),
+      text: 'Rating',
+    ),
+  ];
 
   void toggleExpanded() {
     setState(() {
@@ -29,20 +57,15 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: myTabs.length);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     int id = args['id'];
-    List<Tab> myTabs = <Tab>[
-      Tab(
-        child: Image.asset('/assets/icon/baju.png'),
-      ),
-      Tab(
-        child: Image.asset('/assets/icon/celana.png'),
-      ),
-      Tab(
-        child: Image.asset('/assets/icon/trus.png'),
-      ),
-    ];
 
     void _navigateToCheckout(BuildContext, int id) async {
       await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
@@ -768,16 +791,6 @@ class _DetailScreenState extends State<DetailScreen> {
       );
     }
 
-    Widget tabBarView() {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height - 157,
-        child: TabBarView(
-          controller: _tabController,
-          children: [],
-        ),
-      );
-    }
-
     Widget gridView() {
       return Container(
         margin: const EdgeInsets.only(right: 16, left: 16, top: 16),
@@ -787,10 +800,10 @@ class _DetailScreenState extends State<DetailScreen> {
             crossAxisCount: 2,
             mainAxisSpacing: 16,
             crossAxisSpacing: 12,
-            childAspectRatio: 1 / 1.56,
+            childAspectRatio: 1,
           ),
           children: [
-            for (int i = 0; i < 10; i++)
+            for (int i = 1; i <= 10; i++)
               Container(
                 decoration: BoxDecoration(
                   boxShadow: [cardShadow],
@@ -807,45 +820,77 @@ class _DetailScreenState extends State<DetailScreen> {
                       child: SizedBox(
                         width: double.infinity,
                         height: 175,
-                        child: Image.asset('/assets/images/fashion.png',
-                            fit: BoxFit.cover),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'halo',
-                              style: primaryTextStyle.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.star,
-                                  color: Color.fromARGB(255, 250, 229, 36),
-                                ),
-                                Text(
-                                  '4.5',
-                                  style: primaryTextStyle.copyWith(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        child: Image.asset(
+                          'assets/images/fashion.png',
+                          fit: BoxFit.cover,
+                          height: 50,
                         ),
                       ),
                     ),
+                    // Expanded(
+                    //   child: Container(
+                    //     padding: const EdgeInsets.all(12),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Text(
+                    //           'Item $i', // Display item number
+                    //           style: primaryTextStyle.copyWith(
+                    //             fontSize: 14,
+                    //             fontWeight: FontWeight.bold,
+                    //           ),
+                    //           overflow: TextOverflow.ellipsis,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
+          ],
+        ),
+      );
+    }
+
+    Widget searchOption() {
+      return SizedBox(
+        width: double.infinity,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.0),
+            border: const Border(
+              bottom: BorderSide(
+                color: Color.fromARGB(177, 158, 158, 158),
+                width: 2,
+              ),
+            ),
+          ),
+          child: TabBar(
+            labelColor: primaryColor,
+            labelStyle: primaryTextStyle.copyWith(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+            indicatorColor: primaryColor,
+            unselectedLabelColor: const Color.fromARGB(177, 158, 158, 158),
+            controller: _tabController,
+            indicatorPadding: EdgeInsets.zero,
+            tabs: myTabs,
+          ),
+        ),
+      );
+    }
+
+    Widget tabBarView() {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height - 157,
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            gridView(),
+            gridView(),
+            gridView(),
           ],
         ),
       );
@@ -874,6 +919,7 @@ class _DetailScreenState extends State<DetailScreen> {
           const Divider(
             thickness: 1.5,
           ),
+          searchOption(),
           tabBarView(),
         ],
       );
@@ -900,7 +946,12 @@ class _DetailScreenState extends State<DetailScreen> {
         body: Stack(
           children: [
             SingleChildScrollView(
-              child: marketScreen(),
+              child: Consumer<DetailScreenProvider>(
+                  builder: (context, detailScreenProvider, _) {
+                final detaildata = detailScreenProvider.detailScreenData;
+                final type = detaildata?['isClothSeller'];
+                return (type) ? marketScreen() : penjahitScreen();
+              }),
             ),
             floatingBackButton(),
           ],

@@ -25,7 +25,7 @@ class _SearchScreenState extends State<SearchScreen>
       text: 'Jahit',
     ),
     Tab(
-      text: 'Kain',
+      text: 'Market',
     ),
   ];
 
