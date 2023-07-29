@@ -2,10 +2,26 @@ import 'package:flutter/material.dart';
 
 import '../../../constant/theme.dart';
 
-class SellerOrderDetailScreen extends StatelessWidget {
+class SellerOrderDetailScreen extends StatefulWidget {
   static const routeName = '/seller-order-detail-screen';
-  const SellerOrderDetailScreen({super.key});
+  final Map<String, dynamic> orderData;
+  const SellerOrderDetailScreen({super.key, required this.orderData});
 
+  @override
+  State<SellerOrderDetailScreen> createState() =>
+      _SellerOrderDetailScreenState();
+}
+
+const List<String> statusOptions = [
+  'Menunggu Konfirmasi',
+  'Diproses',
+  'Menunggu Pembayaran',
+  'Dikirim',
+  'Selesai',
+];
+
+class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
+  String selectedStatus = statusOptions.first;
   @override
   Widget build(BuildContext context) {
     PreferredSizeWidget appBar() {
@@ -37,7 +53,7 @@ class SellerOrderDetailScreen extends StatelessWidget {
         child: Card(
           child: Container(
             width: double.infinity,
-            height: 150,
+            height: 130,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -52,21 +68,25 @@ class SellerOrderDetailScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'ATASAN',
+                      'Order ID: ${widget.orderData['orderid']}',
+                      style: subtitleTextStyle,
+                    ),
+                    Text(
+                      widget.orderData['kategori'],
                       style: primaryTextStyle.copyWith(
                         fontWeight: bold,
                         fontSize: 18,
                       ),
                     ),
                     Text(
-                      'Baju Kemeja',
+                      widget.orderData['jenis'],
                       style: primaryTextStyle.copyWith(
                         fontWeight: semiBold,
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      'Jahit Termasuk Bahan',
+                      widget.orderData['jasa'],
                       style: primaryTextStyle.copyWith(
                         fontWeight: reguler,
                         fontSize: 16,
@@ -110,7 +130,7 @@ class SellerOrderDetailScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Container(
             padding: const EdgeInsets.all(14),
             width: double.infinity,
@@ -125,18 +145,7 @@ class SellerOrderDetailScreen extends StatelessWidget {
               thumbVisibility: true,
               child: SingleChildScrollView(
                 child: Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing '
-                  'elit. Sed vitae eros vitae nisl aliquam aliquet. '
-                  'Vestibulum ante ipsum primis in faucibus orci luctus '
-                  'et ultrices posuere cubilia curae; Nulla facilisi. '
-                  'Suspendisse potenti. Donec euismod, nisl sed '
-                  'consectetur ultricies, nunc nisl ultricies nunc, '
-                  'quis ultricies nisl nunc sed nisl. Donec euismod '
-                  'nisl eget enim aliquam, sed aliquam nisl '
-                  'pellentesque. Donec euismod, nisl sed consectetur '
-                  'ultricies, nunc nisl ultricies nunc, quis ultricies '
-                  'nisl nunc sed nisl. Donec euismod nisl eget enim '
-                  'aliquam, sed aliquam nisl pellentesque.',
+                  widget.orderData['deskripsi'],
                   style: primaryTextStyle.copyWith(
                     fontWeight: light,
                     fontSize: 14,
@@ -160,18 +169,22 @@ class SellerOrderDetailScreen extends StatelessWidget {
             style:
                 primaryTextStyle.copyWith(fontWeight: semiBold, fontSize: 16),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Card(
             child: ListTile(
               title: Row(
                 children: [
                   Icon(
-                    Icons.local_shipping,
+                    widget.orderData['delivery'] == 'drop'
+                        ? Icons.storefront
+                        : Icons.local_shipping,
                     color: alertColor,
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Home Delivery',
+                    widget.orderData['delivery'] == 'drop'
+                        ? 'Pick Off'
+                        : 'Home Delivery',
                     style: primaryTextStyle.copyWith(
                       fontWeight: semiBold,
                       fontSize: 16,
@@ -191,15 +204,15 @@ class SellerOrderDetailScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 10),
           Text(
-            'Alamat Pesanan',
+            'Alamat Pemesan',
             style:
                 primaryTextStyle.copyWith(fontWeight: semiBold, fontSize: 16),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Card(
             child: ListTile(
               title: Text(
-                'Jl. Raya Bogor KM 30, Depok',
+                widget.orderData['alamat'],
                 style: primaryTextStyle.copyWith(
                   fontWeight: semiBold,
                   fontSize: 16,
@@ -218,9 +231,119 @@ class SellerOrderDetailScreen extends StatelessWidget {
       );
     }
 
+    Widget statusPemesanan() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          Text(
+            'Status Pemesanan',
+            style:
+                primaryTextStyle.copyWith(fontWeight: semiBold, fontSize: 16),
+          ),
+          const SizedBox(height: 5),
+          Card(
+            child: ListTile(
+              title: ClipRRect(
+                child: Container(
+                  padding: const EdgeInsets.all(6.0),
+                  decoration: BoxDecoration(
+                    color: Colors.yellow.shade200,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    selectedStatus,
+                    style: primaryTextStyle.copyWith(
+                      fontWeight: semiBold,
+                      fontSize: 14,
+                      color: Colors.amber,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget updateStatusPemesanan() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          Text(
+            'Update Status Pemesanan',
+            style: primaryTextStyle.copyWith(
+              fontWeight: semiBold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ),
+            child: DropdownButton<String>(
+              iconEnabledColor: secondaryColor,
+              isExpanded: true,
+              value: selectedStatus,
+              onChanged: (value) {
+                // When the user selects a status option, update the selectedStatus variable
+                setState(() {
+                  selectedStatus = value!;
+                });
+              },
+              items:
+                  statusOptions.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget bottomNavbar() {
+      return Container(
+        margin: EdgeInsets.all(defaultMargin - 5),
+        width: double.maxFinite,
+        height: 45,
+        child: InkWell(
+          onTap: () {
+            //
+          },
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+                child: Text(
+              'Update Status',
+              style: whiteTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: semiBold,
+              ),
+            )),
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+        bottomNavigationBar: BottomAppBar(
+          child: bottomNavbar(),
+        ),
         appBar: appBar(),
         body: Container(
           margin: EdgeInsets.symmetric(
@@ -234,6 +357,8 @@ class SellerOrderDetailScreen extends StatelessWidget {
                 deskripsiPesanan(),
                 pengirimanPesanan(),
                 alamatPemesanan(),
+                statusPemesanan(),
+                updateStatusPemesanan(),
               ],
             ),
           ),
