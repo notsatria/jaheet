@@ -230,9 +230,6 @@ class _SearchScreenState extends State<SearchScreen>
               ],
             ),
           );
-          return SizedBox(
-            height: 16,
-          );
         },
       );
     }

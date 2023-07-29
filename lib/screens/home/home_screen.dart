@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:jahitin/provider/location_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
-import 'package:jahitin/screens/home/add_location.dart';
 import 'package:jahitin/screens/home/address_screen.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:jahitin/screens/home/search_screen.dart';
+import 'package:jahitin/screens/home/see_more.dart';
 import 'package:jahitin/services/haversine.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';
@@ -650,7 +650,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       primaryTextStyle.copyWith(fontSize: 16, fontWeight: bold),
                 ),
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, SeeMoreScreen.routeName);
+                    },
                     child: Text(
                       'Lihat Semua',
                       style: primaryTextStyle.copyWith(

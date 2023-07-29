@@ -24,7 +24,7 @@ class _LocationRecommendationScreenState
   ScrollController scrollController = ScrollController();
 
   List<dynamic> locationSet = [];
-  int highlightRadius = 1000;
+  int highlightRadius = 500;
   List<int> radiusOptions = [500, 1000, 2000];
   late LatLng initialFocusMap;
 
@@ -113,6 +113,7 @@ class _LocationRecommendationScreenState
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: Scaffold(
           body: Stack(

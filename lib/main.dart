@@ -7,6 +7,7 @@ import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
 import 'package:jahitin/screens/home/address_screen.dart';
+import 'package:jahitin/screens/home/see_more.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/seller/order/seller_order_detail_screen.dart';
@@ -95,7 +96,8 @@ class MyApp extends StatelessWidget {
         SellerOrderDetailScreen.routeName: (context) =>
             const SellerOrderDetailScreen(),
         AddLocationScreen.routeName: (context) => const AddLocationScreen(),
-        AddressScreen.routeName: (context) => const AddressScreen()
+        AddressScreen.routeName: (context) => const AddressScreen(),
+        SeeMoreScreen.routeName: (context) => const SeeMoreScreen()
       },
     );
   }

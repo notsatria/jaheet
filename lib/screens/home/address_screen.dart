@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jahitin/provider/address_screen_provider.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/add_location.dart';
 import 'package:provider/provider.dart';
