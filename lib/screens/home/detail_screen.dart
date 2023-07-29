@@ -25,25 +25,28 @@ class _DetailScreenState extends State<DetailScreen>
 
   List<Tab> myTabs = <Tab>[
     Tab(
-      child: Image.asset(
-        'assets/icon/baju.png',
-        width: 25,
-        height: 25,
-      ),
+      // child: Image.asset(
+      //   'assets/icon/baju.png',
+      //   width: 25,
+      //   height: 25,
+      // ),
+      text: 'Produk',
     ),
     Tab(
-      child: Image.asset(
-        'assets/icon/celana.png',
-        width: 25,
-        height: 25,
-      ),
+      // child: Image.asset(
+      //   'assets/icon/celana.png',
+      //   width: 25,
+      //   height: 25,
+      // ),
+      text: 'Category',
     ),
     Tab(
-      child: Image.asset(
-        'assets/icon/trus.png',
-        width: 25,
-        height: 25,
-      ),
+      // child: Image.asset(
+      //   'assets/icon/trus.png',
+      //   width: 25,
+      //   height: 25,
+      // ),
+      text: 'Rating',
     ),
   ];
 
@@ -797,10 +800,10 @@ class _DetailScreenState extends State<DetailScreen>
             crossAxisCount: 2,
             mainAxisSpacing: 16,
             crossAxisSpacing: 12,
-            childAspectRatio: 1 / 1.56,
+            childAspectRatio: 1,
           ),
           children: [
-            for (int i = 1; i <= 10; i++) // Generate 10 items
+            for (int i = 1; i <= 10; i++)
               Container(
                 decoration: BoxDecoration(
                   boxShadow: [cardShadow],
@@ -820,27 +823,28 @@ class _DetailScreenState extends State<DetailScreen>
                         child: Image.asset(
                           'assets/images/fashion.png',
                           fit: BoxFit.cover,
+                          height: 50,
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Item $i', // Display item number
-                              style: primaryTextStyle.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: Container(
+                    //     padding: const EdgeInsets.all(12),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Text(
+                    //           'Item $i', // Display item number
+                    //           style: primaryTextStyle.copyWith(
+                    //             fontSize: 14,
+                    //             fontWeight: FontWeight.bold,
+                    //           ),
+                    //           overflow: TextOverflow.ellipsis,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -865,7 +869,7 @@ class _DetailScreenState extends State<DetailScreen>
           child: TabBar(
             labelColor: primaryColor,
             labelStyle: primaryTextStyle.copyWith(
-              fontSize: 18,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
             indicatorColor: primaryColor,
@@ -884,6 +888,8 @@ class _DetailScreenState extends State<DetailScreen>
         child: TabBarView(
           controller: _tabController,
           children: [
+            gridView(),
+            gridView(),
             gridView(),
           ],
         ),
@@ -914,6 +920,7 @@ class _DetailScreenState extends State<DetailScreen>
             thickness: 1.5,
           ),
           searchOption(),
+          tabBarView(),
         ],
       );
     }
@@ -939,7 +946,12 @@ class _DetailScreenState extends State<DetailScreen>
         body: Stack(
           children: [
             SingleChildScrollView(
-              child: marketScreen(),
+              child: Consumer<DetailScreenProvider>(
+                  builder: (context, detailScreenProvider, _) {
+                final detaildata = detailScreenProvider.detailScreenData;
+                final type = detaildata?['isClothSeller'];
+                return (type) ? marketScreen() : penjahitScreen();
+              }),
             ),
             floatingBackButton(),
           ],
