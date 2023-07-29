@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:jahitin/screens/home/transaction_detail_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
 import '../../provider/transaction_screen_provider.dart';
@@ -34,6 +35,14 @@ class _TransactionScreenState extends State<TransactionScreen> {
     return formattedDate;
   }
 
+  void navigateToDetail(BuildContext context, String orderid) async {
+    await context
+        .read<TransactionScreenProvider>()
+        .fetchDetailScreenData(orderid);
+    Navigator.pushNamed(context, TransactionDetailScreen.routeName,
+        arguments: {'orderid': orderid});
+  }
+
   @override
   Widget build(BuildContext context) {
     PreferredSizeWidget appBar() {
@@ -44,15 +53,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
           style: TextStyle(
             color: primaryTextColor,
             fontWeight: semiBold,
-          ),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, MainScreen.routeName);
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: primaryTextColor,
           ),
         ),
         elevation: 2,
@@ -70,10 +70,12 @@ class _TransactionScreenState extends State<TransactionScreen> {
     ) {
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, TransactionDetailScreen.routeName);
+          navigateToDetail(context, orderid);
         },
         child: Container(
-          margin: const EdgeInsets.all(20),
+          margin: const EdgeInsets.only(
+            bottom: 20,
+          ),
           padding: const EdgeInsets.all(12),
           width: double.maxFinite,
           decoration: BoxDecoration(
@@ -175,29 +177,35 @@ class _TransactionScreenState extends State<TransactionScreen> {
                   );
                 }
 
-                return ListView.builder(
-                  itemCount: orders.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> orderData = orders[index];
-                    String kategori = orderData['kategori'];
-                    String jenis = orderData['jenis'];
-                    String jasa = orderData['jasa'];
-                    String status = orderData['order_status'];
-                    String orderDate = orderData['order-date'];
-                    DateTime date = parseOrderDateString(orderDate);
-                    String formattedDate = formatDateTime(date);
-                    String orderId = orderData['orderid'];
-                    var sellerName = orderData['alamat_penjual']['sellerName'];
-                    return orderItem(
-                      sellerName,
-                      kategori,
-                      jenis,
-                      status,
-                      jasa,
-                      formattedDate,
-                      orderId,
-                    );
-                  },
+                return SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.all(defaultMargin),
+                    child: ListView.builder(
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        Map<String, dynamic> orderData = orders[index];
+                        String kategori = orderData['kategori'];
+                        String jenis = orderData['jenis'];
+                        String jasa = orderData['jasa'];
+                        String status = orderData['order_status'];
+                        String orderDate = orderData['order-date'];
+                        DateTime date = parseOrderDateString(orderDate);
+                        String formattedDate = formatDateTime(date);
+                        String orderId = orderData['orderid'];
+                        var sellerName =
+                            orderData['alamat_penjual']['sellerName'];
+                        return orderItem(
+                          sellerName,
+                          kategori,
+                          jenis,
+                          status,
+                          jasa,
+                          formattedDate,
+                          orderId,
+                        );
+                      },
+                    ),
+                  ),
                 );
               }
             },

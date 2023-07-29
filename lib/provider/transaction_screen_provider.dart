@@ -9,7 +9,8 @@ class TransactionScreenProvider extends ChangeNotifier {
 
   List<Map<String, dynamic>> get orders => _orders;
 
-  String _sellerName = '';
+  Map<String, dynamic>? _detailScreenData;
+  Map<String, dynamic>? get detailScreenData => _detailScreenData;
 
   Future<void> fetchOrders() async {
     try {
@@ -24,6 +25,24 @@ class TransactionScreenProvider extends ChangeNotifier {
       } else {}
     } catch (error) {
       debugPrint('Error fetching data: $error');
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchDetailScreenData(String orderid) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('orders')
+          .where("orderid", isEqualTo: orderid)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        _detailScreenData = snapshot.docs.first.data();
+        print(_detailScreenData);
+      } else {
+        _detailScreenData = null;
+      }
+    } catch (error) {
+      print('Error fetching data: $error');
     }
     notifyListeners();
   }
