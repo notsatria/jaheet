@@ -36,12 +36,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessageFromUser(
-        widget.receiverUserID,
-        _messageController.text,
-      );
-
-      _messageController.clear();
+      try {
+        await _chatService.sendMessageFromUser(
+          widget.receiverUserID,
+          _messageController.text,
+        );
+        _messageController.clear();
+      } catch (error) {
+        // Handle any errors that may occur during message sending
+        print('Error sending message: $error');
+      }
     }
   }
 
