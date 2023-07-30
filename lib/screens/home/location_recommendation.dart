@@ -5,6 +5,7 @@ import 'package:jahitin/constant/theme.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../../provider/detail_screen_provider.dart';
 import '../../provider/location_provider.dart';
 import '../../services/haversine.dart';
 
@@ -29,6 +30,19 @@ class _LocationRecommendationScreenState
   late LatLng initialFocusMap;
 
   BitmapDescriptor? customMarkerIcon;
+
+  void _navigateToDetailScreen(BuildContext context, int id) async {
+    await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailScreen(),
+        settings: RouteSettings(arguments: {
+          'id': id,
+        }),
+      ),
+    );
+  }
 
   Future<void> loadCustomMarkerIcon() async {
     const ImageConfiguration config = ImageConfiguration();
@@ -291,18 +305,20 @@ class _LocationRecommendationScreenState
                                           ),
                                           IconButton(
                                               onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetailScreen(),
-                                                    settings: RouteSettings(
-                                                        arguments: {
-                                                          'id': locationData[
-                                                              "id"],
-                                                        }),
-                                                  ),
-                                                );
+                                                _navigateToDetailScreen(context,
+                                                    locationData["id"]);
+                                                // Navigator.push(
+                                                //   context,
+                                                //   MaterialPageRoute(
+                                                //     builder: (context) =>
+                                                //         DetailScreen(),
+                                                //     settings: RouteSettings(
+                                                //         arguments: {
+                                                //           'id': locationData[
+                                                //               "id"],
+                                                //         }),
+                                                //   ),
+                                                // );
                                               },
                                               icon: Icon(
                                                   Icons.chevron_right_rounded,

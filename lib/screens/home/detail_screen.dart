@@ -991,7 +991,9 @@ class _DetailScreenState extends State<DetailScreen>
               child: Consumer<DetailScreenProvider>(
                   builder: (context, detailScreenProvider, _) {
                 final detaildata = detailScreenProvider.detailScreenData;
+                print(detaildata);
                 final type = detaildata?['isClothSeller'];
+                print(type);
                 return (type) ? marketScreen() : penjahitScreen();
               }),
             ),
