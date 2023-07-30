@@ -68,6 +68,28 @@ class _TransactionScreenState extends State<TransactionScreen> {
       String tanggal,
       String orderid,
     ) {
+      Color statusColor =
+          Colors.grey.shade300; // Default color for "Menunggu Konfirmasi"
+
+      switch (status) {
+        case 'Menunggu Konfirmasi':
+          statusColor = Colors.grey.shade300;
+          break;
+        case 'Diproses':
+          statusColor = Colors.amber.shade200;
+          break;
+        case 'Menunggu Pembayaran':
+          statusColor = Colors.orange.shade300;
+          break;
+        case 'Dikirim':
+          statusColor = Colors.blue.shade300;
+          break;
+        case 'Selesai':
+          statusColor = Colors.green.shade200;
+          break;
+        default:
+          statusColor = Colors.grey.shade300;
+      }
       return GestureDetector(
         onTap: () {
           navigateToDetail(context, orderid);
@@ -99,7 +121,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: waitProcess,
+                      color: statusColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Center(
@@ -173,7 +195,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
                 if (orders.isEmpty) {
                   return const Center(
-                    child: Text('No data available'),
+                    child: Text('Kamu belum memiliki pesanan!'),
                   );
                 }
 

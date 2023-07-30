@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class TransactionScreenProvider extends ChangeNotifier {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final userId = FirebaseAuth.instance.currentUser!.uid;
   final String id = 'RNUprDRh66SPSJGzDMyf3xlcIAq2';
 
   List<Map<String, dynamic>> _orders = [];
@@ -16,7 +18,7 @@ class TransactionScreenProvider extends ChangeNotifier {
     try {
       final snapshot = await firestore
           .collection("orders")
-          .where('uid', isEqualTo: id)
+          .where('uid', isEqualTo: userId)
           .get();
       if (snapshot.docs.isNotEmpty) {
         List<Map<String, dynamic>> orderData =
