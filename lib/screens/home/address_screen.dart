@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:jahitin/provider/address_screen_provider.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/add_location.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
+import 'edit_location.dart';
 
 class AddressScreen extends StatelessWidget {
   const AddressScreen({super.key});
 
   static const routeName = '/address-screen';
+
+  void _navigateToEditLocationScreen(BuildContext context, String id) async {
+    await context.read<SendLocationProvider>().setId(id);
+    // print(context.read<SendLocationProvider>().id);
+    Navigator.pushNamed(context, EditLocationScreen.routeName);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +42,7 @@ class AddressScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: defaultMargin, top: defaultMargin),
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, AddLocationScreen.routeName);
               },
@@ -173,14 +179,16 @@ class AddressScreen extends StatelessWidget {
                   height: 12,
                 ),
                 InkWell(
+                  borderRadius: BorderRadius.circular(10),
                   onTap: () {
-                    // Tambahkan aksi untuk mengubah alamat
-                    // ...
+                    _navigateToEditLocationScreen(
+                        context, '${addressData['id']}');
                   },
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
+                      color: backgroundColor1,
+                      border: Border.all(color: Colors.grey.shade400),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(

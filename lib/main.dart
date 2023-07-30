@@ -6,8 +6,10 @@ import 'package:jahitin/provider/checkout_screen_provider.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
-import 'package:jahitin/provider/transaction_screen_provider.dart';
 import 'package:jahitin/screens/home/address_screen.dart';
+import 'package:jahitin/screens/home/edit_location.dart';
+import 'package:jahitin/screens/home/see_more.dart';
+import 'package:jahitin/provider/transaction_screen_provider.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
@@ -95,7 +97,9 @@ class MyApp extends StatelessWidget {
             const RegistrationFormScreen(),
         AddProductScreen.routeName: (context) => const AddProductScreen(),
         AddLocationScreen.routeName: (context) => const AddLocationScreen(),
-        AddressScreen.routeName: (context) => const AddressScreen()
+        EditLocationScreen.routeName: (context) => const EditLocationScreen(),
+        AddressScreen.routeName: (context) => const AddressScreen(),
+        SeeMoreScreen.routeName: (context) => const SeeMoreScreen()
       },
     );
   }

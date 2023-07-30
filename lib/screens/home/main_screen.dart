@@ -48,6 +48,8 @@ class _MainScreenState extends State<MainScreen> {
     getLocation(
         context.read<LocationProvider>(), context.read<HomeScreenProvider>());
     context.read<SendLocationProvider>().fetchSendLocation();
+    context.read<SendLocationProvider>().fetchSelectionListSendLocation();
+    context.read<SendLocationProvider>().fetchMapSelectedSendLocation();
   }
 
   @override
