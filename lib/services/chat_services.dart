@@ -60,6 +60,38 @@ class ChatService extends ChangeNotifier {
         .add(newMessage.toMap());
   }
 
+  Future<void> sendMessageFromUser(String receiverId, String message) async {
+    String currentUserId = '';
+    String currentUsername = '';
+    final Timestamp timestamp = Timestamp.now();
+
+    final currentUser = _firebaseAuth.currentUser;
+
+    if (currentUser != null) {
+      final userDoc = await users.doc(currentUser.uid).get();
+      currentUserId = currentUser.uid;
+      currentUsername = userDoc['name'];
+    }
+
+    Message newMessage = Message(
+      senderId: currentUserId,
+      senderUsername: currentUsername,
+      receiverId: receiverId,
+      message: message,
+      timestamp: timestamp,
+    );
+
+    List<String> ids = [currentUserId, receiverId];
+    ids.sort();
+    String chatRoomId = ids.join('_');
+
+    await _fireStore
+        .collection('chatrooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .add(newMessage.toMap());
+  }
+
   // GET MESSAGE
   Stream<QuerySnapshot> getMessages(String userId, otherUserId) {
     List<String> ids = [userId, otherUserId];

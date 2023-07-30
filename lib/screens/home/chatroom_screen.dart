@@ -36,7 +36,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(
+      await _chatService.sendMessageFromUser(
         widget.receiverUserID,
         _messageController.text,
       );
