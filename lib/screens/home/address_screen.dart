@@ -178,31 +178,31 @@ class AddressScreen extends StatelessWidget {
                 const SizedBox(
                   height: 12,
                 ),
-                InkWell(
-                  borderRadius: BorderRadius.circular(10),
-                  onTap: () {
-                    _navigateToEditLocationScreen(
-                        context, '${addressData['id']}');
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: backgroundColor1,
-                      border: Border.all(color: Colors.grey.shade400),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Ubah Alamat',
-                        style: primaryTextStyle.copyWith(
-                          fontSize: 12,
-                          fontWeight: bold,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                // InkWell(
+                //   borderRadius: BorderRadius.circular(10),
+                //   onTap: () {
+                //     _navigateToEditLocationScreen(
+                //         context, '${addressData['id']}');
+                //   },
+                //   child: Container(
+                //     padding: const EdgeInsets.all(8),
+                //     decoration: BoxDecoration(
+                //       color: backgroundColor1,
+                //       border: Border.all(color: Colors.grey.shade400),
+                //       borderRadius: BorderRadius.circular(10),
+                //     ),
+                //     child: Center(
+                //       child: Text(
+                //         'Ubah Alamat',
+                //         style: primaryTextStyle.copyWith(
+                //           fontSize: 12,
+                //           fontWeight: bold,
+                //           color: Colors.grey.shade600,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
