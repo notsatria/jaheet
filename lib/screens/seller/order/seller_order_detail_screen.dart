@@ -1,10 +1,45 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/seller/order/seller_order_screen.dart';
 
 import '../../../constant/theme.dart';
 
-class SellerOrderDetailScreen extends StatelessWidget {
+class SellerOrderDetailScreen extends StatefulWidget {
   static const routeName = '/seller-order-detail-screen';
-  const SellerOrderDetailScreen({super.key});
+  final Map<String, dynamic> orderData;
+  const SellerOrderDetailScreen({super.key, required this.orderData});
+
+  @override
+  State<SellerOrderDetailScreen> createState() =>
+      _SellerOrderDetailScreenState();
+}
+
+const List<String> statusOptions = [
+  'Menunggu Konfirmasi',
+  'Diproses',
+  'Menunggu Pembayaran',
+  'Dikirim',
+  'Selesai',
+];
+
+class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
+  String selectedStatus = statusOptions.first;
+  CollectionReference orders = FirebaseFirestore.instance.collection('orders');
+
+  Future<void> updateOrderStatus() async {
+    await orders
+        .where('orderid', isEqualTo: widget.orderData['orderid'])
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        orders.doc(element.id).update({
+          'order_status': selectedStatus,
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +72,7 @@ class SellerOrderDetailScreen extends StatelessWidget {
         child: Card(
           child: Container(
             width: double.infinity,
-            height: 150,
+            height: 130,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -52,21 +87,25 @@ class SellerOrderDetailScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'ATASAN',
+                      'Order ID: ${widget.orderData['orderid']}',
+                      style: subtitleTextStyle,
+                    ),
+                    Text(
+                      widget.orderData['kategori'],
                       style: primaryTextStyle.copyWith(
                         fontWeight: bold,
                         fontSize: 18,
                       ),
                     ),
                     Text(
-                      'Baju Kemeja',
+                      widget.orderData['jenis'],
                       style: primaryTextStyle.copyWith(
                         fontWeight: semiBold,
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      'Jahit Termasuk Bahan',
+                      widget.orderData['jasa'],
                       style: primaryTextStyle.copyWith(
                         fontWeight: reguler,
                         fontSize: 16,
@@ -110,7 +149,7 @@ class SellerOrderDetailScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Container(
             padding: const EdgeInsets.all(14),
             width: double.infinity,
@@ -125,18 +164,7 @@ class SellerOrderDetailScreen extends StatelessWidget {
               thumbVisibility: true,
               child: SingleChildScrollView(
                 child: Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing '
-                  'elit. Sed vitae eros vitae nisl aliquam aliquet. '
-                  'Vestibulum ante ipsum primis in faucibus orci luctus '
-                  'et ultrices posuere cubilia curae; Nulla facilisi. '
-                  'Suspendisse potenti. Donec euismod, nisl sed '
-                  'consectetur ultricies, nunc nisl ultricies nunc, '
-                  'quis ultricies nisl nunc sed nisl. Donec euismod '
-                  'nisl eget enim aliquam, sed aliquam nisl '
-                  'pellentesque. Donec euismod, nisl sed consectetur '
-                  'ultricies, nunc nisl ultricies nunc, quis ultricies '
-                  'nisl nunc sed nisl. Donec euismod nisl eget enim '
-                  'aliquam, sed aliquam nisl pellentesque.',
+                  widget.orderData['deskripsi'],
                   style: primaryTextStyle.copyWith(
                     fontWeight: light,
                     fontSize: 14,
@@ -160,18 +188,22 @@ class SellerOrderDetailScreen extends StatelessWidget {
             style:
                 primaryTextStyle.copyWith(fontWeight: semiBold, fontSize: 16),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Card(
             child: ListTile(
               title: Row(
                 children: [
                   Icon(
-                    Icons.local_shipping,
+                    widget.orderData['delivery'] == 'drop'
+                        ? Icons.storefront
+                        : Icons.local_shipping,
                     color: alertColor,
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Home Delivery',
+                    widget.orderData['delivery'] == 'drop'
+                        ? 'Pick Off'
+                        : 'Home Delivery',
                     style: primaryTextStyle.copyWith(
                       fontWeight: semiBold,
                       fontSize: 16,
@@ -191,17 +223,17 @@ class SellerOrderDetailScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 10),
           Text(
-            'Alamat Pesanan',
+            'Alamat Pemesan',
             style:
                 primaryTextStyle.copyWith(fontWeight: semiBold, fontSize: 16),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Card(
             child: ListTile(
               title: Text(
-                'Jl. Raya Bogor KM 30, Depok',
+                widget.orderData['alamat_pemesan']['additionalDetail'],
                 style: primaryTextStyle.copyWith(
-                  fontWeight: semiBold,
+                  fontWeight: reguler,
                   fontSize: 16,
                 ),
               ),
@@ -218,9 +250,201 @@ class SellerOrderDetailScreen extends StatelessWidget {
       );
     }
 
+    Widget statusPemesanan() {
+      Color statusColor =
+          Colors.grey.shade300; // Default color for "Menunggu Konfirmasi"
+
+      switch (widget.orderData['order_status']) {
+        case 'Menunggu Konfirmasi':
+          statusColor = Colors.grey.shade300;
+          break;
+        case 'Diproses':
+          statusColor = Colors.amber.shade200;
+          break;
+        case 'Menunggu Pembayaran':
+          statusColor = Colors.orange.shade300;
+          break;
+        case 'Dikirim':
+          statusColor = Colors.blue.shade300;
+          break;
+        case 'Selesai':
+          statusColor = Colors.green.shade200;
+          break;
+        default:
+          statusColor = Colors.grey.shade300;
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          Text(
+            'Status Pemesanan',
+            style: primaryTextStyle.copyWith(
+              fontWeight: semiBold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Card(
+            child: ListTile(
+              title: ClipRRect(
+                child: Container(
+                  padding: const EdgeInsets.all(6.0),
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    widget.orderData['order_status'],
+                    style: primaryTextStyle.copyWith(
+                      fontWeight: semiBold,
+                      fontSize: 14,
+                      color: Colors.black45,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget updateStatusPemesanan() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          Text(
+            'Update Status Pemesanan',
+            style: primaryTextStyle.copyWith(
+              fontWeight: semiBold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ),
+            child: DropdownButton<String>(
+              iconEnabledColor: secondaryColor,
+              isExpanded: true,
+              value: selectedStatus,
+              onChanged: (value) {
+                // When the user selects a status option, update the selectedStatus variable
+                setState(() {
+                  selectedStatus = value!;
+                });
+              },
+              items:
+                  statusOptions.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget bottomNavbar() {
+      return Container(
+        margin: EdgeInsets.all(defaultMargin - 5),
+        width: double.maxFinite,
+        height: 45,
+        child: InkWell(
+          onTap: () {
+            // Update the status of the order
+            try {
+              updateOrderStatus();
+            } catch (e) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Error'),
+                      content: Text(e.toString()),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  });
+            } finally {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    insetPadding: const EdgeInsets.all(90),
+                    content: SizedBox(
+                      height: 128,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            size: 60,
+                            color: Colors.greenAccent,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            'Status Pesanan Telah Diperbarui',
+                            style: primaryTextStyle,
+                            textAlign: TextAlign.center,
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+              Timer(const Duration(seconds: 3), () {
+                Navigator.pushReplacementNamed(
+                  context,
+                  SellerOrderScreen.routeName,
+                );
+              });
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                'Update Status',
+                style: whiteTextStyle.copyWith(
+                  fontSize: 16,
+                  fontWeight: semiBold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+        bottomNavigationBar: BottomAppBar(
+          child: bottomNavbar(),
+        ),
         appBar: appBar(),
         body: Container(
           margin: EdgeInsets.symmetric(
@@ -234,6 +458,8 @@ class SellerOrderDetailScreen extends StatelessWidget {
                 deskripsiPesanan(),
                 pengirimanPesanan(),
                 alamatPemesanan(),
+                statusPemesanan(),
+                updateStatusPemesanan(),
               ],
             ),
           ),
