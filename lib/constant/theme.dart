@@ -19,6 +19,13 @@ Color backgroundColor4 = const Color(0xffEEEEEE);
 Color primaryTextColor = const Color(0xff1F1F23);
 Color subtitleTextColor = const Color(0xff8E8E8E);
 
+//status
+Color waitProcess = Colors.grey.shade300;
+Color processing = Colors.amber.shade200;
+Color waitPayment = Colors.orange.shade300;
+Color sending = Colors.blue.shade300;
+Color done = Colors.green.shade200;
+
 TextStyle primaryTextStyle = GoogleFonts.poppins(
   color: primaryTextColor,
 );

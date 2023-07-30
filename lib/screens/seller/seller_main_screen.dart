@@ -48,7 +48,6 @@ class SellerMainScreenState extends State<SellerMainScreen> {
       gapLocation: GapLocation.center,
       notchSmoothness: NotchSmoothness.softEdge,
       onTap: (index) => setState(() => currIndex = index),
-      //other params
     );
   }
 
