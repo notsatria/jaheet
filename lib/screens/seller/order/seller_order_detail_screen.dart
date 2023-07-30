@@ -230,18 +230,42 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
           const SizedBox(height: 5),
           Card(
             child: ListTile(
-              title: Text(
-                widget.orderData['alamat_pemesan']['additionalDetail'],
-                style: primaryTextStyle.copyWith(
-                  fontWeight: reguler,
-                  fontSize: 16,
-                ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.orderData['alamat_pemesan']['additionalDetail'],
+                    style: primaryTextStyle.copyWith(
+                      fontWeight: reguler,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.phone,
+                        color: alertColor,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        widget.orderData['alamat_pemesan']['phone'],
+                        style: primaryTextStyle.copyWith(
+                          fontWeight: reguler,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                ],
               ),
               subtitle: Text(
-                'Rumah',
+                widget.orderData['alamat_pemesan']['type'],
                 style: secondaryTextStyle.copyWith(
                   fontWeight: light,
-                  fontSize: 14,
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -449,6 +473,9 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
         body: Container(
           margin: EdgeInsets.symmetric(
             horizontal: defaultMargin,
+          ),
+          padding: const EdgeInsets.only(
+            bottom: 20,
           ),
           child: SingleChildScrollView(
             controller: ScrollController(),
