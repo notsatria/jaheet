@@ -193,11 +193,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () {
                 Navigator.pushNamed(context, EditProfileScreen.routeName);
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Edit Profil',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -249,11 +250,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                 }
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Penjaheet',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -262,11 +264,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () {
                 //
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Favorit Saya',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -275,11 +278,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () {
                 //
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Help',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -309,11 +313,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () {
                 //
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Privacy & Policy',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -322,11 +327,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () {
                 //
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Terms of Service',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -335,11 +341,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onTap: () {
                 //
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Rate App',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),

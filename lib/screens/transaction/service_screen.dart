@@ -149,6 +149,10 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 firstKategori = value!;
                 // setSelectedValue('kategori', value, kategoriValue);
                 checkoutProvider.setKategori(value);
+                Provider.of<CheckoutScreenProvider>(context, listen: false)
+                    .getPrice(Provider.of<DetailScreenProvider>(context,
+                            listen: false)
+                        .getId);
               });
             },
             items: kategoriValue.map<DropdownMenuItem<String>>((String value) {

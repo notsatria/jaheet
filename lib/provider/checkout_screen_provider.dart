@@ -6,11 +6,18 @@ class CheckoutScreenProvider extends ChangeNotifier {
   CollectionReference orders = FirebaseFirestore.instance.collection('orders');
   final userId = FirebaseAuth.instance.currentUser!.uid;
 
+  CollectionReference sellers = FirebaseFirestore.instance.collection('seller');
+
   String _kategori = 'ATASAN';
   String _jenis = 'Batik';
   String _jasa = 'Jahit termasuk bahan';
   String _size = 'S';
-  String _alamat = 'Belum ada alamat';
+  String _hargaMinimal = '10000';
+  String _hargaMaksimal = '20000';
+  String _orderStatus = 'Menunggu Konfirmasi';
+
+  Map<String, dynamic> _detailAlamatPemesan = {};
+  Map<String, dynamic> _detailAlamatPenjual = {};
 
   String _deskripsi = '';
 
@@ -57,11 +64,6 @@ class CheckoutScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setAlamat(String alamat) {
-    _alamat = alamat;
-    notifyListeners();
-  }
-
   void setOrderdate(String date) {
     _date = date;
     notifyListeners();
@@ -72,16 +74,40 @@ class CheckoutScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setOrderStatus(String status) {
+    _orderStatus = status;
+    notifyListeners();
+  }
+
+  void setDetailAlamatPenerima(Map<String, dynamic> alamatPenerima) {
+    _detailAlamatPemesan = alamatPenerima;
+    notifyListeners();
+  }
+
+  void setDetailAlamatPenjual(Map<String, dynamic> alamatPenjual) {
+    _detailAlamatPenjual = alamatPenjual;
+    notifyListeners();
+  }
+
+  void setHarga(String hargaMinimal, String hargaMaksimal) {
+    _hargaMinimal = hargaMinimal;
+    _hargaMaksimal = hargaMaksimal;
+    notifyListeners();
+  }
+
   String get getKategori => _kategori;
   String get getJenis => _jenis;
   String get getJasa => _jasa;
   String get getSize => _size;
-
   String get getDeskripsi => _deskripsi;
-
   String get getDelivery => _delivery;
+  String get getOrderStatus => _orderStatus;
 
-  String get getAlamat => _alamat;
+  String get getHargaMinimal => _hargaMinimal;
+  String get getHargaMaksimal => _hargaMaksimal;
+
+  Map<String, dynamic> get detailAlamatPemesan => _detailAlamatPemesan;
+  Map<String, dynamic> get detailAlamatPenjual => _detailAlamatPenjual;
 
   String get getOrderDate => _date;
 
@@ -101,6 +127,31 @@ class CheckoutScreenProvider extends ChangeNotifier {
     return '$_sellerId-$_date';
   }
 
+  Future<void> getPrice(int id) async {
+    try {
+      final QuerySnapshot snapshot = await sellers
+          .doc(id.toString())
+          .collection("jasa")
+          .where("title",
+              isEqualTo:
+                  _kategori) // Assuming _jasa is defined elsewhere in your code.
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        Map<String, dynamic> data =
+            snapshot.docs.first.data() as Map<String, dynamic>;
+        print(data);
+        _hargaMinimal = data['minPrice']; // Convert int to String
+        _hargaMaksimal = data['maxPrice']; // Convert int to String
+      } else {
+        _hargaMinimal = '0';
+        _hargaMaksimal = '10000';
+      }
+    } catch (error) {
+      print('Error getting price: $error');
+      return null;
+    }
+  }
+
   Future<void> sendCheckoutData() async {
     await orders.doc().set({
       'uid': userId,
@@ -108,11 +159,15 @@ class CheckoutScreenProvider extends ChangeNotifier {
       'jenis': _jenis,
       'jasa': _jasa,
       'size': _size,
-      'alamat': _alamat,
+      'harga_minimal': _hargaMinimal,
+      'harga_maksimal': _hargaMaksimal,
+      'alamat_pemesan': _detailAlamatPemesan,
+      'alamat_penjual': _detailAlamatPenjual,
       'deskripsi': _deskripsi,
       'delivery': _delivery,
       'order-date': _date,
       'sellerid': _sellerId,
+      'order_status': _orderStatus,
       'orderid': generateOrderId(),
     });
   }

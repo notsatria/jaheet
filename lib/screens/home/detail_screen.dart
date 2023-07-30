@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/provider/checkout_screen_provider.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
+import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/chatroom_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
 import 'package:provider/provider.dart';
@@ -67,8 +69,48 @@ class _DetailScreenState extends State<DetailScreen>
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     int id = args['id'];
 
-    void _navigateToCheckout(BuildContext, int id) async {
-      await context.read<DetailScreenProvider>().fetchDetailScreenData(id);
+    Future<void> _navigateToCheckout(BuildContext, int id) async {
+      // Mengatur alamat penjual yang akan dikirimkan ketika checkout
+      Provider.of<CheckoutScreenProvider>(context, listen: false)
+          .setDetailAlamatPenjual({
+        'sellerId': Provider.of<DetailScreenProvider>(context, listen: false)
+            .detailScreenData!['id'],
+        'sellerName': Provider.of<DetailScreenProvider>(context, listen: false)
+            .detailScreenData!['name'],
+        'subdistric': Provider.of<DetailScreenProvider>(context, listen: false)
+            .detailScreenData!['kelurahan'],
+        'distric': Provider.of<DetailScreenProvider>(context, listen: false)
+            .detailScreenData!['kecamatan'],
+        'regency': Provider.of<DetailScreenProvider>(context, listen: false)
+            .detailScreenData!['kota'],
+        'province': Provider.of<DetailScreenProvider>(context, listen: false)
+            .detailScreenData!['provinsi'],
+      });
+
+      // Mengatur alamat pemesan yang akan dikirimkan ketika checkout
+      Provider.of<CheckoutScreenProvider>(context, listen: false)
+          .setDetailAlamatPenerima({
+        'type': Provider.of<SendLocationProvider>(context, listen: false)
+            .mapSelectedSendLocation['type'],
+        'receiverName':
+            Provider.of<SendLocationProvider>(context, listen: false)
+                .mapSelectedSendLocation['receiverName'],
+        'phone': Provider.of<SendLocationProvider>(context, listen: false)
+            .mapSelectedSendLocation['phone'],
+        'city': Provider.of<SendLocationProvider>(context, listen: false)
+            .mapSelectedSendLocation['city'],
+        'province': Provider.of<SendLocationProvider>(context, listen: false)
+            .mapSelectedSendLocation['province'],
+        'additionalDetail':
+            Provider.of<SendLocationProvider>(context, listen: false)
+                .mapSelectedSendLocation['additionalDetail'],
+      });
+
+      // Mendapatkan harga produk
+      await Provider.of<CheckoutScreenProvider>(context, listen: false)
+          .getPrice(
+              Provider.of<DetailScreenProvider>(context, listen: false).getId);
+
       Navigator.pushNamed(context, ServiceScreen.routeName,
           arguments: {'id': id});
     }

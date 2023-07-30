@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class DetailScreenProvider extends ChangeNotifier {
+  int _id = 0;
+  int get getId => _id;
+
   Map<String, dynamic>? _detailScreenData;
   Map<String, dynamic>? get detailScreenData => _detailScreenData;
 
@@ -13,7 +16,7 @@ class DetailScreenProvider extends ChangeNotifier {
           .get();
       if (snapshot.docs.isNotEmpty) {
         _detailScreenData = snapshot.docs.first.data();
-        print(_detailScreenData);
+        _id = _detailScreenData!['id'];
       } else {
         _detailScreenData = null;
       }

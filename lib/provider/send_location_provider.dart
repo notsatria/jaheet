@@ -6,11 +6,30 @@ class SendLocationProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _sendLocation = [];
   List<Map<String, dynamic>> get sendLocation => _sendLocation;
 
+  String _id = '';
+  String get id => _id;
+
+  List<Map<String, dynamic>> _selectionListSendLocation = [];
+  List<Map<String, dynamic>> get selectionListSendLocation =>
+      _selectionListSendLocation;
+
+  Map<String, dynamic> _editSendLocation = {};
+  Map<String, dynamic> get editSendLocation => _editSendLocation;
+
+  Map<String, dynamic> _mapSelectedSendLocation = {};
+  Map<String, dynamic> get mapSelectedSendLocation => _mapSelectedSendLocation;
+
   String _selectedLocation = '';
   String get selectedLocation => _selectedLocation;
 
   String _userUid = '';
   String get userUid => _userUid;
+
+  Future<void> setId(String id) async {
+    _id = id;
+    fetchSendLocationDataByID();
+    notifyListeners();
+  }
 
   Future<void> fetchSendLocation() async {
     await getLoggedInUID();
@@ -42,6 +61,46 @@ class SendLocationProvider extends ChangeNotifier {
       } else {
         _sendLocation = [];
         _selectedLocation = '';
+      }
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
+  }
+
+  Future<void> fetchMapSelectedSendLocation() async {
+    await getLoggedInUID();
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userUid)
+          .collection('sendLocation')
+          .where('isSelected', isEqualTo: true)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        _mapSelectedSendLocation =
+            snapshot.docs.first.data() as Map<String, dynamic>;
+      }
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
+  }
+
+  Future<void> fetchSelectionListSendLocation() async {
+    await getLoggedInUID();
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userUid)
+          .collection('sendLocation')
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        _selectionListSendLocation =
+            snapshot.docs.map((doc) => doc.data()).toList();
+        notifyListeners();
+      } else {
+        _selectionListSendLocation = [];
       }
     } catch (error) {
       print('Error fetching data: $error');
@@ -96,6 +155,7 @@ class SendLocationProvider extends ChangeNotifier {
         "city": city,
         "province": province,
         "isSelected": false,
+        "id": DateTime.now().millisecondsSinceEpoch.toString()
       });
     } catch (error) {
       print('Error adding data: $error');
@@ -105,5 +165,26 @@ class SendLocationProvider extends ChangeNotifier {
   Future<void> getLoggedInUID() async {
     User user = FirebaseAuth.instance.currentUser!;
     _userUid = user.uid;
+  }
+
+  Future<void> fetchSendLocationDataByID() async {
+    await getLoggedInUID();
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(_userUid)
+          .collection("sendLocation")
+          .where("id", isEqualTo: _id)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        _editSendLocation = snapshot.docs.first.data();
+        notifyListeners();
+      } else {
+        _editSendLocation = {};
+      }
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
   }
 }

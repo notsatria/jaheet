@@ -5,16 +5,16 @@ import 'package:provider/provider.dart';
 import '../../constant/theme.dart';
 import 'main_screen.dart';
 
-class AddLocationScreen extends StatefulWidget {
-  const AddLocationScreen({super.key});
+class EditLocationScreen extends StatefulWidget {
+  const EditLocationScreen({super.key});
 
-  static const routeName = "/add-location-dart";
+  static const routeName = "/edit-location-dart";
 
   @override
-  State<AddLocationScreen> createState() => _AddLocationScreenState();
+  State<EditLocationScreen> createState() => _EditLocationScreenState();
 }
 
-class _AddLocationScreenState extends State<AddLocationScreen> {
+class _EditLocationScreenState extends State<EditLocationScreen> {
   TextEditingController _typeController = TextEditingController();
   TextEditingController _receiverNameController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
@@ -70,7 +70,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
       );
     }
 
-    Widget typeTextField() {
+    Widget typeTextField(String value) {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(
@@ -86,6 +86,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
           children: [
             Expanded(
               child: TextFormField(
+                initialValue: value,
                 controller: _typeController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Tipe Lokasi (Contoh : Rumah, Kos, Apartemen)',
@@ -100,7 +101,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
       );
     }
 
-    Widget receiverNameTextField() {
+    Widget receiverNameTextField(String value) {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(
@@ -116,6 +117,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
           children: [
             Expanded(
               child: TextFormField(
+                initialValue: value,
                 controller: _receiverNameController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Nama Penerima',
@@ -130,7 +132,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
       );
     }
 
-    Widget phoneNumberTextField() {
+    Widget phoneNumberTextField(String value) {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(
@@ -146,6 +148,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
           children: [
             Expanded(
               child: TextFormField(
+                initialValue: value,
                 controller: _phoneNumberController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Nomor Telepon Penerima',
@@ -160,7 +163,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
       );
     }
 
-    Widget additionalInformationTextField() {
+    Widget additionalInformationTextField(String value) {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(
@@ -176,6 +179,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
           children: [
             Expanded(
               child: TextFormField(
+                initialValue: value,
                 controller: _additionalInformationController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Alamat Lengkap',
@@ -190,7 +194,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
       );
     }
 
-    Widget cityTextField() {
+    Widget cityTextField(String value) {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(
@@ -206,6 +210,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
           children: [
             Expanded(
               child: TextFormField(
+                initialValue: value,
                 controller: _cityController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Kota (Misal, Semarang)',
@@ -220,7 +225,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
       );
     }
 
-    Widget provinceTextField() {
+    Widget provinceTextField(String value) {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(
@@ -236,6 +241,7 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
           children: [
             Expanded(
               child: TextFormField(
+                initialValue: value,
                 controller: _provinceController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Provinsi (Misal, Jawa Tengah)',
@@ -288,17 +294,18 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
       );
     }
 
-    Widget form() {
+    Widget form(Map<String, dynamic> editSendLocation) {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         child: Column(
           children: [
-            typeTextField(),
-            receiverNameTextField(),
-            phoneNumberTextField(),
-            additionalInformationTextField(),
-            cityTextField(),
-            provinceTextField()
+            typeTextField(editSendLocation['type'] ?? ''),
+            receiverNameTextField(editSendLocation['receiverName'] ?? ''),
+            phoneNumberTextField(editSendLocation['phone'] ?? ''),
+            additionalInformationTextField(
+                editSendLocation['additionalDetail'] ?? ''),
+            cityTextField(editSendLocation['city'] ?? ''),
+            provinceTextField(editSendLocation['province'] ?? ''),
           ],
         ),
       );
@@ -306,7 +313,13 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
 
     return Scaffold(
       appBar: appBar(),
-      body: form(),
+      body: Consumer<SendLocationProvider>(
+        builder: (context, sendLocationProvider, _) {
+          Map<String, dynamic> editSendLocation =
+              sendLocationProvider.editSendLocation;
+          return form(editSendLocation);
+        },
+      ),
       bottomNavigationBar: BottomAppBar(
         elevation: 10,
         child: Padding(

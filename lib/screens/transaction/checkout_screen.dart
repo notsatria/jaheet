@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/transaction/delivery_screen.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +65,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     }
 
-    Widget homeDetail() {
+    Widget homeDetail(
+      String mode,
+      String type,
+      String receiverName,
+      String phoneNumber,
+      String city,
+      String province,
+      String? additionalDetail,
+    ) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 16),
         width: double.maxFinite,
@@ -81,7 +90,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Dikirim ke',
+                    mode,
                     style: primaryTextStyle.copyWith(
                       fontWeight: bold,
                     ),
@@ -89,14 +98,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   const SizedBox(height: 4),
                   RichText(
                     text: TextSpan(
-                      text: 'Rumah',
+                      text: type,
                       style: secondaryTextStyle.copyWith(
                         fontWeight: semiBold,
                         fontSize: 12,
                       ),
                       children: <TextSpan>[
                         TextSpan(
-                          text: ' - Haidar Alfathin (6282142685510)',
+                          text: ' - $receiverName ($phoneNumber)',
                           style: primaryTextStyle.copyWith(
                             fontSize: 12,
                             fontWeight: reguler,
@@ -106,53 +115,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
                   Text(
-                    'Jalan Candi tembaga tengah I No.825, Kota Semarang',
+                    '$city, $province',
+                    style: subtitleTextStyle.copyWith(fontSize: 12),
+                  ),
+                  Text(
+                    additionalDetail ?? '',
                     style: subtitleTextStyle.copyWith(fontSize: 12),
                   ),
                 ],
               ),
             ),
-            // const Divider(
-            //   height: 1,
-            //   thickness: 0.3,
-            //   color: Colors.black,
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.all(10),
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Text(
-            //         'Jadwal pengambilan',
-            //         style: primaryTextStyle.copyWith(
-            //           fontWeight: bold,
-            //         ),
-            //       ),
-            //       const SizedBox(height: 4),
-            //       Row(
-            //         children: [
-            //           Container(
-            //             padding: const EdgeInsets.all(8),
-            //             decoration: BoxDecoration(
-            //                 color: Colors.grey.shade300,
-            //                 borderRadius: BorderRadius.circular(4)),
-            //             child: Text('Senin, 8 Juli 2023'),
-            //           ),
-            //           const SizedBox(
-            //             width: 10,
-            //           ),
-            //           Container(
-            //             padding: const EdgeInsets.all(8),
-            //             decoration: BoxDecoration(
-            //                 color: Colors.grey.shade300,
-            //                 borderRadius: BorderRadius.circular(4)),
-            //             child: Text('08.00 - 10.00'),
-            //           ),
-            //         ],
-            //       )
-            //     ],
-            //   ),
-            // )
           ],
         ),
       );
@@ -163,10 +135,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       String deliveryText = '';
       switch (delivery) {
         case 'drop':
-          deliveryText = 'Drop off';
+          deliveryText = 'Pick Off';
           break;
         case 'home':
-          deliveryText = 'Home delivery';
+          deliveryText = 'Home Delivery';
           break;
         default:
           deliveryText = '';
@@ -217,7 +189,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ],
             ),
-            delivery == 'home' ? homeDetail() : const SizedBox(),
+            delivery == 'home'
+                ? homeDetail(
+                    "Dikirim ke",
+                    context
+                        .watch<SendLocationProvider>()
+                        .mapSelectedSendLocation['type'],
+                    context
+                        .watch<SendLocationProvider>()
+                        .mapSelectedSendLocation['receiverName'],
+                    context
+                        .watch<SendLocationProvider>()
+                        .mapSelectedSendLocation['phone'],
+                    context
+                        .watch<SendLocationProvider>()
+                        .mapSelectedSendLocation['city'],
+                    context
+                        .watch<SendLocationProvider>()
+                        .mapSelectedSendLocation['province'],
+                    context
+                        .watch<SendLocationProvider>()
+                        .mapSelectedSendLocation['additionalDetail'])
+                : homeDetail(
+                    "Diambil di",
+                    'Toko',
+                    context
+                        .watch<DetailScreenProvider>()
+                        .detailScreenData!['name'],
+                    context
+                        .watch<DetailScreenProvider>()
+                        .detailScreenData!['kelurahan'],
+                    context
+                        .watch<DetailScreenProvider>()
+                        .detailScreenData!['kota'],
+                    context
+                        .watch<DetailScreenProvider>()
+                        .detailScreenData!['provinsi'],
+                    null),
           ],
         ),
       );
@@ -464,7 +472,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '100.000 - 200.000*',
+              '${context.watch<CheckoutScreenProvider>().getHargaMinimal} - ${context.watch<CheckoutScreenProvider>().getHargaMaksimal}',
               style: primaryTextStyle.copyWith(
                 fontSize: 16,
                 fontWeight: bold,
@@ -570,7 +578,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, DeliveryScreen.routeName);
+                  Navigator.pushReplacementNamed(
+                      context, DeliveryScreen.routeName);
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),

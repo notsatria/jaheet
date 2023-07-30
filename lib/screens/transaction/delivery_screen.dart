@@ -52,7 +52,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
         ),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, CheckoutScreen.routeName);
           },
           icon: Icon(
             Icons.arrow_back,
@@ -76,12 +76,12 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             children: [
               SvgPicture.asset(
                 'assets/icon/drop-off.svg',
-                width: 18,
+                width: 25,
                 color: secondaryColor,
               ),
               const SizedBox(width: 10),
               Text(
-                'Drop off',
+                'Pick Off',
                 style: primaryTextStyle.copyWith(
                   fontWeight: semiBold,
                   fontSize: 16,
@@ -101,12 +101,50 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       );
     }
 
+    Widget homeDeliverySelect() {
+      return InkWell(
+        onTap: () {
+          setSelectedOption('home');
+          checkoutProvider.setDelivery('home');
+        },
+        child: Container(
+          padding: EdgeInsets.all(defaultMargin),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.local_shipping_outlined,
+                color: secondaryColor,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Home Delivery',
+                style: primaryTextStyle.copyWith(
+                  fontWeight: semiBold,
+                  fontSize: 16,
+                ),
+              ),
+              const Spacer(),
+              isSelected && selectedDelivery == 'home'
+                  ? Icon(
+                      Icons.check_circle,
+                      size: 16,
+                      color: secondaryColor,
+                    )
+                  : Text(''),
+            ],
+          ),
+        ),
+      );
+    }
+
     Widget addressCard(Map<String, dynamic> addressData) {
       return Container(
         margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
+            // Menyimpan data yang terpilih
             Map<String, dynamic> selectedLocation = {
               "type": addressData['type'],
               "isSelected": true,
@@ -119,6 +157,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             context
                 .read<SendLocationProvider>()
                 .setSelectedLocation(selectedLocation);
+            setSelectedOption('home');
+            checkoutProvider.setDelivery('home');
           },
           child: Container(
             decoration: addressData['isSelected']
@@ -192,76 +232,77 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       );
     }
 
-    Widget homeSelect() {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: ExpansionTile(
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.local_shipping_outlined,
-                size: 20,
-                color: secondaryColor,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'Home delivery',
-                style: primaryTextStyle.copyWith(
-                  fontWeight: semiBold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          iconColor: Colors.grey,
-          trailing: Icon(
-            isExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
-          ),
-          onExpansionChanged: expanded,
-          children: [
-            InkWell(
-              onTap: () {
-                setSelectedOption('home');
-                checkoutProvider.setDelivery('home');
-              },
-              child: ListTile(
-                title: Row(
-                  children: [
-                    Text(
-                      'Pesanan akan diantar ke rumah anda setelah selesai',
-                      style: primaryTextStyle.copyWith(fontSize: 12),
-                    ),
-                    const Spacer(),
-                    isSelected && selectedDelivery == 'home'
-                        ? Icon(
-                            Icons.check_circle,
-                            size: 16,
-                            color: secondaryColor,
-                          )
-                        : Text(''),
-                  ],
-                ),
-              ),
-            ),
-            Column(
-              children: [
-                Consumer<SendLocationProvider>(
-                  builder: (context, sendLocation, _) {
-                    final sendLocations = sendLocation.sendLocation;
-                    return Column(
-                      children: sendLocations.map((addressData) {
-                        return addressCard(addressData);
-                      }).toList(),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
+    // Widget homeSelect() {
+    //   return Padding(
+    //     padding: const EdgeInsets.symmetric(horizontal: 4),
+    //     child: ExpansionTile(
+    //       title: Row(
+    //         crossAxisAlignment: CrossAxisAlignment.center,
+    //         children: [
+    //           Icon(
+    //             Icons.local_shipping_outlined,
+    //             size: 20,
+    //             color: secondaryColor,
+    //           ),
+    //           const SizedBox(width: 10),
+    //           Text(
+    //             'Home delivery',
+    //             style: primaryTextStyle.copyWith(
+    //               fontWeight: semiBold,
+    //               fontSize: 16,
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //       iconColor: Colors.grey,
+    //       trailing: Icon(
+    //         isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+    //       ),
+    //       onExpansionChanged: expanded,
+    //       children: [
+    //         InkWell(
+    //           onTap: () {
+    //             setSelectedOption('home');
+    //             checkoutProvider.setDelivery('home');
+    //           },
+    //           child: Column(
+    //             children: [
+    //               Consumer<SendLocationProvider>(
+    //                 builder: (context, sendLocation, _) {
+    //                   final selectionListSendLocation =
+    //                       sendLocation.selectionListSendLocation;
+    //                   return Column(
+    //                     children: selectionListSendLocation.map((addressData) {
+    //                       return addressCard(addressData);
+    //                     }).toList(),
+    //                   );
+    //                 },
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //         // ListTile(
+    //         //     title: Row(
+    //         //       children: [
+    //         //         Text(
+    //         //           'Pesanan akan diantar ke rumah anda setelah selesai',
+    //         //           style: primaryTextStyle.copyWith(fontSize: 12),
+    //         //         ),
+    //         //         const Spacer(),
+    //         //         isSelected && selectedDelivery == 'home'
+    //         //             ? Icon(
+    //         //                 Icons.check_circle,
+    //         //                 size: 16,
+    //         //                 color: secondaryColor,
+    //         //               )
+    //         //             : Text(''),
+    //         //       ],
+    //         //     ),
+    //         //   ),
+    //       ],
+    //     ),
+    //   );
+    // }
 
     Widget bottomButton() {
       return InkWell(
@@ -291,7 +332,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       body: Column(
         children: [
           dropSelect(),
-          homeSelect(),
+          homeDeliverySelect(),
           const Spacer(),
           Padding(
             padding: EdgeInsets.all(defaultMargin),
