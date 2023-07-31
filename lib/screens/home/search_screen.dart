@@ -17,8 +17,7 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen>
-    with SingleTickerProviderStateMixin {
+class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _searchController = TextEditingController();
   static const List<Tab> myTabs = <Tab>[
     Tab(
@@ -29,7 +28,6 @@ class _SearchScreenState extends State<SearchScreen>
     ),
   ];
 
-  late TabController _tabController;
   late String keyword;
   late List<DocumentSnapshot> _sellerData;
   late List<DocumentSnapshot> _searchResults = [];
@@ -42,12 +40,10 @@ class _SearchScreenState extends State<SearchScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: myTabs.length);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -105,35 +101,6 @@ class _SearchScreenState extends State<SearchScreen>
       );
     }
 
-    Widget searchOption() {
-      return SizedBox(
-        width: double.infinity,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.0),
-            border: const Border(
-              bottom: BorderSide(
-                color: Color.fromARGB(177, 158, 158, 158),
-                width: 2,
-              ),
-            ),
-          ),
-          child: TabBar(
-            labelColor: primaryColor,
-            labelStyle: primaryTextStyle.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-            indicatorColor: primaryColor,
-            unselectedLabelColor: const Color.fromARGB(177, 158, 158, 158),
-            controller: _tabController,
-            indicatorPadding: EdgeInsets.zero,
-            tabs: myTabs,
-          ),
-        ),
-      );
-    }
-
     Widget jahitGridView(String target) {
       return Consumer<SearchScreenProvider>(
         builder: (context, searchScreenProvider, _) {
@@ -168,16 +135,36 @@ class _SearchScreenState extends State<SearchScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(8),
-                            ),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 175,
-                              child: Image.network(data["profileImage"],
-                                  fit: BoxFit.cover),
-                            ),
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(8),
+                                ),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 175,
+                                  child: Image.network(data["profileImage"],
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                              data["isFeaturedSeller"]
+                                  ? Container(
+                                      margin: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      decoration: BoxDecoration(
+                                        color: secondaryColor,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        "Featured Seller",
+                                        style: primaryTextStyle.copyWith(
+                                          color: backgroundColor1,
+                                        ),
+                                      ))
+                                  : const Text('')
+                            ],
                           ),
                           Expanded(
                             child: Container(
@@ -237,13 +224,7 @@ class _SearchScreenState extends State<SearchScreen>
     Widget tabBarView() {
       return SizedBox(
         height: MediaQuery.of(context).size.height - 157,
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            jahitGridView("sailor"),
-            jahitGridView("clothSeller"),
-          ],
-        ),
+        child: jahitGridView("sailor"),
       );
     }
 
@@ -390,10 +371,23 @@ class _SearchScreenState extends State<SearchScreen>
                             style: secondaryTextStyle,
                             softWrap: true,
                           ),
-                          Text(
-                            data["name"],
-                            style: primaryTextStyle.copyWith(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                          Row(
+                            children: [
+                              Text(
+                                data["name"],
+                                style: primaryTextStyle.copyWith(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              data["isFeaturedSeller"]
+                                  ? Icon(
+                                      Icons.check_circle,
+                                      color: secondaryColor,
+                                    )
+                                  : Text('')
+                            ],
                           ),
                           Row(
                             children: [
@@ -438,10 +432,6 @@ class _SearchScreenState extends State<SearchScreen>
               Expanded(
                 child: Column(
                   children: [
-                    searchOption(),
-                    // const SizedBox(
-                    //   height: 12,
-                    // ),
                     // filterBar(),
                     Flexible(
                       child: SingleChildScrollView(
@@ -467,21 +457,42 @@ class _SearchScreenState extends State<SearchScreen>
                   }
                   if (!snapshot.hasData ||
                       snapshot.data == null ||
-                      snapshot.data == []) {
+                      snapshot.data!.docs.isEmpty) {
                     return const Center(child: Text('No data found.'));
                   }
 
-                  // Store all sellers in _sellerData list
                   _sellerData = snapshot.data!.docs;
 
-                  // Perform the local search based on the "name" field
                   _searchResults = _sellerData.where((seller) {
                     String name = seller["name"].toString().toLowerCase();
                     String searchQuery = _searchController.text.toLowerCase();
                     return name.contains(searchQuery);
                   }).toList();
 
-                  // Show the search results in a ListView
+                  _searchResults.sort((seller1, seller2) {
+                    Map<String, dynamic> data1 =
+                        seller1.data() as Map<String, dynamic>;
+                    Map<String, dynamic> data2 =
+                        seller2.data() as Map<String, dynamic>;
+
+                    // Check if "isFeaturedSeller" key exists in the map and get the boolean value
+                    bool isFeatured1 = data1.containsKey("isFeaturedSeller")
+                        ? data1["isFeaturedSeller"] as bool
+                        : false;
+                    bool isFeatured2 = data2.containsKey("isFeaturedSeller")
+                        ? data2["isFeaturedSeller"] as bool
+                        : false;
+
+                    // Custom sorting logic
+                    if (isFeatured1 && !isFeatured2) {
+                      return -1;
+                    } else if (!isFeatured1 && isFeatured2) {
+                      return 1;
+                    } else {
+                      return 0;
+                    }
+                  });
+
                   return searchResultsListView();
                 },
               ),

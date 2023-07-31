@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 class TransactionScreenProvider extends ChangeNotifier {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final userid = FirebaseAuth.instance.currentUser!.uid;
-  final String id = 'RNUprDRh66SPSJGzDMyf3xlcIAq2';
 
   List<Map<String, dynamic>> _orders = [];
 
