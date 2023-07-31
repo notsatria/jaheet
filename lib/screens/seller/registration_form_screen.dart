@@ -569,9 +569,10 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
 
     Widget submitButton() {
       return Container(
-        margin: const EdgeInsets.only(top: 20),
+        margin: const EdgeInsets.only(top: 20, bottom: 10),
         height: 50,
         width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
         child: TextButton(
           onPressed: () async {
             try {
