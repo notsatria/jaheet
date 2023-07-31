@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jahitin/screens/seller/seller_main_screen.dart';
 
 import '../../../constant/theme.dart';
+import '../seller_main_screen.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const routeName = '/add-product-screen';
@@ -32,6 +32,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference seller = FirebaseFirestore.instance.collection('seller');
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Future<String?> uploadImageToFirebase(File imageFile) async {
   //   try {
@@ -195,6 +197,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Harga Minimum harus diisi';
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 Text(
@@ -214,6 +222,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Harga Maksimum harus diisi';
+                      }
+                      // Convert the input value to int for comparison
+                      final int minPrice =
+                          int.tryParse(minPriceController.text) ?? 0;
+                      final int maxPrice = int.tryParse(value) ?? 0;
+
+                      // Check if MaxPrice is less than MinPrice
+                      if (maxPrice < minPrice) {
+                        return 'Harga Maksimum tidak boleh kurang dari Harga Minimum';
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ],
@@ -311,72 +334,74 @@ class _AddProductScreenState extends State<AddProductScreen> {
         width: double.infinity,
         child: TextButton(
           onPressed: () async {
-            try {
-              updateMinMaxPrice(
-                'ATASAN',
-                atasanMinPriceController.text,
-                atasanMaxPriceController.text,
-              );
-              updateMinMaxPrice(
-                'BAWAHAN',
-                bawahanMinPriceController.text,
-                bawahanMaxPriceController.text,
-              );
-              updateMinMaxPrice(
-                'TERUSAN',
-                terusanMinPriceController.text,
-                terusanMaxPriceController.text,
-              );
-              updateMinMaxPrice(
-                'PERBAIKAN',
-                perbaikanMinPriceController.text,
-                perbaikanMaxPriceController.text,
-              );
+            if (_formKey.currentState!.validate()) {
+              try {
+                updateMinMaxPrice(
+                  'ATASAN',
+                  atasanMinPriceController.text,
+                  atasanMaxPriceController.text,
+                );
+                updateMinMaxPrice(
+                  'BAWAHAN',
+                  bawahanMinPriceController.text,
+                  bawahanMaxPriceController.text,
+                );
+                updateMinMaxPrice(
+                  'TERUSAN',
+                  terusanMinPriceController.text,
+                  terusanMaxPriceController.text,
+                );
+                updateMinMaxPrice(
+                  'PERBAIKAN',
+                  perbaikanMinPriceController.text,
+                  perbaikanMaxPriceController.text,
+                );
 
-              // setState(() {
-              //   images = null;
-              // });
+                // setState(() {
+                //   images = null;
+                // });
 
-              // Tampilkan circullar progress indicator
-              const CircularProgressIndicator();
-            } catch (e) {
-              print(e.toString());
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Update Data Gagal'),
-                    content: const Text('Silahkan coba lagi'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                },
-              );
-            } finally {
-              Navigator.pushNamed(context, SellerMainScreen.routeName);
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Produk Berhasil Diperbarui'),
-                    content: const Text('Silahkan cek kembali produk Anda'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                },
-              );
+                // Tampilkan circullar progress indicator
+                const CircularProgressIndicator();
+              } catch (e) {
+                print(e.toString());
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Update Data Gagal'),
+                      content: const Text('Silahkan coba lagi'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } finally {
+                Navigator.pushNamed(context, SellerMainScreen.routeName);
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Produk Berhasil Diperbarui'),
+                      content: const Text('Silahkan cek kembali produk Anda'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             }
           },
           style: TextButton.styleFrom(
@@ -409,20 +434,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
             horizontal: defaultMargin,
             vertical: 20,
           ),
-          child: ListView(
-            children: [
-              hargaForm(
-                  'ATASAN', atasanMinPriceController, atasanMaxPriceController),
-              hargaForm('BAWAHAN', bawahanMinPriceController,
-                  bawahanMaxPriceController),
-              hargaForm('TERUSAN', terusanMinPriceController,
-                  terusanMaxPriceController),
-              hargaForm('PERBAIKAN', perbaikanMinPriceController,
-                  perbaikanMaxPriceController),
-              // galeriText(),
-              // const SizedBox(height: 10),
-              // imagePicker(),
-            ],
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                hargaForm('ATASAN', atasanMinPriceController,
+                    atasanMaxPriceController),
+                hargaForm('BAWAHAN', bawahanMinPriceController,
+                    bawahanMaxPriceController),
+                hargaForm('TERUSAN', terusanMinPriceController,
+                    terusanMaxPriceController),
+                hargaForm('PERBAIKAN', perbaikanMinPriceController,
+                    perbaikanMaxPriceController),
+                // galeriText(),
+                // const SizedBox(height: 10),
+                // imagePicker(),
+              ],
+            ),
           ),
         ),
       ),
