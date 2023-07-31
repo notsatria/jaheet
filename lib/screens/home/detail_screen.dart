@@ -648,6 +648,7 @@ class _DetailScreenState extends State<DetailScreen>
               final lat = detaildata?['location'].latitude;
               final kota = detaildata?['kota'];
               final provinsi = detaildata?['provinsi'];
+              final deskripsi = detaildata?['description'];
 
               return titlePenjahit(sellerName, lat, long, kota, provinsi);
             },
@@ -657,9 +658,9 @@ class _DetailScreenState extends State<DetailScreen>
             judul: "Deskripsi",
             child: expandableDescription(
               initialDescription:
-                  "Untuk mendapatkan lebar total layar (width) dalam Flutter, Anda dapat menggunakan widget MediaQuery. MediaQuery adalah widget yang menyediakan",
+                  "Jahit Mas Damar adalah toko jahit yang menghadirkan layanan kreatif dan profesional dalam dunia fashion.",
               expandedDescription:
-                  "Untuk mendapatkan lebar total layar (width) dalam Flutter, Anda dapat menggunakan widget MediaQuery. MediaQuery adalah widget yang menyediakan informasi tentang media (termasuk lebar dan tinggi layar) kepada widget di dalamnya.",
+                  "Dengan penuh dedikasi dan keahlian, toko ini menyediakan jasa jahit dan desain pakaian untuk pelanggan yang mengutamakan kualitas dan ketepatan waktu. Dengan berbagai pilihan kain berkualitas tinggi dan beragam gaya desain, Jahit Mas Damar mampu memenuhi kebutuhan dan keinginan pelanggan dari berbagai lapisan usia dan gaya fashion.",
             ),
           ),
           const Divider(thickness: 4),
