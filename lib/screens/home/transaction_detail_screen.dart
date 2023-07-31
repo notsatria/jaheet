@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:jahitin/provider/transaction_screen_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -337,16 +338,34 @@ class TransactionDetailScreen extends StatelessWidget {
       );
     }
 
-    Widget tagihan() {
+    Widget tagihan(int totalJasa) {
+      final formattedTotalJasa =
+          NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ')
+              .format(totalJasa);
+
+      int totalPengiriman = 10000;
+      final formattedTotalPengiriman =
+          NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ')
+              .format(totalPengiriman);
+      int biayaLayanan = 2000;
+      final formattedBiayaLayanan =
+          NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ')
+              .format(biayaLayanan);
+
+      int totalTagihan = totalJasa + totalPengiriman + biayaLayanan;
+      final formattedTotalTagihan =
+          NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ')
+              .format(totalTagihan);
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const SizedBox(height: 10),
         Text(
-          'Pengiriman',
+          'Total Tagihan',
           style: primaryTextStyle.copyWith(
             fontWeight: semiBold,
             fontSize: 14,
           ),
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: 10),
         Card(
           child: ListTile(
             title: Column(
@@ -354,48 +373,52 @@ class TransactionDetailScreen extends StatelessWidget {
                 Row(children: [
                   Text(
                     'Subtotal Jasa',
-                    style: primaryTextStyle.copyWith(fontSize: 12),
+                    style: primaryTextStyle.copyWith(fontSize: 14),
                   ),
                   const Spacer(),
                   Text(
-                    'Rp100.000-Rp200.000',
-                    style: primaryTextStyle.copyWith(fontSize: 12),
+                    formattedTotalJasa.isEmpty
+                        ? '(Menunggu Penjahit)'
+                        : formattedTotalJasa,
+                    style: primaryTextStyle.copyWith(fontSize: 14),
                   ),
                 ]),
                 const SizedBox(height: 8),
                 Row(children: [
                   Text(
                     'Subtotal Pengiriman',
-                    style: primaryTextStyle.copyWith(fontSize: 12),
+                    style: primaryTextStyle.copyWith(fontSize: 14),
                   ),
                   const Spacer(),
                   Text(
-                    'Rp10.000',
-                    style: primaryTextStyle.copyWith(fontSize: 12),
+                    formattedTotalPengiriman,
+                    style: primaryTextStyle.copyWith(fontSize: 14),
                   ),
                 ]),
                 const SizedBox(height: 8),
                 Row(children: [
                   Text(
                     'Biaya Layanan',
-                    style: primaryTextStyle.copyWith(fontSize: 12),
+                    style: primaryTextStyle.copyWith(fontSize: 14),
                   ),
                   const Spacer(),
                   Text(
-                    'Rp10.000',
-                    style: primaryTextStyle.copyWith(fontSize: 12),
+                    formattedBiayaLayanan,
+                    style: primaryTextStyle.copyWith(fontSize: 14),
                   ),
                 ]),
                 const SizedBox(height: 8),
                 Row(children: [
                   Text(
                     'Total Pembayaran',
-                    style: primaryTextStyle.copyWith(fontSize: 14),
+                    style: primaryTextStyle.copyWith(
+                        fontSize: 14, fontWeight: bold),
                   ),
                   const Spacer(),
                   Text(
-                    '(menunggu penjahit)',
-                    style: primaryTextStyle.copyWith(fontSize: 14),
+                    formattedTotalTagihan,
+                    style: primaryTextStyle.copyWith(
+                        fontSize: 14, fontWeight: bold),
                   ),
                 ]),
               ],
@@ -406,20 +429,25 @@ class TransactionDetailScreen extends StatelessWidget {
     }
 
     Widget payment() {
-      return Container(
-        height: 60,
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          color: primaryColor,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Center(
-          child: Text(
-            'Bayar Pesanan',
-            style: primaryTextStyle.copyWith(
-              fontWeight: bold,
-              fontSize: 14,
-              color: Colors.white,
+      return GestureDetector(
+        onTap: () {
+          // TODO: Tambahkan new screen
+        },
+        child: Container(
+          height: 60,
+          width: double.maxFinite,
+          decoration: BoxDecoration(
+            color: primaryColor,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Center(
+            child: Text(
+              'Bayar Pesanan',
+              style: primaryTextStyle.copyWith(
+                fontWeight: bold,
+                fontSize: 14,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -449,14 +477,16 @@ class TransactionDetailScreen extends StatelessWidget {
             final sellerName = detaildata?['alamat_penjual']['sellerName'];
             final deskripsi = detaildata?['deskripsi'];
             final orderStatus = detaildata?['order_status'];
-            final delivery = detaildata?['delivery'];
-            final alamatUser =
-                detaildata?['alamat_pemesan']['additionalDetail'];
-            final type = detaildata?['alamat_pemesan']['type'];
+            final totalJasa = detaildata!['biaya_jasa'];
+            final delivery = detaildata['delivery'];
+            final alamatUser = detaildata['alamat_pemesan']['additionalDetail'];
+            final type = detaildata['alamat_pemesan']['type'];
             //nanti ditambahkan additionalDetail alamat penjual yah
-            final kecamatan = detaildata?['alamat_penjual']['distric'];
-            final kota = detaildata?['alamat_penjual']['regency'];
+            final kecamatan = detaildata['alamat_penjual']['distric'];
+            final kota = detaildata['alamat_penjual']['regency'];
             final alamatPenjual = '$kecamatan, $kota';
+
+            final totalJasaInt = int.parse(totalJasa);
 
             return Container(
               padding:
@@ -470,7 +500,7 @@ class TransactionDetailScreen extends StatelessWidget {
                     orderid: orderid,
                     orderStatus: orderStatus,
                   ),
-                  tagihan(),
+                  tagihan(totalJasaInt),
                   (deskripsi == "")
                       ? const SizedBox(height: 10)
                       : deskripsiPesanan(deskripsi),
