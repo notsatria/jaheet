@@ -23,6 +23,7 @@ class SellerHomeScreen extends StatelessWidget {
       return Container(
         margin: const EdgeInsets.only(top: 20),
         padding: const EdgeInsets.all(20),
+        width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -78,7 +79,7 @@ class SellerHomeScreen extends StatelessWidget {
             ),
             Icon(
               Icons.bar_chart_rounded,
-              size: 75,
+              size: 50,
               color: secondaryColor,
             ),
           ],
@@ -90,6 +91,8 @@ class SellerHomeScreen extends StatelessWidget {
       return Container(
         margin: const EdgeInsets.only(top: 20),
         padding: const EdgeInsets.all(20),
+        width: double.infinity,
+
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -145,7 +148,7 @@ class SellerHomeScreen extends StatelessWidget {
             ),
             Icon(
               Icons.monetization_on_rounded,
-              size: 75,
+              size: 50,
               color: secondaryColor,
             ),
           ],
@@ -157,6 +160,8 @@ class SellerHomeScreen extends StatelessWidget {
       return Container(
         margin: const EdgeInsets.only(top: 20),
         padding: const EdgeInsets.all(20),
+        width: double.infinity,
+
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -212,7 +217,7 @@ class SellerHomeScreen extends StatelessWidget {
             ),
             Icon(
               Icons.pending_actions_rounded,
-              size: 75,
+              size: 50,
               color: secondaryColor,
             ),
           ],

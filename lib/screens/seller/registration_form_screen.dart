@@ -654,6 +654,9 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: appBar(),
+        bottomNavigationBar: BottomAppBar(
+          child: submitButton(),
+        ),
         body: Container(
           margin: EdgeInsets.symmetric(
             horizontal: defaultMargin,
@@ -669,7 +672,6 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
               warningLocationText(),
               profileImagePicker(),
               const Spacer(),
-              submitButton(),
             ],
           ),
         ),
