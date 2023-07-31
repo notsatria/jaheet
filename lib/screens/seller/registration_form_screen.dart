@@ -569,9 +569,10 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
 
     Widget submitButton() {
       return Container(
-        margin: const EdgeInsets.only(top: 20),
+        margin: const EdgeInsets.only(top: 20, bottom: 10),
         height: 50,
         width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
         child: TextButton(
           onPressed: () async {
             try {
@@ -654,6 +655,9 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: appBar(),
+        bottomNavigationBar: BottomAppBar(
+          child: submitButton(),
+        ),
         body: Container(
           margin: EdgeInsets.symmetric(
             horizontal: defaultMargin,
@@ -668,8 +672,12 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
               getLocationButton(),
               warningLocationText(),
               profileImagePicker(),
+<<<<<<< HEAD
               const SizedBox(height: 20),
               submitButton(),
+=======
+              const Spacer(),
+>>>>>>> 15a58a2e86e199a29adb90fecd4789cf6c1472bf
             ],
           ),
         ),

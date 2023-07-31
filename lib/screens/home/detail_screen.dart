@@ -237,7 +237,8 @@ class _DetailScreenState extends State<DetailScreen>
         children: [
           Text(
             isExpanded ? expandedDescription : initialDescription,
-            maxLines: !isExpanded ? null : 2,
+            style: primaryTextStyle.copyWith(fontSize: 12),
+            maxLines: !isExpanded ? 3 : 20,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
@@ -644,6 +645,7 @@ class _DetailScreenState extends State<DetailScreen>
             builder: (context, detailScreenProvider, _) {
               final detaildata = detailScreenProvider.detailScreenData;
               final sellerName = detaildata?['name'];
+              final description = detaildata?['description'];
               final long = detaildata?['location'].longitude;
               final lat = detaildata?['location'].latitude;
               final kota = detaildata?['kota'];
@@ -654,6 +656,7 @@ class _DetailScreenState extends State<DetailScreen>
             },
           ),
           const Divider(thickness: 4),
+<<<<<<< HEAD
           customContainer(
             judul: "Deskripsi",
             child: expandableDescription(
@@ -662,7 +665,29 @@ class _DetailScreenState extends State<DetailScreen>
               expandedDescription:
                   "Dengan penuh dedikasi dan keahlian, toko ini menyediakan jasa jahit dan desain pakaian untuk pelanggan yang mengutamakan kualitas dan ketepatan waktu. Dengan berbagai pilihan kain berkualitas tinggi dan beragam gaya desain, Jahit Mas Damar mampu memenuhi kebutuhan dan keinginan pelanggan dari berbagai lapisan usia dan gaya fashion.",
             ),
+=======
+          Consumer<DetailScreenProvider>(
+            builder: (context, detailScreenProvider, _) {
+              final detaildata = detailScreenProvider.detailScreenData;
+              final description = detaildata?['description'];
+              return customContainer(
+                judul: "Deskripsi",
+                child: expandableDescription(
+                  initialDescription: description,
+                  expandedDescription: description,
+                ),
+              );
+            },
+>>>>>>> 15a58a2e86e199a29adb90fecd4789cf6c1472bf
           ),
+          // customContainer(
+          //   judul: "Deskripsi",
+          //   child: expandableDescription(
+          //     initialDescription: description,
+          //     expandedDescription:
+          //         "Untuk mendapatkan lebar total layar (width) dalam Flutter, Anda dapat menggunakan widget MediaQuery. MediaQuery adalah widget yang menyediakan informasi tentang media (termasuk lebar dan tinggi layar) kepada widget di dalamnya.",
+          //   ),
+          // ),
           const Divider(thickness: 4),
           customContainer(
             judul: "Gallery Penjahit",
