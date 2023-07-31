@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
@@ -34,72 +33,110 @@ class _AddProductScreenState extends State<AddProductScreen> {
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   CollectionReference seller = FirebaseFirestore.instance.collection('seller');
 
-  Future<String?> uploadImageToFirebase(File imageFile) async {
-    try {
-      final uid = auth.currentUser!.uid;
-      final sellerId =
-          await users.doc(uid).get().then((value) => value.get('sellerId'));
+  // Future<String?> uploadImageToFirebase(File imageFile) async {
+  //   try {
+  //     final uid = auth.currentUser!.uid;
+  //     final sellerId =
+  //         await users.doc(uid).get().then((value) => value.get('sellerId'));
 
-      final fileName =
-          'seller_${sellerId}_gallery/${DateTime.now().millisecondsSinceEpoch}.png';
+  //     final fileName =
+  //         'seller_${sellerId}_gallery/${DateTime.now().millisecondsSinceEpoch}.png';
 
-      final storageRef = FirebaseStorage.instance.ref().child(fileName);
-      final uploadTask = storageRef.putFile(imageFile);
+  //     final storageRef = FirebaseStorage.instance.ref().child(fileName);
+  //     final uploadTask = storageRef.putFile(imageFile);
 
-      final TaskSnapshot snapshot = await uploadTask;
+  //     final TaskSnapshot snapshot = await uploadTask;
 
-      if (snapshot.state == TaskState.success) {
-        final downloadUrl = await snapshot.ref.getDownloadURL();
-        return downloadUrl;
-      }
-    } catch (e) {
-      print('Error uploading image to Firebase Storage: $e');
-    }
-    return null;
-  }
+  //     if (snapshot.state == TaskState.success) {
+  //       final downloadUrl = await snapshot.ref.getDownloadURL();
+  //       return downloadUrl;
+  //     }
+  //   } catch (e) {
+  //     print('Error uploading image to Firebase Storage: $e');
+  //   }
+  //   return null;
+  // }
 
-  Future<void> uploadImagesAndAddToFirestore(
+  // Future<void> uploadImagesAndAddToFirestore(
+  //     String title, String minPrice, String maxPrice) async {
+  //   final uid = auth.currentUser!.uid;
+  //   final sellerId =
+  //       await users.doc(uid).get().then((value) => value.get('sellerId'));
+
+  //   if (images!.isNotEmpty) {
+  //     // Upload images to Firebase Storage
+  //     List<String> imageUrls = [];
+  //     for (final imageFile in images!) {
+  //       final imageUrl = await uploadImageToFirebase(File(imageFile.path));
+  //       if (imageUrl != null) {
+  //         imageUrls.add(imageUrl);
+  //       }
+  //     }
+
+  //     // Clear existing jasa documents for the current seller and title
+  //     await FirebaseFirestore.instance
+  //         .collection('seller')
+  //         .doc('$sellerId')
+  //         .collection('jasa')
+  //         .where('title', isEqualTo: title)
+  //         .get()
+  //         .then((snapshot) {
+  //       for (var doc in snapshot.docs) {
+  //         doc.reference.delete();
+  //       }
+  //     });
+
+  //     // Create new jasa documents with the uploaded image URLs
+  //     for (final imageUrl in imageUrls) {
+  //       await FirebaseFirestore.instance
+  //           .collection('seller')
+  //           .doc('$sellerId')
+  //           .collection('jasa')
+  //           .add({
+  //         'title': title,
+  //         'minPrice': minPrice,
+  //         'maxPrice': maxPrice,
+  //         'imageUrl': imageUrl,
+  //       });
+  //     }
+  //   }
+  // }
+  Future<void> updateMinMaxPrice(
       String title, String minPrice, String maxPrice) async {
     final uid = auth.currentUser!.uid;
     final sellerId =
         await users.doc(uid).get().then((value) => value.get('sellerId'));
 
-    if (images!.isNotEmpty) {
-      // Upload images to Firebase Storage
-      List<String> imageUrls = [];
-      for (final imageFile in images!) {
-        final imageUrl = await uploadImageToFirebase(File(imageFile.path));
-        if (imageUrl != null) {
-          imageUrls.add(imageUrl);
-        }
-      }
+    // Get the specific document reference using a query
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('seller')
+        .doc('$sellerId')
+        .collection('jasa')
+        .where('title', isEqualTo: title)
+        .get();
 
-      // Clear existing jasa documents for the current seller and title
+    if (querySnapshot.docs.isEmpty) {
       await FirebaseFirestore.instance
           .collection('seller')
           .doc('$sellerId')
           .collection('jasa')
-          .where('title', isEqualTo: title)
-          .get()
-          .then((snapshot) {
-        for (var doc in snapshot.docs) {
-          doc.reference.delete();
-        }
+          .add({
+        'title': title,
+        'minPrice': minPrice,
+        'maxPrice': maxPrice,
       });
+    }
 
-      // Create new jasa documents with the uploaded image URLs
-      for (final imageUrl in imageUrls) {
-        await FirebaseFirestore.instance
-            .collection('seller')
-            .doc('$sellerId')
-            .collection('jasa')
-            .add({
-          'title': title,
-          'minPrice': minPrice,
-          'maxPrice': maxPrice,
-          'imageUrl': imageUrl,
-        });
-      }
+    // Ensure that the query returned at least one document
+    if (querySnapshot.docs.isNotEmpty) {
+      final documentSnapshot = querySnapshot.docs.first;
+
+      // Update the data for the specific document
+      await documentSnapshot.reference.update({
+        'title': title,
+        'minPrice': minPrice,
+        'maxPrice': maxPrice,
+      });
     }
   }
 
@@ -275,22 +312,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
         child: TextButton(
           onPressed: () async {
             try {
-              uploadImagesAndAddToFirestore(
+              updateMinMaxPrice(
                 'ATASAN',
                 atasanMinPriceController.text,
                 atasanMaxPriceController.text,
               );
-              uploadImagesAndAddToFirestore(
+              updateMinMaxPrice(
                 'BAWAHAN',
                 bawahanMinPriceController.text,
                 bawahanMaxPriceController.text,
               );
-              uploadImagesAndAddToFirestore(
+              updateMinMaxPrice(
                 'TERUSAN',
                 terusanMinPriceController.text,
                 terusanMaxPriceController.text,
               );
-              uploadImagesAndAddToFirestore(
+              updateMinMaxPrice(
                 'PERBAIKAN',
                 perbaikanMinPriceController.text,
                 perbaikanMaxPriceController.text,
@@ -382,9 +419,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   terusanMaxPriceController),
               hargaForm('PERBAIKAN', perbaikanMinPriceController,
                   perbaikanMaxPriceController),
-              galeriText(),
-              const SizedBox(height: 10),
-              imagePicker(),
+              // galeriText(),
+              // const SizedBox(height: 10),
+              // imagePicker(),
             ],
           ),
         ),
