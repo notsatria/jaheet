@@ -302,7 +302,7 @@ class TransactionDetailScreen extends StatelessWidget {
                   children: [
                     RichText(
                       text: TextSpan(
-                        text: 'Dikirim ke: ',
+                        text: 'Diambil di: ',
                         style: primaryTextStyle.copyWith(
                           fontSize: 14,
                           fontWeight: bold,
@@ -400,7 +400,7 @@ class TransactionDetailScreen extends StatelessWidget {
                   pengirimanPesanan(delivery),
                   (delivery == 'home')
                       ? alamatPemesanan(alamatUser, type)
-                      : pickoff(alamatPenjual, type),
+                      : pickoff(alamatPenjual, sellerName),
                   const Spacer(),
                   (orderStatus == 'Menunggu Pembayaran')
                       ? payment()
