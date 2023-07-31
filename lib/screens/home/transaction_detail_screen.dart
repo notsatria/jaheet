@@ -91,7 +91,7 @@ class TransactionDetailScreen extends StatelessWidget {
             child: Text(
               'order id: $orderid',
               style: subtitleTextStyle.copyWith(
-                fontSize: 10,
+                fontSize: 12,
               ),
             ),
           ),
@@ -302,7 +302,7 @@ class TransactionDetailScreen extends StatelessWidget {
                   children: [
                     RichText(
                       text: TextSpan(
-                        text: 'Dikirim ke: ',
+                        text: 'Diambil di: ',
                         style: primaryTextStyle.copyWith(
                           fontSize: 14,
                           fontWeight: bold,
@@ -337,6 +337,27 @@ class TransactionDetailScreen extends StatelessWidget {
       );
     }
 
+    Widget payment() {
+      return Container(
+        margin: const EdgeInsets.all(16),
+        height: 60,
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: primaryColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Text(
+            'Bayar Pesanan',
+            style: primaryTextStyle.copyWith(
+              fontWeight: bold,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: appBar(),
@@ -356,8 +377,13 @@ class TransactionDetailScreen extends StatelessWidget {
               final deskripsi = detaildata?['deskripsi'];
               final orderStatus = detaildata?['order_status'];
               final delivery = detaildata?['delivery'];
-              final alamat = detaildata?['alamat_pemesan']['additionalDetail'];
+              final alamatUser =
+                  detaildata?['alamat_pemesan']['additionalDetail'];
               final type = detaildata?['alamat_pemesan']['type'];
+              //nanti ditambahkan additionalDetail alamat penjual yah
+              final kecamatan = detaildata?['alamat_penjual']['distric'];
+              final kota = detaildata?['alamat_penjual']['regency'];
+              final alamatPenjual = '$kecamatan, $kota';
 
               return Column(
                 children: [
@@ -368,15 +394,17 @@ class TransactionDetailScreen extends StatelessWidget {
                     orderid: orderid,
                     orderStatus: orderStatus,
                   ),
-                  const SizedBox(
-                    height: 14,
-                  ),
+                  const SizedBox(height: 14),
                   deskripsiPesanan(deskripsi),
                   const SizedBox(height: 14),
                   pengirimanPesanan(delivery),
-                  (delivery == 'drop')
-                      ? alamatPemesanan(alamat, type)
-                      : pickoff('ahay', type),
+                  (delivery == 'home')
+                      ? alamatPemesanan(alamatUser, type)
+                      : pickoff(alamatPenjual, sellerName),
+                  const Spacer(),
+                  (orderStatus == 'Menunggu Pembayaran')
+                      ? payment()
+                      : const SizedBox(),
                 ],
               );
             },
