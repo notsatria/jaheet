@@ -35,12 +35,19 @@ class _TransactionScreenState extends State<TransactionScreen> {
     return formattedDate;
   }
 
-  void navigateToDetail(BuildContext context, String orderid) async {
-    await context
-        .read<TransactionScreenProvider>()
-        .fetchDetailScreenData(orderid);
+  void navigateToDetail(BuildContext context, String orderid) {
+    context.read<TransactionScreenProvider>().fetchDetailScreenData(orderid);
     Navigator.pushNamed(context, TransactionDetailScreen.routeName,
         arguments: {'orderid': orderid});
+  }
+
+  List<Map<String, dynamic>> _orders = [];
+  Future<void> getAllOrders() async {
+    List<Map<String, dynamic>> ordersData =
+        await transactionProvider.getOrdersData();
+    setState(() {
+      _orders = ordersData;
+    });
   }
 
   @override
@@ -158,7 +165,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
       child: Scaffold(
           appBar: appBar(),
           body: FutureBuilder(
-            future: transactionProvider.fetchOrders(),
+            future: transactionProvider.getOrdersData(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -169,11 +176,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
                   child: Text('Error fetching data'),
                 );
               } else {
-                List<Map<String, dynamic>> orders = transactionProvider.orders;
+                List<Map<String, dynamic>> orders = _orders;
 
                 if (orders.isEmpty) {
                   return const Center(
-                    child: Text('No data available'),
+                    child: Text('Anda belum memesan apapun'),
                   );
                 }
 

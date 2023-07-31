@@ -41,6 +41,8 @@ class TransactionDetailScreen extends StatelessWidget {
       required String jasa,
       required String orderid,
       required String orderStatus,
+      required String hargaMin,
+      required String hargaMax,
     }) {
       Color statusColor =
           Colors.grey.shade300; // Default color for "Menunggu Konfirmasi"
@@ -132,7 +134,7 @@ class TransactionDetailScreen extends StatelessWidget {
                         height: 4,
                       ),
                       Text(
-                        'Harga: Rp 100.000 - Rp 200.000*',
+                        'Harga: Rp$hargaMin - Rp$hargaMax*',
                         style: secondaryTextStyle.copyWith(
                           fontWeight: light,
                           fontSize: 14,
@@ -358,14 +360,67 @@ class TransactionDetailScreen extends StatelessWidget {
       );
     }
 
+    Widget tagihan() {
+      return Container(
+        child: Column(
+          children: [
+            Row(children: [
+              Text(
+                'Subtotal Jasa',
+                style: primaryTextStyle.copyWith(fontSize: 12),
+              ),
+              const Spacer(),
+              Text(
+                'Rp100.000-Rp200.000',
+                style: primaryTextStyle.copyWith(fontSize: 12),
+              ),
+            ]),
+            const SizedBox(height: 8),
+            Row(children: [
+              Text(
+                'Subtotal Pengiriman',
+                style: primaryTextStyle.copyWith(fontSize: 12),
+              ),
+              const Spacer(),
+              Text(
+                'Rp10.000',
+                style: primaryTextStyle.copyWith(fontSize: 12),
+              ),
+            ]),
+            const SizedBox(height: 8),
+            Row(children: [
+              Text(
+                'Biaya Layanan',
+                style: primaryTextStyle.copyWith(fontSize: 12),
+              ),
+              const Spacer(),
+              Text(
+                'Rp10.000',
+                style: primaryTextStyle.copyWith(fontSize: 12),
+              ),
+            ]),
+            const SizedBox(height: 8),
+            Row(children: [
+              Text(
+                'Total Pembayaran',
+                style: primaryTextStyle.copyWith(fontSize: 14),
+              ),
+              const Spacer(),
+              Text(
+                '(menunggu penjahit)',
+                style: primaryTextStyle.copyWith(fontSize: 14),
+              ),
+            ]),
+          ],
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: appBar(),
-        body: Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 20,
-          ),
+        body: Padding(
+          padding: const EdgeInsets.all(20),
           child: Consumer<TransactionScreenProvider>(
             builder: (context, transactionScreenProvider, _) {
               final detaildata = transactionScreenProvider.detailScreenData;
@@ -393,6 +448,8 @@ class TransactionDetailScreen extends StatelessWidget {
                     jasa: jasa,
                     orderid: orderid,
                     orderStatus: orderStatus,
+                    hargaMax: '200.000',
+                    hargaMin: '100.000',
                   ),
                   const SizedBox(height: 14),
                   deskripsiPesanan(deskripsi),
