@@ -64,15 +64,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
             fontWeight: semiBold,
           ),
         ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: primaryTextColor,
-          ),
-        ),
         elevation: 2,
       );
     }
