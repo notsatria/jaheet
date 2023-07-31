@@ -668,7 +668,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
               getLocationButton(),
               warningLocationText(),
               profileImagePicker(),
-              const Spacer(),
+              const SizedBox(height: 20),
               submitButton(),
             ],
           ),
