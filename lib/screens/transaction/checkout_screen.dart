@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/main_screen.dart';
-import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/transaction/delivery_screen.dart';
 import 'package:provider/provider.dart';
+
 import '../../constant/theme.dart';
 import '../../provider/checkout_screen_provider.dart';
 import '../../provider/detail_screen_provider.dart';
@@ -452,14 +452,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
           ),
-          const SizedBox(
-            height: 12,
-          ),
-          Row(
-            children: [
-              imagePicker(),
-            ],
-          )
+          // const SizedBox(
+          //   height: 12,
+          // ),
+          // Row(
+          //   children: [
+          //     imagePicker(),
+          //   ],
+          // )
         ],
       );
     }

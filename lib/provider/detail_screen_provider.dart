@@ -17,6 +17,7 @@ class DetailScreenProvider extends ChangeNotifier {
       if (snapshot.docs.isNotEmpty) {
         _detailScreenData = snapshot.docs.first.data();
         _id = _detailScreenData!['id'];
+        
       } else {
         _detailScreenData = null;
       }

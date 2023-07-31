@@ -15,6 +15,7 @@ class CheckoutScreenProvider extends ChangeNotifier {
   String _hargaMinimal = '10000';
   String _hargaMaksimal = '20000';
   String _orderStatus = 'Menunggu Konfirmasi';
+  final String _biayaJasa = '0';
 
   Map<String, dynamic> _detailAlamatPemesan = {};
   Map<String, dynamic> _detailAlamatPenjual = {};
@@ -150,7 +151,7 @@ class CheckoutScreenProvider extends ChangeNotifier {
       }
     } catch (error) {
       print('Error getting price: $error');
-      return null;
+      return;
     }
   }
 
@@ -172,6 +173,7 @@ class CheckoutScreenProvider extends ChangeNotifier {
       'order_status': _orderStatus,
       'orderid': generateOrderId(),
       'status': _status,
+      'biaya_jasa': _biayaJasa,
     });
   }
 }
