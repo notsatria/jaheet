@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/home/main_screen.dart';
 
 import '../../constant/theme.dart';
 
@@ -24,7 +25,7 @@ class EditProfileScreen extends StatelessWidget {
         ),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, MainScreen.routeName);
           },
           icon: Icon(
             Icons.arrow_back,
