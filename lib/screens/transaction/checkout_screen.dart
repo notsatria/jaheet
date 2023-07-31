@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
+import 'package:jahitin/screens/home/main_screen.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
 import 'package:jahitin/screens/transaction/delivery_screen.dart';
 import 'package:provider/provider.dart';
@@ -517,7 +518,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   Timer(const Duration(seconds: 3), () {
                     Navigator.pushReplacementNamed(
                       context,
-                      TransactionScreen.routeName,
+                      MainScreen.routeName,
                     );
                   });
                 }
