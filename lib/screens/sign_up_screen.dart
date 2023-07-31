@@ -403,7 +403,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             passwordConfirmationInput(),
                             buttonSignUp(),
                             textLogin(),
-                            buttonLoginGoogle(),
+                            // buttonLoginGoogle(),
                             SizedBox(
                               height: defaultMargin,
                             )

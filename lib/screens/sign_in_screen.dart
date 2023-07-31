@@ -325,7 +325,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           buttonLogin(),
                           textSignUp(),
-                          buttonLoginGoogle(),
+                          // buttonLoginGoogle(),
                         ],
                       ),
                       isLoading

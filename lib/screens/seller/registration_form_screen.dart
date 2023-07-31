@@ -673,11 +673,15 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
               warningLocationText(),
               profileImagePicker(),
 <<<<<<< HEAD
+<<<<<<< HEAD
               const SizedBox(height: 20),
               submitButton(),
 =======
               const Spacer(),
 >>>>>>> 15a58a2e86e199a29adb90fecd4789cf6c1472bf
+=======
+              SizedBox(height: 50)
+>>>>>>> 28be14c232d60878204434ebbaf341e7be4f30e3
             ],
           ),
         ),
