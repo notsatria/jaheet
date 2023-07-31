@@ -598,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget categoryOption() {
       return Container(
-        padding: const EdgeInsets.only(left: 15),
+        padding: const EdgeInsets.only(left: 15, top: 15),
         margin: const EdgeInsets.symmetric(vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -653,7 +653,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.pushNamed(context, SeeMoreScreen.routeName);
                     },
                     child: Text(
-                      'Lihat Semua',
+                      '',
                       style: primaryTextStyle.copyWith(
                           fontSize: 14,
                           fontWeight: bold,
@@ -718,7 +718,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 TextButton(
                     onPressed: () {},
                     child: Text(
-                      'Lihat Semua',
+                      '',
                       style: primaryTextStyle.copyWith(
                           fontSize: 14,
                           fontWeight: bold,
@@ -787,7 +787,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  serviceOption(),
+                  // serviceOption(),
                   categoryOption(),
                   divider(),
                   nearest("Paling populer di dekat Anda"),
