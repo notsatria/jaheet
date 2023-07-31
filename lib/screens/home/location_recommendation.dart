@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jahitin/constant/theme.dart';
 import 'package:jahitin/screens/home/detail_screen.dart';
+import 'package:jahitin/screens/home/main_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/detail_screen_provider.dart';
@@ -345,7 +346,7 @@ class _LocationRecommendationScreenState
             child: FloatingActionButton(
               backgroundColor: primaryColor,
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, MainScreen.routeName);
               },
               child: Icon(Icons.chevron_left),
             ),

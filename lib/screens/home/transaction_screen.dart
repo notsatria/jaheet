@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
 import '../../provider/transaction_screen_provider.dart';
+import 'main_screen.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -47,6 +48,15 @@ class _TransactionScreenState extends State<TransactionScreen> {
     PreferredSizeWidget appBar() {
       return AppBar(
         backgroundColor: backgroundColor1,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, MainScreen.routeName);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: primaryTextColor,
+          ),
+        ),
         title: Text(
           'Transaksi',
           style: TextStyle(
@@ -207,8 +217,24 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 List<Map<String, dynamic>> orders = transactionProvider.orders;
 
                 if (orders.isEmpty) {
-                  return const Center(
-                    child: Text('Kamu belum memiliki pesanan!'),
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.remove_shopping_cart_rounded,
+                          color: primaryTextColor.withOpacity(0.5),
+                          size: 50,
+                        ),
+                        Text(
+                          'Anda belum membuat pesanan',
+                          style: primaryTextStyle.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: primaryTextColor.withOpacity(0.5)),
+                        ),
+                      ],
+                    ),
                   );
                 }
 

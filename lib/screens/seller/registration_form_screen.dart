@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jahitin/screens/home/main_screen.dart';
 
 import '../../constant/theme.dart';
 import '../home/profile_screen.dart';
@@ -115,8 +116,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         .doc('${sellerDataLength + 1}')
         .set({
           'id': sellerDataLength + 1,
-          'isClothSeller': false,
           'isSailor': true,
+          'isFeaturedSeller': false,
           'name': namaTokoController.text,
           'kelurahan': kelurahanTokoController.text,
           'kecamatan': kecamatanTokoController.text,
@@ -146,7 +147,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         ),
         leading: IconButton(
           onPressed: () {
-            Navigator.pushNamed(context, ProfileScreen.routeName);
+            Navigator.pushReplacementNamed(context, MainScreen.routeName);
           },
           icon: Icon(
             Icons.arrow_back,
@@ -604,7 +605,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.pushReplacementNamed(
+                              context, MainScreen.routeName);
                         },
                         child: const Text('OK'),
                       ),
@@ -624,7 +626,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.pushReplacementNamed(
+                              context, MainScreen.routeName);
                         },
                         child: const Text('OK'),
                       ),
@@ -663,17 +666,18 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
             horizontal: defaultMargin,
             vertical: 20,
           ),
-          child: ListView(
-            children: [
-              namaTokoForm(),
-              alamatTokoForm(),
-              detailAlamatTokoForm(),
-              deskripsiTokoForm(),
-              getLocationButton(),
-              warningLocationText(),
-              profileImagePicker(),
-              const Spacer(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                namaTokoForm(),
+                alamatTokoForm(),
+                detailAlamatTokoForm(),
+                deskripsiTokoForm(),
+                getLocationButton(),
+                warningLocationText(),
+                profileImagePicker(),
+              ],
+            ),
           ),
         ),
       ),
