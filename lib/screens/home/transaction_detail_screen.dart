@@ -458,7 +458,9 @@ class TransactionDetailScreen extends StatelessWidget {
             final kota = detaildata?['alamat_penjual']['regency'];
             final alamatPenjual = '$kecamatan, $kota';
 
-            return SingleChildScrollView(
+            return Container(
+              padding:
+                  EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 10),
               child: Column(
                 children: [
                   cardPesanan(
