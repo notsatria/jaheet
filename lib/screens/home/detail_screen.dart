@@ -656,16 +656,6 @@ class _DetailScreenState extends State<DetailScreen>
             },
           ),
           const Divider(thickness: 4),
-<<<<<<< HEAD
-          customContainer(
-            judul: "Deskripsi",
-            child: expandableDescription(
-              initialDescription:
-                  "Jahit Mas Damar adalah toko jahit yang menghadirkan layanan kreatif dan profesional dalam dunia fashion.",
-              expandedDescription:
-                  "Dengan penuh dedikasi dan keahlian, toko ini menyediakan jasa jahit dan desain pakaian untuk pelanggan yang mengutamakan kualitas dan ketepatan waktu. Dengan berbagai pilihan kain berkualitas tinggi dan beragam gaya desain, Jahit Mas Damar mampu memenuhi kebutuhan dan keinginan pelanggan dari berbagai lapisan usia dan gaya fashion.",
-            ),
-=======
           Consumer<DetailScreenProvider>(
             builder: (context, detailScreenProvider, _) {
               final detaildata = detailScreenProvider.detailScreenData;
@@ -678,7 +668,6 @@ class _DetailScreenState extends State<DetailScreen>
                 ),
               );
             },
->>>>>>> 15a58a2e86e199a29adb90fecd4789cf6c1472bf
           ),
           // customContainer(
           //   judul: "Deskripsi",
