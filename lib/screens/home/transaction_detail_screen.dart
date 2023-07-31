@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jahitin/provider/transaction_screen_provider.dart';
 import 'package:provider/provider.dart';
+
 import '../../constant/theme.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
@@ -152,7 +153,6 @@ class TransactionDetailScreen extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 10),
           Text(
             'Pengiriman',
             style: primaryTextStyle.copyWith(
@@ -337,14 +337,81 @@ class TransactionDetailScreen extends StatelessWidget {
       );
     }
 
+    Widget tagihan() {
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          'Pengiriman',
+          style: primaryTextStyle.copyWith(
+            fontWeight: semiBold,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Card(
+          child: ListTile(
+            title: Column(
+              children: [
+                Row(children: [
+                  Text(
+                    'Subtotal Jasa',
+                    style: primaryTextStyle.copyWith(fontSize: 12),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Rp100.000-Rp200.000',
+                    style: primaryTextStyle.copyWith(fontSize: 12),
+                  ),
+                ]),
+                const SizedBox(height: 8),
+                Row(children: [
+                  Text(
+                    'Subtotal Pengiriman',
+                    style: primaryTextStyle.copyWith(fontSize: 12),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Rp10.000',
+                    style: primaryTextStyle.copyWith(fontSize: 12),
+                  ),
+                ]),
+                const SizedBox(height: 8),
+                Row(children: [
+                  Text(
+                    'Biaya Layanan',
+                    style: primaryTextStyle.copyWith(fontSize: 12),
+                  ),
+                  const Spacer(),
+                  Text(
+                    'Rp10.000',
+                    style: primaryTextStyle.copyWith(fontSize: 12),
+                  ),
+                ]),
+                const SizedBox(height: 8),
+                Row(children: [
+                  Text(
+                    'Total Pembayaran',
+                    style: primaryTextStyle.copyWith(fontSize: 14),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '(menunggu penjahit)',
+                    style: primaryTextStyle.copyWith(fontSize: 14),
+                  ),
+                ]),
+              ],
+            ),
+          ),
+        ),
+      ]);
+    }
+
     Widget payment() {
       return Container(
-        margin: const EdgeInsets.all(16),
         height: 60,
         width: double.maxFinite,
         decoration: BoxDecoration(
           color: primaryColor,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Center(
           child: Text(
@@ -352,6 +419,7 @@ class TransactionDetailScreen extends StatelessWidget {
             style: primaryTextStyle.copyWith(
               fontWeight: bold,
               fontSize: 14,
+              color: Colors.white,
             ),
           ),
         ),
@@ -361,31 +429,37 @@ class TransactionDetailScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: appBar(),
-        body: Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 20,
-          ),
-          child: Consumer<TransactionScreenProvider>(
-            builder: (context, transactionScreenProvider, _) {
-              final detaildata = transactionScreenProvider.detailScreenData;
-              final kategori = detaildata?['kategori'];
-              final jenis = detaildata?['jenis'];
-              final jasa = detaildata?['jasa'];
-              final orderid = detaildata?['orderid'];
-              final sellerName = detaildata?['alamat_penjual']['sellerName'];
-              final deskripsi = detaildata?['deskripsi'];
-              final orderStatus = detaildata?['order_status'];
-              final delivery = detaildata?['delivery'];
-              final alamatUser =
-                  detaildata?['alamat_pemesan']['additionalDetail'];
-              final type = detaildata?['alamat_pemesan']['type'];
-              //nanti ditambahkan additionalDetail alamat penjual yah
-              final kecamatan = detaildata?['alamat_penjual']['distric'];
-              final kota = detaildata?['alamat_penjual']['regency'];
-              final alamatPenjual = '$kecamatan, $kota';
+        bottomNavigationBar: Consumer<TransactionScreenProvider>(
+          builder: (context, transactionScreenProvider, _) {
+            final detaildata = transactionScreenProvider.detailScreenData;
+            final statusOrder = detaildata?['status_order'];
+            if (statusOrder == 'Menunggu Pembayaran') {
+              return payment();
+            }
+            return const SizedBox();
+          },
+        ),
+        body: Consumer<TransactionScreenProvider>(
+          builder: (context, transactionScreenProvider, _) {
+            final detaildata = transactionScreenProvider.detailScreenData;
+            final kategori = detaildata?['kategori'];
+            final jenis = detaildata?['jenis'];
+            final jasa = detaildata?['jasa'];
+            final orderid = detaildata?['orderid'];
+            final sellerName = detaildata?['alamat_penjual']['sellerName'];
+            final deskripsi = detaildata?['deskripsi'];
+            final orderStatus = detaildata?['order_status'];
+            final delivery = detaildata?['delivery'];
+            final alamatUser =
+                detaildata?['alamat_pemesan']['additionalDetail'];
+            final type = detaildata?['alamat_pemesan']['type'];
+            //nanti ditambahkan additionalDetail alamat penjual yah
+            final kecamatan = detaildata?['alamat_penjual']['distric'];
+            final kota = detaildata?['alamat_penjual']['regency'];
+            final alamatPenjual = '$kecamatan, $kota';
 
-              return Column(
+            return SingleChildScrollView(
+              child: Column(
                 children: [
                   cardPesanan(
                     kategori: kategori,
@@ -394,8 +468,10 @@ class TransactionDetailScreen extends StatelessWidget {
                     orderid: orderid,
                     orderStatus: orderStatus,
                   ),
-                  const SizedBox(height: 14),
-                  deskripsiPesanan(deskripsi),
+                  tagihan(),
+                  (deskripsi == "")
+                      ? const SizedBox(height: 10)
+                      : deskripsiPesanan(deskripsi),
                   const SizedBox(height: 14),
                   pengirimanPesanan(delivery),
                   (delivery == 'home')
@@ -406,9 +482,9 @@ class TransactionDetailScreen extends StatelessWidget {
                       ? payment()
                       : const SizedBox(),
                 ],
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

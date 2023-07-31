@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
 import '../../provider/transaction_screen_provider.dart';
-import 'main_screen.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -55,6 +54,15 @@ class _TransactionScreenState extends State<TransactionScreen> {
             fontWeight: semiBold,
           ),
         ),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: primaryTextColor,
+          ),
+        ),
         elevation: 2,
       );
     }
@@ -68,6 +76,28 @@ class _TransactionScreenState extends State<TransactionScreen> {
       String tanggal,
       String orderid,
     ) {
+      Color statusColor =
+          Colors.grey.shade300; // Default color for "Menunggu Konfirmasi"
+
+      switch (status) {
+        case 'Menunggu Konfirmasi':
+          statusColor = Colors.grey.shade300;
+          break;
+        case 'Diproses':
+          statusColor = Colors.amber.shade200;
+          break;
+        case 'Menunggu Pembayaran':
+          statusColor = Colors.orange.shade300;
+          break;
+        case 'Dikirim':
+          statusColor = Colors.blue.shade300;
+          break;
+        case 'Selesai':
+          statusColor = Colors.green.shade200;
+          break;
+        default:
+          statusColor = Colors.grey.shade300;
+      }
       return GestureDetector(
         onTap: () {
           navigateToDetail(context, orderid);
@@ -99,7 +129,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: waitProcess,
+                      color: statusColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Center(
@@ -156,8 +186,13 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
     return SafeArea(
       child: Scaffold(
-          appBar: appBar(),
-          body: FutureBuilder(
+        appBar: appBar(),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await transactionProvider.fetchOrders();
+            setState(() {});
+          },
+          child: FutureBuilder(
             future: transactionProvider.fetchOrders(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -173,43 +208,43 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
                 if (orders.isEmpty) {
                   return const Center(
-                    child: Text('No data available'),
+                    child: Text('Kamu belum memiliki pesanan!'),
                   );
                 }
 
-                return SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.all(defaultMargin),
-                    child: ListView.builder(
-                      itemCount: orders.length,
-                      itemBuilder: (context, index) {
-                        Map<String, dynamic> orderData = orders[index];
-                        String kategori = orderData['kategori'];
-                        String jenis = orderData['jenis'];
-                        String jasa = orderData['jasa'];
-                        String status = orderData['order_status'];
-                        String orderDate = orderData['order-date'];
-                        DateTime date = parseOrderDateString(orderDate);
-                        String formattedDate = formatDateTime(date);
-                        String orderId = orderData['orderid'];
-                        var sellerName =
-                            orderData['alamat_penjual']['sellerName'];
-                        return orderItem(
-                          sellerName,
-                          kategori,
-                          jenis,
-                          status,
-                          jasa,
-                          formattedDate,
-                          orderId,
-                        );
-                      },
-                    ),
+                return Padding(
+                  padding: EdgeInsets.all(defaultMargin),
+                  child: ListView.builder(
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> orderData = orders[index];
+                      String kategori = orderData['kategori'];
+                      String jenis = orderData['jenis'];
+                      String jasa = orderData['jasa'];
+                      String status = orderData['order_status'];
+                      String orderDate = orderData['order-date'];
+                      DateTime date = parseOrderDateString(orderDate);
+                      String formattedDate = formatDateTime(date);
+                      String orderId = orderData['orderid'];
+                      var sellerName =
+                          orderData['alamat_penjual']['sellerName'];
+                      return orderItem(
+                        sellerName,
+                        kategori,
+                        jenis,
+                        status,
+                        jasa,
+                        formattedDate,
+                        orderId,
+                      );
+                    },
                   ),
                 );
               }
             },
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:jahitin/screens/home/see_more.dart';
 import 'package:jahitin/services/haversine.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletons/skeletons.dart';
+
 import '../../constant/theme.dart';
 import '../../provider/detail_screen_provider.dart';
 import '../../provider/home_screen_provider.dart';

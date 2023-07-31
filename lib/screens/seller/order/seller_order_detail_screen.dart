@@ -16,7 +16,7 @@ class SellerOrderDetailScreen extends StatefulWidget {
       _SellerOrderDetailScreenState();
 }
 
-const List<String> statusOptions = [
+const List<String> statusHome = [
   'Menunggu Konfirmasi',
   'Diproses',
   'Menunggu Pembayaran',
@@ -24,9 +24,22 @@ const List<String> statusOptions = [
   'Selesai',
 ];
 
+const List<String> statusPick = [
+  'Menunggu Konfirmasi',
+  'Mengambil Pesanan', //penjahit mengambil pesanan
+  'Diproses',
+  'Mengirim Pesanan', //penjahit mengirim pesanan
+  'Selesai', //pembayaran COD
+];
+
 class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
-  String selectedStatus = statusOptions.first;
+  String selectedStatusHome = statusHome.first;
+  String selectedStatusPick = statusPick.first; //nambahin list buat pickoff
   CollectionReference orders = FirebaseFirestore.instance.collection('orders');
+
+  TextEditingController biayaJasaController = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Future<void> updateOrderStatus() async {
     await orders
@@ -35,7 +48,8 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
         .then((value) {
       for (var element in value.docs) {
         orders.doc(element.id).update({
-          'order_status': selectedStatus,
+          'order_status': selectedStatusHome,
+          'biaya_jasa': biayaJasaController.text,
         });
       }
     });
@@ -357,15 +371,14 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
             child: DropdownButton<String>(
               iconEnabledColor: secondaryColor,
               isExpanded: true,
-              value: selectedStatus,
+              value: selectedStatusHome,
               onChanged: (value) {
-                // When the user selects a status option, update the selectedStatus variable
+                // When the user selects a status option, update the selectedStatusHome variable
                 setState(() {
-                  selectedStatus = value!;
+                  selectedStatusHome = value!;
                 });
               },
-              items:
-                  statusOptions.map<DropdownMenuItem<String>>((String value) {
+              items: statusHome.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -377,6 +390,48 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
       );
     }
 
+    Widget updateBiayaJasa() {
+      return Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            Text(
+              'Update Biaya Jasa',
+              style: primaryTextStyle.copyWith(
+                fontWeight: semiBold,
+                fontSize: 16,
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: 55,
+              margin: const EdgeInsets.only(top: 15),
+              child: TextFormField(
+                controller: biayaJasaController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Harga Minimum harus diisi';
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.number,
+                enabled:
+                    selectedStatusHome == 'Menunggu Pembayaran' ? true : false,
+                decoration: InputDecoration(
+                  labelText: 'Biaya Jasa',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     Widget bottomNavbar() {
       return Container(
         margin: EdgeInsets.all(defaultMargin - 5),
@@ -385,62 +440,64 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
         child: InkWell(
           onTap: () {
             // Update the status of the order
-            try {
-              updateOrderStatus();
-            } catch (e) {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Error'),
-                      content: Text(e.toString()),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    );
-                  });
-            } finally {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    insetPadding: const EdgeInsets.all(90),
-                    content: SizedBox(
-                      height: 128,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.check_circle,
-                            size: 60,
-                            color: Colors.greenAccent,
+            if (_formKey.currentState!.validate()) {
+              try {
+                updateOrderStatus();
+              } catch (e) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Error'),
+                        content: Text(e.toString()),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            'Status Pesanan Telah Diperbarui',
-                            style: primaryTextStyle,
-                            textAlign: TextAlign.center,
-                          )
                         ],
+                      );
+                    });
+              } finally {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      insetPadding: const EdgeInsets.all(90),
+                      content: SizedBox(
+                        height: 128,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.check_circle,
+                              size: 60,
+                              color: Colors.greenAccent,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              'Status Pesanan Telah Diperbarui',
+                              style: primaryTextStyle,
+                              textAlign: TextAlign.center,
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-              Timer(const Duration(seconds: 3), () {
-                Navigator.pushReplacementNamed(
-                  context,
-                  SellerOrderScreen.routeName,
+                    );
+                  },
                 );
-              });
+                Timer(const Duration(seconds: 3), () {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    SellerOrderScreen.routeName,
+                  );
+                });
+              }
             }
           },
           child: Container(
@@ -451,7 +508,9 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
             ),
             child: Center(
               child: Text(
-                'Update Status',
+                selectedStatusHome == 'Menunggu Pembayaran'
+                    ? 'Update Status & Biaya Jasa'
+                    : 'Update Status',
                 style: whiteTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: semiBold,
@@ -463,31 +522,39 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
       );
     }
 
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        bottomNavigationBar: BottomAppBar(
-          child: bottomNavbar(),
-        ),
-        appBar: appBar(),
-        body: Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: defaultMargin,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: SafeArea(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          bottomNavigationBar: BottomAppBar(
+            child: bottomNavbar(),
           ),
-          padding: const EdgeInsets.only(
-            bottom: 20,
-          ),
-          child: SingleChildScrollView(
-            controller: ScrollController(),
-            child: Column(
-              children: [
-                cardPesanan(),
-                deskripsiPesanan(),
-                pengirimanPesanan(),
-                alamatPemesanan(),
-                statusPemesanan(),
-                updateStatusPemesanan(),
-              ],
+          appBar: appBar(),
+          body: Container(
+            margin: EdgeInsets.symmetric(
+              horizontal: defaultMargin,
+            ),
+            padding: const EdgeInsets.only(
+              bottom: 20,
+            ),
+            height: double.infinity,
+            child: SingleChildScrollView(
+              controller: ScrollController(),
+              child: Column(
+                children: [
+                  cardPesanan(),
+                  deskripsiPesanan(),
+                  pengirimanPesanan(),
+                  alamatPemesanan(),
+                  statusPemesanan(),
+                  updateStatusPemesanan(),
+                  updateBiayaJasa(),
+                ],
+              ),
             ),
           ),
         ),

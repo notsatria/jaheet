@@ -26,7 +26,7 @@ class _DetailScreenState extends State<DetailScreen>
   late TabController _tabController;
 
   List<Tab> myTabs = <Tab>[
-    Tab(
+    const Tab(
       // child: Image.asset(
       //   'assets/icon/baju.png',
       //   width: 25,
@@ -34,7 +34,7 @@ class _DetailScreenState extends State<DetailScreen>
       // ),
       text: 'Produk',
     ),
-    Tab(
+    const Tab(
       // child: Image.asset(
       //   'assets/icon/celana.png',
       //   width: 25,
@@ -42,7 +42,7 @@ class _DetailScreenState extends State<DetailScreen>
       // ),
       text: 'Category',
     ),
-    Tab(
+    const Tab(
       // child: Image.asset(
       //   'assets/icon/trus.png',
       //   width: 25,
@@ -431,139 +431,117 @@ class _DetailScreenState extends State<DetailScreen>
                 rating,
                 style: primaryTextStyle.copyWith(
                   fontWeight: bold,
-                  fontSize: 36,
+                  fontSize: 40,
                 ),
               ),
             ],
           ),
-          const SizedBox(width: 14),
-          InkWell(
-            onTap: () {},
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '97% pembeli merasa puas',
-                      style: primaryTextStyle.copyWith(
-                        fontWeight: semiBold,
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      '620 Rating | 20 ulasan',
-                      style: subtitleTextStyle.copyWith(
-                        fontWeight: light,
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
+          Container(
+              margin: const EdgeInsets.only(left: 10, right: 10),
+              width: 3,
+              height: 50,
+              decoration: BoxDecoration(color: Colors.grey.shade200)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '10 pembeli merasa puas',
+                style: primaryTextStyle.copyWith(
+                  fontWeight: semiBold,
+                  fontSize: 14,
                 ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 12,
-                  color: primaryTextColor,
-                )
-              ],
-            ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Total 620 Rating',
+                style: subtitleTextStyle.copyWith(
+                  fontWeight: light,
+                  fontSize: 14,
+                ),
+              )
+            ],
           )
         ],
       );
     }
 
-    Widget ulasan(String name, String comment) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const CircleAvatar(
-                radius: 10,
-                backgroundColor: Colors.black,
-                backgroundImage: AssetImage(
-                  'assets/icon/google.png',
-                ),
-              ),
-              const SizedBox(
-                width: 4,
-              ),
-              Text(name, style: primaryTextStyle.copyWith(fontSize: 12)),
-              const SizedBox(
-                width: 4,
-              ),
-              Text('2 hari lalu',
-                  style: subtitleTextStyle.copyWith(fontSize: 12)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          const SizedBox(
-            child: Row(
-              children: [
-                Icon(Icons.star_rounded, size: 12, color: Colors.amber),
-                Icon(Icons.star_rounded, size: 12, color: Colors.amber),
-                Icon(Icons.star_rounded, size: 12, color: Colors.amber),
-                Icon(Icons.star_rounded, size: 12, color: Colors.amber),
-                Icon(Icons.star_rounded, size: 12, color: Colors.amber),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            comment,
-            style: primaryTextStyle.copyWith(fontSize: 14),
-          ),
-          const SizedBox(height: 8),
-          Image.asset(
-            'assets/images/produk_jahit.png',
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
-        ],
-      );
-    }
+    // Widget ulasan(String name, String comment) {
+    //   return Column(
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //     children: [
+    //       Row(
+    //         children: [
+    //           const CircleAvatar(
+    //             radius: 10,
+    //             backgroundColor: Colors.black,
+    //             backgroundImage: AssetImage(
+    //               'assets/icon/google.png',
+    //             ),
+    //           ),
+    //           const SizedBox(
+    //             width: 4,
+    //           ),
+    //           Text(name, style: primaryTextStyle.copyWith(fontSize: 12)),
+    //           const SizedBox(
+    //             width: 4,
+    //           ),
+    //           Text('2 hari lalu',
+    //               style: subtitleTextStyle.copyWith(fontSize: 12)),
+    //         ],
+    //       ),
+    //       const SizedBox(height: 8),
+    //       const SizedBox(
+    //         child: Row(
+    //           children: [
+    //             Icon(Icons.star_rounded, size: 12, color: Colors.amber),
+    //             Icon(Icons.star_rounded, size: 12, color: Colors.amber),
+    //             Icon(Icons.star_rounded, size: 12, color: Colors.amber),
+    //             Icon(Icons.star_rounded, size: 12, color: Colors.amber),
+    //             Icon(Icons.star_rounded, size: 12, color: Colors.amber),
+    //           ],
+    //         ),
+    //       ),
+    //       const SizedBox(height: 8),
+    //       Text(
+    //         comment,
+    //         style: primaryTextStyle.copyWith(fontSize: 14),
+    //       ),
+    //       const SizedBox(height: 8),
+    //       Image.asset(
+    //         'assets/images/produk_jahit.png',
+    //         width: 50,
+    //         height: 50,
+    //         fit: BoxFit.cover,
+    //       ),
+    //     ],
+    //   );
+    // }
 
     Widget ratingUlasan() {
-      return Column(
-        children: [
-          FutureBuilder(
-            future: FirebaseFirestore.instance
-                .collection('seller')
-                .where("id", isEqualTo: id)
-                .get(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              if (snapshot.hasData) {
-                final sellers = snapshot.data!.docs;
-                if (sellers.isNotEmpty) {
-                  final sellerData = sellers.first.data();
-                  final rateSeller = sellerData['rating'].toString();
-                  return rating(rateSeller);
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              }
-              return const SizedBox();
-            },
-          ),
-          const SizedBox(height: 8),
-          const Divider(
-            thickness: 2,
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          ulasan('Sanstoso', 'Jahitannya rapi, keren'),
-          const SizedBox(height: 12),
-          ulasan('Bambang', 'Cepat dan rapi, Alhamdulillah. Mantap!'),
-        ],
+      return FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('seller')
+            .where("id", isEqualTo: id)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.hasData) {
+            final sellers = snapshot.data!.docs;
+            if (sellers.isNotEmpty) {
+              final sellerData = sellers.first.data();
+              final rateSeller = sellerData['rating'].toString();
+              return rating(rateSeller);
+            } else {
+              return const CircularProgressIndicator();
+            }
+          }
+          return const SizedBox();
+        },
       );
     }
 
@@ -645,7 +623,6 @@ class _DetailScreenState extends State<DetailScreen>
             builder: (context, detailScreenProvider, _) {
               final detaildata = detailScreenProvider.detailScreenData;
               final sellerName = detaildata?['name'];
-              final description = detaildata?['description'];
               final long = detaildata?['location'].longitude;
               final lat = detaildata?['location'].latitude;
               final kota = detaildata?['kota'];
@@ -653,6 +630,11 @@ class _DetailScreenState extends State<DetailScreen>
 
               return titlePenjahit(sellerName, lat, long, kota, provinsi);
             },
+          ),
+          const Divider(thickness: 4),
+          customContainer(
+            judul: "Rating dan Ulasan",
+            child: ratingUlasan(),
           ),
           const Divider(thickness: 4),
           Consumer<DetailScreenProvider>(
@@ -668,14 +650,6 @@ class _DetailScreenState extends State<DetailScreen>
               );
             },
           ),
-          // customContainer(
-          //   judul: "Deskripsi",
-          //   child: expandableDescription(
-          //     initialDescription: description,
-          //     expandedDescription:
-          //         "Untuk mendapatkan lebar total layar (width) dalam Flutter, Anda dapat menggunakan widget MediaQuery. MediaQuery adalah widget yang menyediakan informasi tentang media (termasuk lebar dan tinggi layar) kepada widget di dalamnya.",
-          //   ),
-          // ),
           const Divider(thickness: 4),
           customContainer(
             judul: "Gallery Penjahit",
@@ -686,13 +660,7 @@ class _DetailScreenState extends State<DetailScreen>
             judul: "Layanan Unggulan",
             child: categoryPenjahit(),
           ),
-          const Divider(
-            thickness: 4,
-          ),
-          customContainer(
-            judul: "Rating dan Ulasan",
-            child: ratingUlasan(),
-          )
+          const SizedBox(height: 8),
         ],
       );
     }
