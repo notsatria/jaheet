@@ -18,7 +18,7 @@ class FeaturedSellerFormRegistration extends StatelessWidget {
         backgroundColor: backgroundColor1,
         title: Text(
           'Mendaftar Premium',
-          style: TextStyle(
+          style: primaryTextStyle.copyWith(
             color: primaryTextColor,
             fontWeight: semiBold,
           ),
@@ -38,7 +38,7 @@ class FeaturedSellerFormRegistration extends StatelessWidget {
 
     Widget registerToFeaturedSeller() {
       return Container(
-        margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+        margin: const EdgeInsets.all(20),
         child: ElevatedButton(
           onPressed: () {
             FirebaseFirestore.instance
@@ -75,7 +75,7 @@ class FeaturedSellerFormRegistration extends StatelessWidget {
                 );
               },
             );
-            Future.delayed(Duration(seconds: 3), () {
+            Future.delayed(const Duration(seconds: 3), () {
               Navigator.pushReplacementNamed(
                   context, SellerMainScreen.routeName);
             });
@@ -116,12 +116,12 @@ class FeaturedSellerFormRegistration extends StatelessWidget {
         children: [
           Stack(
             children: [
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: MediaQuery.of(context).size.height * 0.25,
                 child: ClipRRect(
                   borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(10)),
+                      const BorderRadius.vertical(bottom: Radius.circular(30)),
                   child: Image.asset(
                     'assets/images/background-premium.jpg',
                     fit: BoxFit.cover,
@@ -134,7 +134,7 @@ class FeaturedSellerFormRegistration extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.25,
                 decoration: BoxDecoration(
                   borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(10)),
+                      const BorderRadius.vertical(bottom: Radius.circular(30)),
                   color: secondaryColor.withOpacity(0.4),
                 ),
                 child: Text(
@@ -171,13 +171,56 @@ class FeaturedSellerFormRegistration extends StatelessWidget {
                 const SizedBox(
                   height: 6,
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    '"Memudahkan pengguna mencari, mendapatkan, dan memesan jasa jahit dari tempat Anda"',
+                    textAlign: TextAlign.center,
+                    style: primaryTextStyle.copyWith(
+                        fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              children: [
                 Text(
-                  '"Memudahkan pengguna mencari, mendapatkan, dan memesan jasa jahit dari tempat Anda"',
+                  "Apa persyaratan Anda bisa\nmendaftar Penjaheet Premium?",
                   textAlign: TextAlign.center,
                   style: primaryTextStyle.copyWith(
-                      fontSize: 14, fontWeight: FontWeight.w600),
+                    color: secondaryColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                registerToFeaturedSeller()
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "- Menyelesaikan 20 pesanan\ndalam 3 bulan terakhir",
+                  textAlign: TextAlign.center,
+                  style: primaryTextStyle.copyWith(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                Text(
+                  "- Rating 3 ke atas",
+                  textAlign: TextAlign.center,
+                  style: primaryTextStyle.copyWith(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
               ],
             ),
           )
@@ -188,6 +231,7 @@ class FeaturedSellerFormRegistration extends StatelessWidget {
     return Scaffold(
       appBar: appBar(),
       body: body(),
+      bottomNavigationBar: registerToFeaturedSeller(),
     );
   }
 }
