@@ -270,11 +270,12 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               onTap: () {
                 //
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Edit Profil Penjaheet',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -283,11 +284,12 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               onTap: () {
                 //
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Produk Saya',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -317,11 +319,12 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               onTap: () {
                 //
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Privacy & Policy',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),
@@ -330,11 +333,12 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
               onTap: () {
                 Navigator.pushNamed(context, MainScreen.routeName);
               },
-              child: const ListTile(
+              child: ListTile(
                 leading: Text(
                   'Keluar',
+                  style: primaryTextStyle,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.chevron_right_rounded,
                 ),
               ),

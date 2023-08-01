@@ -6,6 +6,9 @@ class TransactionScreenProvider extends ChangeNotifier {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final userid = FirebaseAuth.instance.currentUser!.uid;
 
+  String _orderId = '';
+  String get orderId => _orderId;
+
   String _sellerId = '';
   String get sellerId => _sellerId;
 
@@ -19,6 +22,10 @@ class TransactionScreenProvider extends ChangeNotifier {
   void setSellerId(String id) {
     _sellerId = id;
     notifyListeners();
+  }
+
+  void setOrderId(String id) {
+    _orderId = id;
   }
 
   Future<void> fetchOrders() async {

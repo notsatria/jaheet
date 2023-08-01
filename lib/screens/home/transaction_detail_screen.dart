@@ -16,6 +16,8 @@ class TransactionDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     String orderid = args['orderid'];
+    Provider.of<TransactionScreenProvider>(context, listen: false)
+        .setOrderId(orderid);
     PreferredSizeWidget appBar() {
       return AppBar(
         backgroundColor: backgroundColor1,

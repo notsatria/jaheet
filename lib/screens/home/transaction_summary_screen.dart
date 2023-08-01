@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
 import '../../provider/checkout_screen_provider.dart';
+import '../../provider/transaction_screen_provider.dart';
 import 'main_screen.dart';
 
 class TransactionSummaryScreen extends StatelessWidget {
@@ -139,20 +142,30 @@ class TransactionSummaryScreen extends StatelessWidget {
 
     Widget cekPayment() {
       return GestureDetector(
-        onTap: () {
-          //TODO
-          // Consumer<TransactionScreenProvider>(
-          //   builder: (context, transactionScreenProvider, _) {
-          //     final detaildata = transactionScreenProvider.detailScreenData;
-          //     final orderid = detaildata?['orderid'];
+        onTap: () async {
+          final orderid = context.read<TransactionScreenProvider>().orderId;
+          print(orderid);
+          try {
+            final querySnapshot = await FirebaseFirestore.instance
+                .collection("orders")
+                .where("orderid", isEqualTo: orderid)
+                .get();
 
-          //     transactionScreenProvider.sendTotalTagihan(
-          //         context.read<CheckoutScreenProvider>().getTotalTagihan,
-          //         orderid);
-
-          //     return const Text('Berhasil');
-          //   },
-          // );
+            // Check if the document exists with the provided orderid
+            if (querySnapshot.docs.isNotEmpty) {
+              final doc = querySnapshot.docs.first;
+              await doc.reference.update({
+                'total_harga':
+                    context.read<CheckoutScreenProvider>().getTotalTagihan
+              });
+              print("Data updated successfully.");
+            } else {
+              print("No document found with the provided orderid: $orderid");
+            }
+          } catch (e) {
+            print('Error updating data: $e');
+            // Handle the error as needed (show an error message, log the error, etc.).
+          }
           showDialog(
             context: context,
             builder: (BuildContext context) {
