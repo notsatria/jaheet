@@ -24,17 +24,17 @@ const List<String> statusHome = [
   'Selesai',
 ];
 
-const List<String> statusPick = [
-  'Menunggu Konfirmasi',
-  'Mengambil Pesanan', //penjahit mengambil pesanan
-  'Diproses',
-  'Mengirim Pesanan', //penjahit mengirim pesanan
-  'Selesai', //pembayaran COD
-];
+// const List<String> statusPick = [
+//   'Menunggu Konfirmasi',
+//   'Mengambil Pesanan', //penjahit mengambil pesanan
+//   'Diproses',
+//   'Mengirim Pesanan', //penjahit mengirim pesanan
+//   'Selesai', //pembayaran COD
+// ];
 
 class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
   String selectedStatusHome = statusHome.first;
-  String selectedStatusPick = statusPick.first; //nambahin list buat pickoff
+  // String selectedStatusPick = statusPick.first; //nambahin list buat pickoff
   CollectionReference orders = FirebaseFirestore.instance.collection('orders');
 
   TextEditingController biayaJasaController = TextEditingController();
@@ -439,64 +439,63 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
         child: InkWell(
           onTap: () {
             // Update the status of the order
-            if (_formKey.currentState!.validate()) {
-              try {
-                updateOrderStatus();
-              } catch (e) {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Error'),
-                        content: Text(e.toString()),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-                    });
-              } finally {
-                showDialog(
+
+            try {
+              updateOrderStatus();
+            } catch (e) {
+              showDialog(
                   context: context,
-                  builder: (BuildContext context) {
+                  builder: (context) {
                     return AlertDialog(
-                      insetPadding: const EdgeInsets.all(90),
-                      content: SizedBox(
-                        height: 128,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.check_circle,
-                              size: 60,
-                              color: Colors.greenAccent,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              'Status Pesanan Telah Diperbarui',
-                              style: primaryTextStyle,
-                              textAlign: TextAlign.center,
-                            )
-                          ],
+                      title: const Text('Error'),
+                      content: Text(e.toString()),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('OK'),
                         ),
-                      ),
+                      ],
                     );
-                  },
-                );
-                Timer(const Duration(seconds: 3), () {
-                  Navigator.pushReplacementNamed(
-                    context,
-                    SellerOrderScreen.routeName,
+                  });
+            } finally {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    insetPadding: const EdgeInsets.all(90),
+                    content: SizedBox(
+                      height: 128,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            size: 60,
+                            color: Colors.greenAccent,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            'Status Pesanan Telah Diperbarui',
+                            style: primaryTextStyle,
+                            textAlign: TextAlign.center,
+                          )
+                        ],
+                      ),
+                    ),
                   );
-                });
-              }
+                },
+              );
+              Timer(const Duration(seconds: 3), () {
+                Navigator.pushReplacementNamed(
+                  context,
+                  SellerOrderScreen.routeName,
+                );
+              });
             }
           },
           child: Container(

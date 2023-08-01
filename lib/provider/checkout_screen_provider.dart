@@ -18,7 +18,7 @@ class CheckoutScreenProvider extends ChangeNotifier {
   final String _biayaJasa = '0';
   final String _biayaDelivery = '10000';
   final String _biayaAdmin = '2000';
-   String _totalHarga = '0';
+  String _totalHarga = '0';
 
   Map<String, dynamic> _detailAlamatPemesan = {};
   Map<String, dynamic> _detailAlamatPenjual = {};
@@ -129,7 +129,6 @@ class CheckoutScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- 
   String generateOrderId() {
     return '$_sellerId-$_date';
   }
@@ -158,15 +157,11 @@ class CheckoutScreenProvider extends ChangeNotifier {
       return;
     }
   }
-  
-  int setTotalTagihan(int totalTagihan)  {
+
+  int setTotalTagihan(int totalTagihan) {
     _totalHarga = totalTagihan.toString();
-    notifyListeners();
     return totalTagihan;
   }
-
-  
-
 
   Future<void> sendCheckoutData() async {
     await orders.doc().set({
@@ -191,5 +186,4 @@ class CheckoutScreenProvider extends ChangeNotifier {
       'total_harga': _totalHarga,
     });
   }
-
 }
