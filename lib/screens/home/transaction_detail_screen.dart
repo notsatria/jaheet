@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:jahitin/provider/transaction_screen_provider.dart';
+import 'package:jahitin/screens/home/transaction_payment_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../constant/theme.dart';
@@ -431,7 +432,7 @@ class TransactionDetailScreen extends StatelessWidget {
     Widget payment() {
       return GestureDetector(
         onTap: () {
-          // TODO: Tambahkan new screen
+          Navigator.pushNamed(context, TransactionPaymentScreen.routeName);
         },
         child: Container(
           height: 60,

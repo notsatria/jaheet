@@ -6,18 +6,19 @@ import 'package:jahitin/provider/checkout_screen_provider.dart';
 import 'package:jahitin/provider/detail_screen_provider.dart';
 import 'package:jahitin/provider/home_screen_provider.dart';
 import 'package:jahitin/provider/search_screen_provider.dart';
+import 'package:jahitin/provider/send_location_provider.dart';
+import 'package:jahitin/provider/transaction_screen_provider.dart';
+import 'package:jahitin/screens/home/add_location.dart';
 import 'package:jahitin/screens/home/address_screen.dart';
 import 'package:jahitin/screens/home/edit_location.dart';
 import 'package:jahitin/screens/home/see_more.dart';
-import 'package:jahitin/provider/transaction_screen_provider.dart';
+import 'package:jahitin/screens/home/transaction_payment_screen.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
-import 'package:jahitin/screens/splash_screen.dart';
-import 'package:jahitin/provider/send_location_provider.dart';
-import 'package:jahitin/screens/home/add_location.dart';
 import 'package:jahitin/screens/seller/order/seller_order_screen.dart';
 import 'package:jahitin/screens/seller/products/add_product_screen.dart';
 import 'package:jahitin/screens/seller/registration_form_screen.dart';
 import 'package:jahitin/screens/seller/seller_main_screen.dart';
+import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/screens/transaction/checkout_screen.dart';
 import 'package:jahitin/screens/transaction/payment_screen.dart';
 import 'package:jahitin/screens/transaction/service_screen.dart';
@@ -87,6 +88,8 @@ class MyApp extends StatelessWidget {
         TransactionScreen.routeName: (context) => const TransactionScreen(),
         TransactionDetailScreen.routeName: (context) =>
             const TransactionDetailScreen(),
+        TransactionPaymentScreen.routeName: (context) =>
+            const TransactionPaymentScreen(),
         ProfileScreen.routeName: (context) => const ProfileScreen(),
         EditProfileScreen.routeName: (context) => const EditProfileScreen(),
         LocationRecommendationScreen.routeName: (context) =>
