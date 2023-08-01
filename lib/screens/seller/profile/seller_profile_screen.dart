@@ -1,7 +1,12 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jahitin/provider/transaction_screen_provider.dart';
 import 'package:jahitin/screens/home/main_screen.dart';
+import 'package:jahitin/screens/seller/featured_seller_form_registration_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constant/theme.dart';
 
@@ -72,7 +77,8 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget sellerProfileHeader({String? profileImage, String? tokoName}) {
+    Widget sellerProfileHeader(
+        {String? profileImage, String? tokoName, required bool tokoStatus}) {
       return Stack(
         children: [
           Container(
@@ -126,11 +132,6 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                 ),
                 Row(
                   children: [
-                    const Icon(
-                      Icons.verified,
-                      color: Colors.white,
-                      size: 16,
-                    ),
                     Text(
                       'Toko Penjahit',
                       style: whiteTextStyle.copyWith(
@@ -138,6 +139,16 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                         fontWeight: medium,
                       ),
                     ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    tokoStatus
+                        ? const Icon(
+                            Icons.verified,
+                            color: Colors.white,
+                            size: 16,
+                          )
+                        : const SizedBox(),
                   ],
                 ),
                 const SizedBox(
@@ -333,40 +344,91 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
       );
     }
 
+    Widget registerToFeaturedSeller(String id) {
+      return Container(
+        margin: const EdgeInsets.only(top: 10),
+        child: ElevatedButton(
+          onPressed: () {
+            context.read<TransactionScreenProvider>().setSellerId(id);
+            print(context.read<TransactionScreenProvider>().sellerId);
+            Navigator.pushNamed(
+                context, FeaturedSellerFormRegistration.routeName);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: secondaryColor,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            elevation: 0,
+          ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(Icons.stars_rounded),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  "Daftar Penjaheet Premium",
+                  style: primaryTextStyle.copyWith(
+                    color: backgroundColor1,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Container(
-          height: MediaQuery.of(context).size.height * 0.8,
+          height: MediaQuery.of(context).size.height,
           margin: EdgeInsets.symmetric(
             horizontal: defaultMargin,
           ),
-          child: Column(
-            children: [
-              FutureBuilder<Map<String, dynamic>>(
-                future: getSellerData(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasData) {
-                    return sellerProfileHeader(
-                      profileImage: snapshot.data!['profileImage'],
-                      tokoName: snapshot.data!['name'],
-                    );
-                  } else {
-                    // Handle the case when seller data is not available.
-                    return const Center(
-                      child: Text('Seller data not found.'),
-                    );
-                  }
-                },
-              ),
-              categoryPenjahit(),
-              accountProfileBlock(),
-              generalProfileBlock(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                FutureBuilder<Map<String, dynamic>>(
+                  future: getSellerData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasData) {
+                      return Column(
+                        children: [
+                          sellerProfileHeader(
+                              profileImage: snapshot.data!['profileImage'],
+                              tokoName: snapshot.data!['name'],
+                              tokoStatus: snapshot.data!['isFeaturedSeller']),
+                          snapshot.data!['isFeaturedSeller']
+                              ? const SizedBox()
+                              : registerToFeaturedSeller(
+                                  snapshot.data!['id'].toString()),
+                        ],
+                      );
+                    } else {
+                      // Handle the case when seller data is not available.
+                      return const Center(
+                        child: Text('Seller data not found.'),
+                      );
+                    }
+                  },
+                ),
+                categoryPenjahit(),
+                accountProfileBlock(),
+                generalProfileBlock(),
+              ],
+            ),
           ),
         ),
       ),

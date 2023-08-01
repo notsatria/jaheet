@@ -6,12 +6,20 @@ class TransactionScreenProvider extends ChangeNotifier {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final userid = FirebaseAuth.instance.currentUser!.uid;
 
+  String _sellerId = '';
+  String get sellerId => _sellerId;
+
   List<Map<String, dynamic>> _orders = [];
 
   List<Map<String, dynamic>> get orders => _orders;
 
   Map<String, dynamic>? _detailScreenData;
   Map<String, dynamic>? get detailScreenData => _detailScreenData;
+
+  void setSellerId(String id) {
+    _sellerId = id;
+    notifyListeners();
+  }
 
   Future<void> fetchOrders() async {
     try {

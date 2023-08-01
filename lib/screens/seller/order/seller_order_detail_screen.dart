@@ -86,7 +86,6 @@ class _SellerOrderDetailScreenState extends State<SellerOrderDetailScreen> {
         child: Card(
           child: Container(
             width: double.infinity,
-            height: 130,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),

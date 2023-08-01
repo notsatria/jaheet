@@ -117,6 +117,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         .set({
           'id': sellerDataLength + 1,
           'isSailor': true,
+          'isClothSeller': false,
           'isFeaturedSeller': false,
           'name': namaTokoController.text,
           'kelurahan': kelurahanTokoController.text,

@@ -141,7 +141,6 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               width: double.infinity,
-              height: 140,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -243,8 +242,24 @@ class _SellerOrderScreenState extends State<SellerOrderScreen> {
               } else {
                 final orderList = snapshot.data as List<Map<String, dynamic>>;
                 if (orderList.isEmpty) {
-                  return const Center(
-                    child: Text('No orders found for this seller.'),
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.remove_shopping_cart_rounded,
+                          color: primaryTextColor.withOpacity(0.5),
+                          size: 50,
+                        ),
+                        Text(
+                          'Tidak ada pesanan terbaru',
+                          style: primaryTextStyle.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: primaryTextColor.withOpacity(0.5)),
+                        ),
+                      ],
+                    ),
                   );
                 } else {
                   return ListView.builder(

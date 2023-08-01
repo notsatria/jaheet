@@ -11,6 +11,7 @@ import 'package:jahitin/screens/home/edit_location.dart';
 import 'package:jahitin/screens/home/see_more.dart';
 import 'package:jahitin/provider/transaction_screen_provider.dart';
 import 'package:jahitin/screens/home/transaction_screen.dart';
+import 'package:jahitin/screens/seller/featured_seller_form_registration_screen.dart';
 import 'package:jahitin/screens/splash_screen.dart';
 import 'package:jahitin/provider/send_location_provider.dart';
 import 'package:jahitin/screens/home/add_location.dart';
@@ -99,7 +100,9 @@ class MyApp extends StatelessWidget {
         AddLocationScreen.routeName: (context) => const AddLocationScreen(),
         EditLocationScreen.routeName: (context) => const EditLocationScreen(),
         AddressScreen.routeName: (context) => const AddressScreen(),
-        SeeMoreScreen.routeName: (context) => const SeeMoreScreen()
+        SeeMoreScreen.routeName: (context) => const SeeMoreScreen(),
+        FeaturedSellerFormRegistration.routeName: (context) =>
+            const FeaturedSellerFormRegistration()
       },
     );
   }
