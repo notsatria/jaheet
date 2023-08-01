@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jahitin/constant/theme.dart';
 import 'package:jahitin/provider/google_sign_in_provider.dart';
 import 'package:jahitin/screens/sign_in_screen.dart';
@@ -20,37 +19,21 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final _googleSignIn = GoogleSignIn();
+  // final _googleSignIn = GoogleSignIn();
   final user = FirebaseAuth.instance.currentUser;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   String? uid;
-  bool isGoogleUser = false;
+  // bool isGoogleUser = false;
   bool isDataLoaded = false;
 
   Future<void> loadUser() async {
     User? firebaseUser = FirebaseAuth.instance.currentUser;
-    if (firebaseUser != null) {
-      setState(() {
-        uid = firebaseUser.uid;
-        isGoogleUser = false;
-        isDataLoaded = true;
-      });
-    } else {
-      GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser != null) {
-        setState(() {
-          uid = googleUser.id;
-          isGoogleUser = true;
-          isDataLoaded = true;
-        });
-      } else {
-        setState(() {
-          uid = null;
-          isGoogleUser = false;
-          isDataLoaded = true;
-        });
-      }
-    }
+
+    setState(() {
+      uid = firebaseUser!.uid;
+
+      isDataLoaded = true;
+    });
   }
 
   @override
@@ -164,14 +147,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    Future<Widget> googleProfileHeader() async {
-      final googleUser = await _googleSignIn.signIn();
-      return profileHeader(
-        photoURL: googleUser!.photoUrl,
-        name: googleUser.displayName ?? '',
-        email: googleUser.email,
-      );
-    }
+    // Future<Widget> googleProfileHeader() async {
+    //   final googleUser = await _googleSignIn.signIn();
+    //   return profileHeader(
+    //     photoURL: googleUser!.photoUrl,
+    //     name: googleUser.displayName ?? '',
+    //     email: googleUser.email,
+    //   );
+    // }
 
     Widget accountProfileBlock() {
       return Container(
@@ -367,36 +350,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               children: [
                 isDataLoaded
-                    ? (isGoogleUser
-                        ? FutureBuilder(
-                            future: googleProfileHeader(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
-                              } else {
-                                return snapshot.data ??
-                                    const Text('Google user not signed in');
-                              }
-                            },
-                          )
-                        : FutureBuilder(
-                            future: users.doc(uid).get(),
-                            builder: (context,
-                                AsyncSnapshot<DocumentSnapshot> snapshot) {
-                              if (snapshot.hasData) {
-                                return profileHeader(
-                                  photoURL: snapshot.data!.get('photoURL'),
-                                  name: snapshot.data!.get('name'),
-                                  email: snapshot.data!.get('email'),
-                                );
-                              } else {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                            },
-                          ))
+                    ? FutureBuilder(
+                        future: users.doc(uid).get(),
+                        builder: (context,
+                            AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            return profileHeader(
+                              photoURL: snapshot.data!.get('photoURL'),
+                              name: snapshot.data!.get('name'),
+                              email: snapshot.data!.get('email'),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      )
                     : const Center(
                         child: CircularProgressIndicator(),
                       ),

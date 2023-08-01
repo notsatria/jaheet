@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jahitin/screens/home/transaction_summary_screen.dart';
 
 import '../../constant/theme.dart';
 
@@ -46,7 +47,10 @@ class TransactionPaymentScreen extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              //
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TransactionSummaryScreen()));
             },
             leading: Image.asset(
               'assets/icon/ovo.png',
@@ -242,7 +246,7 @@ class TransactionPaymentScreen extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              //
+              Navigator.pushNamed(context, TransactionSummaryScreen.routeName);
             },
             leading: Image.asset(
               'assets/icon/bni.png',

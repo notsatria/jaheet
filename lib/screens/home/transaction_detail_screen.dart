@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:jahitin/provider/checkout_screen_provider.dart';
 import 'package:jahitin/provider/transaction_screen_provider.dart';
 import 'package:jahitin/screens/home/transaction_payment_screen.dart';
 import 'package:provider/provider.dart';
@@ -357,6 +358,12 @@ class TransactionDetailScreen extends StatelessWidget {
       final formattedTotalTagihan =
           NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ')
               .format(totalTagihan);
+
+      context.read<CheckoutScreenProvider>().setTotalTagihan(totalTagihan);
+
+      print(
+          context.read<CheckoutScreenProvider>().setTotalTagihan(totalTagihan));
+
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const SizedBox(height: 10),
         Text(
@@ -378,7 +385,7 @@ class TransactionDetailScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    formattedTotalJasa.isEmpty
+                    formattedTotalJasa == 'Rp 0,00'
                         ? '(Menunggu Penjahit)'
                         : formattedTotalJasa,
                     style: primaryTextStyle.copyWith(fontSize: 14),
@@ -400,15 +407,16 @@ class TransactionDetailScreen extends StatelessWidget {
                 Row(children: [
                   Text(
                     'Biaya Layanan',
-                    style: primaryTextStyle.copyWith(fontSize: 14),
+                    style: secondaryTextStyle.copyWith(fontSize: 14),
                   ),
                   const Spacer(),
                   Text(
                     formattedBiayaLayanan,
-                    style: primaryTextStyle.copyWith(fontSize: 14),
+                    style: secondaryTextStyle.copyWith(fontSize: 14),
                   ),
                 ]),
                 const SizedBox(height: 8),
+                const Divider(),
                 Row(children: [
                   Text(
                     'Total Pembayaran',
@@ -417,7 +425,9 @@ class TransactionDetailScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    formattedTotalTagihan,
+                    formattedTotalJasa == 'Rp 0,00'
+                        ? '(Menunggu Penjahit)'
+                        : formattedTotalTagihan,
                     style: primaryTextStyle.copyWith(
                         fontSize: 14, fontWeight: bold),
                   ),
@@ -429,16 +439,20 @@ class TransactionDetailScreen extends StatelessWidget {
       ]);
     }
 
-    Widget payment() {
+    Widget payment(String orderStatus) {
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, TransactionPaymentScreen.routeName);
+          orderStatus == 'Menunggu Pembayaran'
+              ? Navigator.pushNamed(context, TransactionPaymentScreen.routeName)
+              : null;
         },
         child: Container(
           height: 60,
           width: double.maxFinite,
           decoration: BoxDecoration(
-            color: primaryColor,
+            color: orderStatus == 'Menunggu Pembayaran'
+                ? primaryColor
+                : subtitleTextColor,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Center(
@@ -458,16 +472,16 @@ class TransactionDetailScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: appBar(),
-        bottomNavigationBar: Consumer<TransactionScreenProvider>(
-          builder: (context, transactionScreenProvider, _) {
-            final detaildata = transactionScreenProvider.detailScreenData;
-            final statusOrder = detaildata?['status_order'];
-            if (statusOrder == 'Menunggu Pembayaran') {
-              return payment();
-            }
-            return const SizedBox();
-          },
-        ),
+        // bottomNavigationBar: Consumer<TransactionScreenProvider>(
+        //   builder: (context, transactionScreenProvider, _) {
+        //     final detaildata = transactionScreenProvider.detailScreenData;
+        //     final statusOrder = detaildata?['status_order'];
+        //     if (statusOrder == 'Menunggu Pembayaran') {
+        //       return payment();
+        //     }
+        //     return const SizedBox();
+        //   },
+        // ),
         body: Consumer<TransactionScreenProvider>(
           builder: (context, transactionScreenProvider, _) {
             final detaildata = transactionScreenProvider.detailScreenData;
@@ -511,9 +525,7 @@ class TransactionDetailScreen extends StatelessWidget {
                       ? alamatPemesanan(alamatUser, type)
                       : pickoff(alamatPenjual, sellerName),
                   const Spacer(),
-                  (orderStatus == 'Menunggu Pembayaran')
-                      ? payment()
-                      : const SizedBox(),
+                  payment(orderStatus),
                 ],
               ),
             );

@@ -47,4 +47,16 @@ class TransactionScreenProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> sendTotalTagihan(int totalTagihan, String orderid) async {
+    await FirebaseFirestore.instance
+        .collection('orders')
+        .where("orderid", isEqualTo: orderid)
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        element.reference.update({'total_harga': totalTagihan});
+      });
+    });
+  }
 }

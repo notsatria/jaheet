@@ -16,6 +16,9 @@ class CheckoutScreenProvider extends ChangeNotifier {
   String _hargaMaksimal = '20000';
   String _orderStatus = 'Menunggu Konfirmasi';
   final String _biayaJasa = '0';
+  final String _biayaDelivery = '10000';
+  final String _biayaAdmin = '2000';
+   String _totalHarga = '0';
 
   Map<String, dynamic> _detailAlamatPemesan = {};
   Map<String, dynamic> _detailAlamatPenjual = {};
@@ -116,6 +119,8 @@ class CheckoutScreenProvider extends ChangeNotifier {
 
   Map<String, dynamic> get detailJasa => _detailJasa;
 
+  int get getTotalTagihan => int.parse(_totalHarga);
+
   void setDetailJasa(String kategori, String jenis, String jasa, String size) {
     _detailJasa['kategori'] = kategori;
     _detailJasa['jenis'] = jenis;
@@ -124,6 +129,7 @@ class CheckoutScreenProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+ 
   String generateOrderId() {
     return '$_sellerId-$_date';
   }
@@ -152,6 +158,15 @@ class CheckoutScreenProvider extends ChangeNotifier {
       return;
     }
   }
+  
+  int setTotalTagihan(int totalTagihan)  {
+    _totalHarga = totalTagihan.toString();
+    notifyListeners();
+    return totalTagihan;
+  }
+
+  
+
 
   Future<void> sendCheckoutData() async {
     await orders.doc().set({
@@ -170,6 +185,11 @@ class CheckoutScreenProvider extends ChangeNotifier {
       'sellerid': _sellerId,
       'order_status': _orderStatus,
       'orderid': generateOrderId(),
+      'biaya_jasa': _biayaJasa,
+      'biaya_delivery': _biayaDelivery,
+      'biaya_admin': _biayaAdmin,
+      'total_harga': _totalHarga,
     });
   }
+
 }
